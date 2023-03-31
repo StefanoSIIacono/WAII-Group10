@@ -10,6 +10,6 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
     }
 
     override fun getProfileByEmail(email: String): ProfileDTO? {
-        return profileRepository.findByIdOrNull(email)?.toDTO()
+        return profileRepository.findByEmail(email)?.toDTO()
     }
 }
