@@ -10,8 +10,8 @@ class ProfileController(private val profileService: ProfileService) {
     fun getAll(): List<ProfileDTO>{
         return profileService.getAll()
     }
-    @GetMapping("/profiles/{profileId}")
-    fun getProduct(@PathVariable profileId:String): ProfileDTO?{
-        return profileService.getProduct(profileId)
+    @GetMapping("/profiles/{email}")
+    fun getProfileByEmail(@PathVariable email:String): ProfileDTO?{
+        return profileService.getProfileByEmail(email)
     }
 }
