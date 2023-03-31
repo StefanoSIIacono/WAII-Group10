@@ -9,7 +9,7 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
         return profileRepository.findAll().map { it.toDTO() }
     }
 
-    override fun getProduct(productId: String): ProfileDTO? {
-        return profileRepository.findByIdOrNull(productId)?.toDTO()
+    override fun getProduct(profileId: String): ProfileDTO? {
+        return profileRepository.findByIdOrNull(profileId)?.toDTO()
     }
 }

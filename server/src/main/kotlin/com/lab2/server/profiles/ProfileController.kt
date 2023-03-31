@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class ProfileController(private val productService: ProfileService) {
+class ProfileController(private val profileService: ProfileService) {
     @GetMapping("/profiles/")
     fun getAll(): List<ProfileDTO>{
-        return productService.getAll()
+        return profileService.getAll()
     }
-    @GetMapping("/profiles/{prodileId}")
+    @GetMapping("/profiles/{profileId}")
     fun getProduct(@PathVariable profileId:String): ProfileDTO?{
-        return productService.getProduct(profileId)
+        return profileService.getProduct(profileId)
     }
 }
