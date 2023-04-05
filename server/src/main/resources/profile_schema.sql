@@ -1,1 +1,1 @@
-INSERT INTO profiles (id, email, password) VALUES ('236452','davidecosola@gmail.com', 'cosolina' );
+INSERT INTO profiles (email, password) VALUES ('davidecosola@gmail.com', 'cosolina' );

@@ -1,5 +1,6 @@
 package com.lab2.server.profiles
 
+import com.lab2.server.products.toDTO
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -10,6 +11,6 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
     }
 
     override fun getProfileByEmail(email: String): ProfileDTO? {
-        return profileRepository.findByEmail(email)?.toDTO()
+        return profileRepository.findByIdOrNull(email)?.toDTO()
     }
 }

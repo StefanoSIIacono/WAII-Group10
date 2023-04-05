@@ -8,7 +8,6 @@ import jakarta.persistence.Table
 @Table(name = "profiles")
 class Profile {
     @Id
-    var id: String=""
     var email: String=""
     var password: String=""
 }
