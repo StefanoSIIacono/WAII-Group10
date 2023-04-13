@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 function SidebarProd() {
     return (
         <ListGroup as="ul" className="Drawer">
-            <ListGroup.Item as="li" variant="dark">GetAll</ListGroup.Item>
+            <ListGroup.Item as="li" variant="dark"> GetAll</ListGroup.Item>
             <ListGroup.Item as="li">GetFromID</ListGroup.Item>
         </ListGroup>
     )
