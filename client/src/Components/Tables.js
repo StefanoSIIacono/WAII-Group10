@@ -12,7 +12,7 @@ function ProductTable(props) {
       </tr>
       </thead>
       <tbody>
-      {props.products.map((p) => (<ProductRow classname="RowStyle" key={p.ean} product={p} />))}
+        {props.products.map((p) => (<ProductRow classname="RowStyle" key={p.productId} product={p} />))}
       </tbody>
     </Table>
   </>

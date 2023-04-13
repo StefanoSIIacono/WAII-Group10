@@ -1,20 +1,19 @@
 import {Product} from "./Components/Product";
-import {Profile} from "./Components/Profile"
+import {Profile} from "./Components/Profile";
 
-const URL = 'http://localhost:8080';
 
 async function readProducts() {
-    let url = URL + '/products';
+    let url = '/products/';
     try {
         const response = await fetch(url, {
             credentials: 'include',
         });
-        if (!response.ok) {
+        if (response.ok) {
+            const list = await response.json();
+            return list.map((p) => new Product(p.productId, p.name, p.brand));
+        } else {
             const text = await response.text();
             throw new TypeError(text);
-        } else {
-            const list = await response.json();
-            return list.map((p) => new Product(p.ean, p.name, p.brand));
         }
     } catch (ex) {
         throw ex;
@@ -22,7 +21,7 @@ async function readProducts() {
 }
 
 async function readProductFromID(id) {
-    const url = URL + '/courses/'+ id;
+    const url = '/products/'+ id;
     try {
         const response = await fetch(url, {
             credentials: 'include',
@@ -44,7 +43,7 @@ async function readProductFromID(id) {
 }
 
 async function readProfileFromMail(mail) {
-    const url = URL + '/courses/'+ mail;
+    const url = '/courses/'+ mail;
     try {
         const response = await fetch(url, {
             credentials: 'include',
@@ -65,6 +64,5 @@ async function readProfileFromMail(mail) {
     }
 }
 
-
-const API = {readProfileFromMail, readProductFromID, readProducts};
-export default API
+const API ={readProfileFromMail, readProductFromID, readProducts};
+export default API;

@@ -1,5 +1,5 @@
-function Product(ean, name, brand) {
-    this.ean = ean;
+function Product(productId, name, brand) {
+    this.productId = productId;
     this.name = name;
     this.brand = brand;
 }

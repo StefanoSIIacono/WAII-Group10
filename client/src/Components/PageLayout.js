@@ -20,7 +20,7 @@ function ProductsPage(props) {
                 <SidebarProd />
             </Col>
             <Col className="ProTitle" xs={8}>
-                <h1>Products: filter</h1>
+                <h1>Products:ciao</h1>
                 <ProductTable products={props.products}/>
             </Col>
         </Row>

@@ -10,7 +10,7 @@ function ProductRow(props) {
 
 function ProductData(props) {
     return <>
-        <td>{props.product.ean}</td>
+        <td>{props.product.productId}</td>
         <td>{props.product.name}</td>
         <td>{props.product.brand}</td>
     </>
