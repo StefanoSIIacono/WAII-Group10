@@ -1,5 +1,4 @@
-function Profile(profileID, email, password) {
-    this.profileID = profileID;
+function Profile(email, password) {
     this.email = email;
     this.password = password;
 }

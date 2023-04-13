@@ -35,7 +35,7 @@ async function readProductFromID(id) {
             throw new TypeError(text);
         } else {
             const res = await response.json()
-            return new Product(res.id, res.name, res.brand)
+            return new Product(res.productId, res.name, res.brand)
         }
     } catch (ex) {
         throw ex;
@@ -57,7 +57,7 @@ async function readProfileFromMail(mail) {
             throw new TypeError(text);
         } else {
             const res = await response.json()
-            return new Profile(res.id, res.email, res.password)
+            return new Profile(res.email, res.password)
         }
     } catch (ex) {
         throw ex;

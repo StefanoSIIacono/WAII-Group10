@@ -23,13 +23,12 @@ function ProfilesTable(props) {
     <Table responsive className="TableStuff">
       <thead>
       <tr>
-        <th>PROFILE ID</th>
-        <th>EMAIL</th>
-        <th>PASSWORD</th>
+        <th>Email</th>
+        <th>Password</th>
       </tr>
       </thead>
       <tbody>
-      {props.profiles.map((p) => (<ProfileRow key={p.profileID} profile={p} />))}
+      {props.profiles.map((p) => (<ProfileRow key={p.email} profile={p} />))}
       </tbody>
     </Table>
   </>

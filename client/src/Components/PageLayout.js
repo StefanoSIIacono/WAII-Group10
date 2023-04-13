@@ -3,6 +3,7 @@ import {SidebarProd, SidebarProf} from "./Sidebar";
 import {ProductTable, ProfilesTable} from "./Tables";
 import {MyNavbar} from "./Navbar";
 import {Outlet} from "react-router-dom";
+import { AddProfileForm} from "./AddProfileForm";
 
 function HomePage(){
     return(<Container  className="Home">
@@ -20,7 +21,7 @@ function ProductsPage(props) {
                 <SidebarProd />
             </Col>
             <Col className="ProTitle" xs={8}>
-                <h1>Products:ciao</h1>
+                <h1>Products:</h1>
                 <ProductTable products={props.products}/>
             </Col>
         </Row>
@@ -33,7 +34,7 @@ function ProfilesPage(props) {
         <div>
             <Row>
                 <Col xs={3} className="Menu">
-                    <SidebarProf />
+                    <SidebarProf mode={props.mode} setMode={props.setMode}/>
                 </Col>
                 <Col className="ProTitle" xs={8}>
                     <h1>Profiles:</h1>
@@ -44,6 +45,44 @@ function ProfilesPage(props) {
     );
 }
 
+function AddProfilePage(props) {
+    props.setMode("add");
+    return (
+      <Row>
+        <Col>
+          <div>
+            <h1>Add profile</h1>
+            <AddProfileForm
+              addProfile={props.addProfile}
+              mode={props.mode}
+              setMode={props.setMode}
+            />
+          </div>
+        </Col>
+      </Row>
+    );
+  }
+
+
+  function EditProfilePage(props) {
+    props.setMode('edit');
+    return (
+      <Row>
+        <Col>
+          <div>
+            <h1>Edit profile</h1>
+            {!props.loading && <AddProfileForm
+              key={props.editedProfile.email}
+              mode={props.mode}
+              setMode={props.setMode}
+              editProfile={props.editProfile}
+              editedProfile={props.editedProfile}
+            />}
+          </div>
+        </Col>
+      </Row>
+    );
+  }
 
 function AppLayout() {
     return (
@@ -63,4 +102,4 @@ function AppLayout() {
         </div>
     )
 }
-export {AppLayout, HomePage, ProfilesPage, ProductsPage}
+export {AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage}
