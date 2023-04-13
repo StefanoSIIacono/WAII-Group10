@@ -6,8 +6,12 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "profiles")
-class Profile {
+class Profile (
     @Id
-    var email: String=""
-    var password: String=""
+    var email: String,
+    var password: String
+)
+
+fun ProfileDTO.toProfile(): Profile {
+    return Profile(email, password)
 }

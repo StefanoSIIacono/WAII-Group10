@@ -13,4 +13,12 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
     override fun getProfileByEmail(email: String): ProfileDTO? {
         return profileRepository.findByIdOrNull(email)?.toDTO()
     }
+    override fun insertProfile(profile: ProfileDTO){
+        profileRepository.save(profile.toProfile())
+    }
+
+    override fun editProfile(email: String, profile: ProfileDTO){
+        profileRepository.deleteById(email)
+        profileRepository.save(profile.toProfile())
+    }
 }
