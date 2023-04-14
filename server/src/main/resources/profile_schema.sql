@@ -1,1 +1,4 @@
-INSERT INTO profiles (email, password) VALUES ('davidecosola@gmail.com', 'cosolina' );
+create table if not exists profiles(
+    email varchar(31) primary key,
+    password varchar(255)
+    );

@@ -1,6 +1,7 @@
 package com.lab2.server.profiles
 
-import com.lab2.server.products.toDTO
+import com.lab2.server.exceptionsHandler.exceptions.DuplicateProfileException
+import com.lab2.server.exceptionsHandler.exceptions.ProfileNotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -14,10 +15,23 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
         return profileRepository.findByIdOrNull(email)?.toDTO()
     }
     override fun insertProfile(profile: ProfileDTO){
+        if (profileRepository.existsById(profile.email))
+            throw DuplicateProfileException("Profile exists!")
+
         profileRepository.save(profile.toProfile())
     }
 
     override fun editProfile(email: String, profile: ProfileDTO){
+        /*val dbProfile = profileRepository.findByIdOrNull(email)
+            ?: throw ProfileNotFoundException("Profile doesn't exist!")
+
+        dbProfile.setEmail(profile.email)
+        dbProfile.setPassword(profile.password)*/
+        if (!profileRepository.existsById(email))
+            throw ProfileNotFoundException("Profile doesn't exist!")
+        if (profileRepository.existsById(profile.email))
+            throw DuplicateProfileException("Cannot change the email!")
+
         profileRepository.deleteById(email)
         profileRepository.save(profile.toProfile())
     }
