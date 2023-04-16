@@ -3,9 +3,10 @@ package com.lab2.server.profiles
 
 data class ProfileDTO(
     val email:String,
-    val password:String
+    val name:String,
+    val surname:String
 )
 
 fun Profile.toDTO(): ProfileDTO {
-    return ProfileDTO(email, password)
+    return ProfileDTO(email, name, surname)
 }

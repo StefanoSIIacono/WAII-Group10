@@ -29,7 +29,8 @@ function ProfileRow(props) {
 function ProfileData(props) {
     return <>
         <td>{props.profile.email}</td>
-        <td>{props.profile.password}</td>
+        <td>{props.profile.name}</td>
+        <td>{props.profile.surname}</td>
     </>
 }
 

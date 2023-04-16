@@ -8,39 +8,49 @@ import API from "./API"
 function App() {
 
     const [products, setProducts] = useState([]);
-    const [profiles, setProfile] = useState([]);
+    const [profile, setProfile] = useState([]);
     const [mode, setMode] = useState('show');
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(true);
-    const [editedProfile, setEditedProfile] = useState(new Profile('newemail@polito.it', 'nuova password'));
     
     async function loadProducts(){
             setLoading(true);
             let prod= [] 
-            prod= await API.readProducts();
-            setProducts(prod);
+            try{
+              prod= await API.readProducts();
+              setProducts(prod);
+            }catch(e){
+              throw e;
+            }
             setLoading(false);
     };
 
-    async function readProfileByMail(){
-      setLoading(true); 
-      let prof = await API.readProfileFromMail();
-      setProfile(prof);
-      setLoading(false);
-};    
+    const readProfileByMail = async(email) => {
+      try{
+        setLoading(true); 
+        let prof = await API.readProfileFromMail(email);
+        setProfile(prof);
+        setLoading(false);
+      }catch(e){
+        throw(e);
+      }
+    };
 
-    async function readProductByID(){
-      setLoading(true); 
-      let prof = await API.readProductFromID();
-      setProfile(prof);
-      setLoading(false);
-    };    
+    const readProductByID = async(id) => {
+      try{
+        setLoading(true); 
+        let prof = await API.readProductFromID(id);
+        setProducts(prof);
+        setLoading(false);
+      }catch(e){
+        throw(e);
+      }
+    };
 
     const addProfile = async (profile) => {
         try {
           setLoading(true);
           await API.addProfile(profile);
-          //reloadFilms(filt);
           setLoading(false);
         } catch (e) {
           throw (e);
@@ -51,18 +61,12 @@ function App() {
         try {
           setLoading(true);
           await API.editProfile(profile);
-          //reloadFilms(filt);
+          setProfile([]);
           setLoading(false);
         } catch (e) {
           throw (e);
         }
       }
-
-      const openEdit = (profile) => {
-        setEditedProfile(profile)
-        setMode('edit')
-      }
-
 
     useEffect(() => {
         loadProducts();
@@ -78,9 +82,9 @@ function App() {
               <Route element={<AppLayout />}>
                   <Route path='/' element={<HomePage />} />
                   <Route path='/products' element={<ProductsPage products={products} />} />
-                  <Route path='/profiles' element={<ProfilesPage mode={mode} setMode={setMode} profiles={profiles} />} />
+                  <Route path='/profiles' element={<ProfilesPage mode={mode} loading={loading} setMode={setMode} profile={profile} setProfile={setProfile} readProfileByMail={readProfileByMail}/>} />
                   <Route path='/addProfile' element={<AddProfilePage mode={mode} setMode={setMode} addProfile={addProfile} />} />
-                  <Route path='/editProfile' element={<EditProfilePage mode={mode} setMode={setMode} editProfile={editProfile} editedProfile={editedProfile} />} />
+                  <Route path='/editProfile' element={<EditProfilePage mode={mode} loading={loading} setMode={setMode} profile={profile} editProfile={editProfile} />} />
                   <Route path='*' element={<h1>404 Page not found</h1>} />
               </Route>
           </Routes>

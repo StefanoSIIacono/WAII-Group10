@@ -29,8 +29,6 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
         dbProfile.setPassword(profile.password)*/
         if (!profileRepository.existsById(email))
             throw ProfileNotFoundException("Profile doesn't exist!")
-        if (profileRepository.existsById(profile.email))
-            throw DuplicateProfileException("Cannot change the email!")
 
         profileRepository.deleteById(email)
         profileRepository.save(profile.toProfile())

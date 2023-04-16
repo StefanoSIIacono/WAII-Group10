@@ -9,11 +9,12 @@ import jakarta.persistence.Table
 class Profile (
     @Id
     var email: String,
-    var password: String
+    var name: String,
+    var surname: String
 )
 
 fun ProfileDTO.toProfile(): Profile {
-    return Profile(email, password)
+    return Profile(email, name, surname)
 }
 // FIX: usare get e set per i relativi scopi invece di accere direttamente alle proprietà
 /*fun Profile.setEmail(email: String) {

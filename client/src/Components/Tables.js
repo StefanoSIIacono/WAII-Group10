@@ -1,4 +1,4 @@
-import { Table } from "react-bootstrap";
+import { Table} from "react-bootstrap";
 import {ProductRow, ProfileRow} from "./Rows";
 
 function ProductTable(props) {
@@ -20,15 +20,16 @@ function ProductTable(props) {
 
 function ProfilesTable(props) {
   return <>
-    <Table responsive className="TableStuff">
+  <Table responsive className="TableStuff">
       <thead>
       <tr>
         <th>Email</th>
-        <th>Password</th>
+        <th>Name</th>
+        <th>Surname</th>
       </tr>
       </thead>
       <tbody>
-      {props.profiles.map((p) => (<ProfileRow key={p.email} profile={p} />))}
+      <ProfileRow key={props.profile.email} profile={props.profile} />
       </tbody>
     </Table>
   </>
