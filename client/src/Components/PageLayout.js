@@ -1,9 +1,10 @@
 import { Col, Container, Row} from "react-bootstrap";
 import { SidebarProd, SidebarProf } from "./Sidebar";
-import { ProductTable, ProfilesTable } from "./Tables";
+import { ProductsTable, ProfileTable, ProductTable } from "./Tables";
 import { MyNavbar } from "./Navbar";
 import { Outlet } from "react-router-dom";
-import { AddProfileForm, EditProfileForm, GetProfileForm } from "./Forms";
+import { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm } from "./Forms";
+import {useEffect} from "react";
 
 
 function HomePage() {
@@ -22,13 +23,24 @@ function ProductsPage(props) {
       </Col>
       <Col className="ProTitle" xs={8}>
         <h1>Products:</h1>
-        <ProductTable products={props.products} />
+        <ProductsTable products={props.products} />
       </Col>
     </Row>
     </div>
   );
 }
-
+function GetProductPage(props){
+    useEffect(() => {
+        props.setProduct([])
+    }, []);
+    return(
+    <Col className="ProTitle" xs={8}>
+        <h1>Product:</h1>
+        <h2>Insert the product id:</h2>
+        <GetProductForm readProductByID={props.readProductByID}  />
+        <ProductTable product={props.product} />
+    </Col>)
+}
 
 function ProfilesPage(props) {
 
@@ -36,13 +48,13 @@ function ProfilesPage(props) {
     <div>
       <Row>
         <Col xs={3} className="Menu">
-          <SidebarProf mode={props.mode} setMode={props.setMode} />
+          <SidebarProf edit={props.edit} setEdit={props.setEdit} />
         </Col>
         <Col className="ProTitle" xs={8}>
           <h1>Profile:</h1>
           <h2>Insert the profile email:</h2>
-          <GetProfileForm readProfileByMail={props.readProfileByMail} setMode={props.setMode} />
-          <ProfilesTable profile={props.profile} />
+          <GetProfileForm readProfileByMail={props.readProfileByMail} setEdit={props.setEdit} />
+          <ProfileTable profile={props.profile} />
         </Col>
       </Row>
     </div>
@@ -57,8 +69,6 @@ function AddProfilePage(props) {
           <h1>Add profile</h1>
           <AddProfileForm
             addProfile={props.addProfile}
-            mode={props.mode}
-            setMode={props.setMode}
           />
         </div>
       </Col>
@@ -68,7 +78,6 @@ function AddProfilePage(props) {
 
 
 function EditProfilePage(props) {
-  props.setMode('edit');
   return (
     <Row>
       <Col>
@@ -76,8 +85,8 @@ function EditProfilePage(props) {
           <h1>Edit profile</h1>
           {!props.loading && <EditProfileForm
             key={props.profile.email}
-            mode={props.mode}
-            setMode={props.setMode}
+            edit={props.edit}
+            setEdit={props.setEdit}
             profile={props.profile}
             editProfile={props.editProfile}
           />}
@@ -106,4 +115,4 @@ function AppLayout() {
     </div>
   )
 }
-export { AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage }
+export { AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage, GetProductPage }

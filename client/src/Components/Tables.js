@@ -1,7 +1,7 @@
 import { Table} from "react-bootstrap";
 import {ProductRow, ProfileRow} from "./Rows";
 
-function ProductTable(props) {
+function ProductsTable(props) {
   return <>
     <Table responsive className="TableStuff">
       <thead>
@@ -17,8 +17,24 @@ function ProductTable(props) {
     </Table>
   </>
 }
+function ProductTable(props) {
+    return <>
+        <Table responsive className="TableStuff">
+            <thead>
+            <tr>
+                <th>Ean</th>
+                <th>Name</th>
+                <th>Brand</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ProductRow classname="RowStyle" key={props.product.productId} product={props.product} />
+            </tbody>
+        </Table>
+    </>
+}
 
-function ProfilesTable(props) {
+function ProfileTable(props) {
   return <>
   <Table responsive className="TableStuff">
       <thead>
@@ -36,4 +52,4 @@ function ProfilesTable(props) {
 }
 
 
-export {ProductTable, ProfilesTable};
+export {ProductsTable, ProfileTable, ProductTable};

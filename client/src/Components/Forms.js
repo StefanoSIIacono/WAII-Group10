@@ -9,7 +9,7 @@ function GetProfileForm(props) {
     const handleSubmit = (event) => {
         event.preventDefault();
         props.readProfileByMail(email);
-        props.setMode('edit');
+        props.setEdit(true);
       }
 
     return <>
@@ -24,8 +24,27 @@ function GetProfileForm(props) {
     </>
 }
 
+function GetProductForm(props){
+    const [id, setId] = useState('');
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        props.readProductByID(id);
+    }
+
+    return <>
+        <Form onSubmit={handleSubmit}>
+            <Form.Group >
+                <Form.Control type='text' value={id} required={true} placeholder="Id" onChange={(event) => { setId(event.target.value) }} />
+            </Form.Group>
+            <div align='right'>
+                <Button type='submit' variant='dark'>Get</Button>
+            </div>
+        </Form>
+    </>
+}
 function EditProfileForm(props) {
-    var navigate = useNavigate();
+    let navigate = useNavigate();
     const [name, setName] = useState(props.profile.name);
     const [surname, setSurname] = useState(props.profile.surname);
 
@@ -33,7 +52,7 @@ function EditProfileForm(props) {
     const handleSubmit = (event) => {
         event.preventDefault();
         props.editProfile(new Profile(props.profile.email, name, surname));
-        props.setMode('show');
+        props.setEdit(false);
         navigate('/profiles');
     }
 
@@ -60,7 +79,7 @@ function EditProfileForm(props) {
 
 
 function AddProfileForm(props) {
-    var navigate = useNavigate();
+    let navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
@@ -89,7 +108,7 @@ function AddProfileForm(props) {
                 </Form.Group>
                 <Form.Group >
                     <Form.Label>Surname</Form.Label>
-                    <Form.Control type='text' value={surname} required={true} placeholder="Surame" onChange={(event) => { setSurname(event.target.value) }} />
+                    <Form.Control type='text' value={surname} required={true} placeholder="Surname" onChange={(event) => { setSurname(event.target.value) }} />
                 </Form.Group>
                 <div align='right'>
                     <NavLink to='/profiles'><Button variant='secondary'>Cancel</Button></NavLink> &nbsp;
@@ -100,4 +119,4 @@ function AddProfileForm(props) {
 
 }
 
-export { AddProfileForm, EditProfileForm, GetProfileForm};
+export { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm};

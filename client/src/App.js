@@ -2,16 +2,17 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {Profile} from "./Components/Profile";
 import { useEffect, useState } from 'react';
 import {Row, Alert} from 'react-bootstrap'
-import {AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage} from "./Components/PageLayout";
+import {AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage, GetProductPage} from "./Components/PageLayout";
 import API from "./API"
 
 function App() {
 
     const [products, setProducts] = useState([]);
+    const [product, setProduct] = useState([]);
     const [profile, setProfile] = useState([]);
-    const [mode, setMode] = useState('show');
+    const [edit, setEdit] = useState(false);
     const [message, setMessage] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     
     async function loadProducts(){
             setLoading(true);
@@ -39,8 +40,8 @@ function App() {
     const readProductByID = async(id) => {
       try{
         setLoading(true); 
-        let prof = await API.readProductFromID(id);
-        setProducts(prof);
+        let prod = await API.readProductFromID(id);
+        setProduct(prod);
         setLoading(false);
       }catch(e){
         throw(e);
@@ -82,9 +83,11 @@ function App() {
               <Route element={<AppLayout />}>
                   <Route path='/' element={<HomePage />} />
                   <Route path='/products' element={<ProductsPage products={products} />} />
-                  <Route path='/profiles' element={<ProfilesPage mode={mode} loading={loading} setMode={setMode} profile={profile} setProfile={setProfile} readProfileByMail={readProfileByMail}/>} />
-                  <Route path='/addProfile' element={<AddProfilePage mode={mode} setMode={setMode} addProfile={addProfile} />} />
-                  <Route path='/editProfile' element={<EditProfilePage mode={mode} loading={loading} setMode={setMode} profile={profile} editProfile={editProfile} />} />
+                  <Route path='/getProduct' element={<GetProductPage loading={loading} product={product} setProduct={setProduct} readProductByID={readProductByID} />} />
+                  <Route path='/profiles' element={<ProfilesPage edit={edit} loading={loading} setEdit={setEdit} profile={profile} setProfile={setProfile} readProfileByMail={readProfileByMail}/>} />
+                  <Route path='/addProfile' element={<AddProfilePage addProfile={addProfile} />} />
+                  <Route path='/editProfile' element={<EditProfilePage edit={edit} loading={loading} setEdit={setEdit} profile={profile} editProfile={editProfile} />} />
+
                   <Route path='*' element={<h1>404 Page not found</h1>} />
               </Route>
           </Routes>
