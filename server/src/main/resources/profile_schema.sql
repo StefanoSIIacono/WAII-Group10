@@ -7,4 +7,6 @@ create table if not exists profiles(
     );
 
 insert into profiles(email, name, surname)
-values('mariorossi@gmail.com', 'mario', 'rossi');
+values('mariorossi@gmail.com', 'mario', 'rossi'),
+      ('luigiverdi@gmail.com', 'luigi', 'verdi'),
+      ('sergiobianchi@gmail.com', 'sergio', 'bianchi');
