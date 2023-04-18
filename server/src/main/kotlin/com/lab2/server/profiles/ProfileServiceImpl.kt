@@ -30,7 +30,6 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
         if (!profileRepository.existsById(email))
             throw ProfileNotFoundException("Profile doesn't exist!")
 
-        profileRepository.deleteById(email)
         profileRepository.save(profile.toProfile())
     }
 }
