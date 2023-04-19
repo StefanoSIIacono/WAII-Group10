@@ -19,6 +19,7 @@
 
 .Menu {
   margin-right: 8%;
+  text-decoration: none;
 }
 
 .Drawer {
@@ -34,6 +35,11 @@
   font-size: 35px;
   font-weight: bold;
   position: center;
+}
+
+.TableContainer{
+  height: 80vh;
+  overflow: scroll;
 }
 
 .TableStuff{
