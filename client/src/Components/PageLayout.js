@@ -1,10 +1,9 @@
-import { Col, Container, Row} from "react-bootstrap";
+import { Col, Container, Row, Alert } from "react-bootstrap";
 import { SidebarProd, SidebarProf } from "./Sidebar";
 import { ProductsTable, ProfileTable, ProductTable } from "./Tables";
 import { MyNavbar } from "./Navbar";
 import { Outlet } from "react-router-dom";
 import { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm } from "./Forms";
-import {useEffect} from "react";
 
 
 function HomePage() {
@@ -23,27 +22,31 @@ function ProductsPage(props) {
       </Col>
       <Col className="ProTitle" xs={8}>
         <h1>Products:</h1>
-        <ProductsTable products={props.products} />
+        <div className="TableContainer">
+          <ProductsTable className="ProTable" products={props.products} />
+        </div>
       </Col>
     </Row>
     </div>
   );
 }
-function GetProductPage(props){
-    useEffect(() => {
-        props.setProduct([])
-    }, []);
-    return(
-    <Col className="ProTitle" xs={8}>
+function GetProductPage(props) {
+  return (
+    <div><Row>
+      <Col xs={3} className="Menu">
+        <SidebarProd />
+      </Col>
+      <Col className="ProTitle" xs={8}>
         <h1>Product:</h1>
         <h2>Insert the product id:</h2>
-        <GetProductForm readProductByID={props.readProductByID}  />
+        <GetProductForm readProductByID={props.readProductByID} />
         <ProductTable product={props.product} />
-    </Col>)
+      </Col>
+    </Row>
+    </div>);
 }
 
 function ProfilesPage(props) {
-
   return (
     <div>
       <Row>
@@ -96,7 +99,7 @@ function EditProfilePage(props) {
   );
 }
 
-function AppLayout() {
+function AppLayout(props) {
   return (
     <div>
       <MyNavbar />
@@ -109,6 +112,9 @@ function AppLayout() {
         height: '90vh'
       }}>
         <Container className="Content">
+          {props.message && <Row>
+            <Alert variant={props.message.type} onClose={() => props.setMessage('')} dismissible>{props.message.msg}</Alert>
+          </Row>}
           <Outlet />
         </Container>
       </div>

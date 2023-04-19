@@ -15,7 +15,7 @@ function GetProfileForm(props) {
     return <>
         <Form onSubmit={handleSubmit}>
             <Form.Group >
-                <Form.Control type='text' value={email} required={true} placeholder="Email" onChange={(event) => { setEmail(event.target.value) }} />
+                <Form.Control type='email' value={email} required={true} placeholder="Email" onChange={(event) => { setEmail(event.target.value) }} />
             </Form.Group>
             <div align='right'>
                 <Button type='submit' variant='dark'>Get</Button>
@@ -100,7 +100,7 @@ function AddProfileForm(props) {
             <Form onSubmit={handleSubmit}>
                 <Form.Group >
                     <Form.Label>Email</Form.Label>
-                    <Form.Control type='text' value={email} required={true} placeholder="Email" onChange={(event) => { setEmail(event.target.value) }} />
+                    <Form.Control type='email' value={email} required={true} placeholder="Email" onChange={(event) => { setEmail(event.target.value) }} />
                 </Form.Group>
                 <Form.Group >
                     <Form.Label>Name</Form.Label>

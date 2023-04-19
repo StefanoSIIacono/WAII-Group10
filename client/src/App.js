@@ -1,7 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import {Profile} from "./Components/Profile";
 import { useEffect, useState } from 'react';
-import {Row, Alert} from 'react-bootstrap'
 import {AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage, GetProductPage} from "./Components/PageLayout";
 import API from "./API"
 
@@ -15,15 +13,15 @@ function App() {
     const [loading, setLoading] = useState(false);
     
     async function loadProducts(){
-            setLoading(true);
-            let prod= [] 
             try{
+              setLoading(true);
+              let prod= [] 
               prod= await API.readProducts();
               setProducts(prod);
+              setLoading(false);
             }catch(e){
-              throw e;
+              setMessage({ msg: JSON.parse(e.message).detail, type: 'danger' });
             }
-            setLoading(false);
     };
 
     const readProfileByMail = async(email) => {
@@ -33,7 +31,7 @@ function App() {
         setProfile(prof);
         setLoading(false);
       }catch(e){
-        throw(e);
+        setMessage({ msg: JSON.parse(e.message).detail, type: 'danger' });
       }
     };
 
@@ -44,7 +42,7 @@ function App() {
         setProduct(prod);
         setLoading(false);
       }catch(e){
-        throw(e);
+        setMessage({ msg: JSON.parse(e.message).detail, type: 'danger' });
       }
     };
 
@@ -52,9 +50,10 @@ function App() {
         try {
           setLoading(true);
           await API.addProfile(profile);
+          setMessage({ msg: `Profile linked to ${profile.email} correctly added`, type: 'success' });
           setLoading(false);
         } catch (e) {
-          throw (e);
+          setMessage({ msg: JSON.parse(e.message).detail, type: 'danger' });
         }
       }
 
@@ -62,38 +61,38 @@ function App() {
         try {
           setLoading(true);
           await API.editProfile(profile);
+          setMessage({ msg: `Profile linked to ${profile.email} correctly edited`, type: 'success' });
           setProfile([]);
           setLoading(false);
         } catch (e) {
-          throw (e);
+          setMessage({ msg: JSON.parse(e.message).detail, type: 'danger' });
         }
       }
 
     useEffect(() => {
         loadProducts();
-      }, []);
+    }, []);
+
+    useEffect(() => {
+        setProduct([])
+    }, []);
 
     return (
       <div>
-        {message && <Row>
-        <Alert variant={message.type} onClose={() => setMessage('')} dismissible>{message.msg}</Alert>
-        </Row>}
         <BrowserRouter>
           <Routes>
-              <Route element={<AppLayout />}>
+              <Route element={<AppLayout message={message} setMessage={setMessage} />}>
                   <Route path='/' element={<HomePage />} />
                   <Route path='/products' element={<ProductsPage products={products} />} />
                   <Route path='/getProduct' element={<GetProductPage loading={loading} product={product} setProduct={setProduct} readProductByID={readProductByID} />} />
                   <Route path='/profiles' element={<ProfilesPage edit={edit} loading={loading} setEdit={setEdit} profile={profile} setProfile={setProfile} readProfileByMail={readProfileByMail}/>} />
                   <Route path='/addProfile' element={<AddProfilePage addProfile={addProfile} />} />
                   <Route path='/editProfile' element={<EditProfilePage edit={edit} loading={loading} setEdit={setEdit} profile={profile} editProfile={editProfile} />} />
-
                   <Route path='*' element={<h1>404 Page not found</h1>} />
               </Route>
           </Routes>
         </BrowserRouter >
       </div>
-      
   );
 }
 
