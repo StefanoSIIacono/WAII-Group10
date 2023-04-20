@@ -12,4 +12,7 @@ values(9780702305511,'Welsh Fairy Tales, Myths and Legends by Claire Fayers (Pap
     (9781788307017,'Vegans Deserve Better than a Fruit Salad by Danielle Maupertuis (Paperback, 2020)','Olympia Publishers'),
     (9781942275732,'The Black Sable by Joe Brusha (Paperback, 2018)','Zenescope Entertainment'),
     (9781941610428,'The Prophetic Ethics and the Courtesies of Living by Al-Ghazali (Paperback, 2019)','Fons Vitae,US'),
-    (9781617137082,'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)', 'Hal Leonard Corporation');
+    (9781617137082,'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)', 'Hal Leonard Corporation'),
+    (9781617137080,'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)', 'Hal Leonard Corporation'),
+    (9781617137083,'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)', 'Hal Leonard Corporation'),
+    (9781617137084,'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)', 'Hal Leonard Corporation');
