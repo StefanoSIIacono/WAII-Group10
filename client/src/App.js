@@ -28,9 +28,11 @@ function App() {
       try{
         setLoading(true); 
         let prof = await API.readProfileFromMail(email);
+        setEdit(true);
         setProfile(prof);
         setLoading(false);
       }catch(e){
+        setEdit(false);
         setMessage({ msg: JSON.parse(e.message).detail, type: 'danger' });
       }
     };

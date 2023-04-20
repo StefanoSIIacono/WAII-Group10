@@ -69,7 +69,7 @@ function AddProfilePage(props) {
     <Row>
       <Col>
         <div>
-          <h1>Add profile</h1>
+          <h1 className="ProTitle">Add profile</h1>
           <AddProfileForm
             addProfile={props.addProfile}
           />
@@ -85,7 +85,7 @@ function EditProfilePage(props) {
     <Row>
       <Col>
         <div>
-          <h1>Edit profile</h1>
+          <h1 className="ProTitle">Edit profile</h1>
           {!props.loading && <EditProfileForm
             key={props.profile.email}
             edit={props.edit}
@@ -111,12 +111,12 @@ function AppLayout(props) {
         width: '100vw',
         height: '90vh'
       }}>
-        <Container className="Content">
+        <div class="flex-container">
           {props.message && <Row>
             <Alert variant={props.message.type} onClose={() => props.setMessage('')} dismissible>{props.message.msg}</Alert>
           </Row>}
           <Outlet />
-        </Container>
+        </div>
       </div>
     </div>
   )

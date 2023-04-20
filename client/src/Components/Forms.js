@@ -14,7 +14,7 @@ function GetProfileForm(props) {
 
     return <>
         <Form onSubmit={handleSubmit}>
-            <Form.Group >
+            <Form.Group className='mb-3'>
                 <Form.Control type='email' value={email} required={true} placeholder="Email" onChange={(event) => { setEmail(event.target.value) }} />
             </Form.Group>
             <div align='right'>
@@ -34,7 +34,7 @@ function GetProductForm(props){
 
     return <>
         <Form onSubmit={handleSubmit}>
-            <Form.Group >
+            <Form.Group className='mb-3'>
                 <Form.Control type='text' value={id} required={true} placeholder="Id" onChange={(event) => { setId(event.target.value) }} />
             </Form.Group>
             <div align='right'>
@@ -57,19 +57,19 @@ function EditProfileForm(props) {
     }
 
     return <>
-        <div style={{ padding: 10 }}>
+        <div style={{ padding: 10}} class="FontText" >
             <Form onSubmit={handleSubmit}>
-                <Form.Group >
+                <Form.Group className='mb-3'>
                     <Form.Label>Name</Form.Label>
                     <Form.Control type='text' value={name} required={true} placeholder="Name" onChange={(event) => { setName(event.target.value) }} />
                 </Form.Group>
-                <Form.Group >
+                <Form.Group className='mb-3'>
                     <Form.Label>Surname</Form.Label>
                     <Form.Control type='text' value={surname} required={true} placeholder="Surname" onChange={(event) => { setSurname(event.target.value) }} />
                 </Form.Group>
                 <div align='right'>
-                    <NavLink to='/profiles'><Button variant='secondary' onClick={() => props.setMode('show')}>Cancel</Button></NavLink> &nbsp;
-                    <Button type='submit' variant='success'>Save</Button>
+                    <NavLink to='/profiles'><Button variant='secondary' onClick={() => props.setEdit(false)}>Cancel</Button></NavLink> &nbsp;
+                    <Button type='submit' variant='dark'>Save</Button>
                 </div>
             </Form>
         </div>
@@ -96,23 +96,23 @@ function AddProfileForm(props) {
     }
 
     return <>
-        <div style={{ padding: 10 }}>
+        <div style={{ padding: 10 }} class="FontText">
             <Form onSubmit={handleSubmit}>
-                <Form.Group >
+                <Form.Group className='mb-3'>
                     <Form.Label>Email</Form.Label>
                     <Form.Control type='email' value={email} required={true} placeholder="Email" onChange={(event) => { setEmail(event.target.value) }} />
                 </Form.Group>
-                <Form.Group >
+                <Form.Group className='mb-3'>
                     <Form.Label>Name</Form.Label>
                     <Form.Control type='text' value={name} required={true} placeholder="Name" onChange={(event) => { setName(event.target.value) }} />
                 </Form.Group>
-                <Form.Group >
+                <Form.Group className='mb-3'>
                     <Form.Label>Surname</Form.Label>
                     <Form.Control type='text' value={surname} required={true} placeholder="Surname" onChange={(event) => { setSurname(event.target.value) }} />
                 </Form.Group>
                 <div align='right'>
                     <NavLink to='/profiles'><Button variant='secondary'>Cancel</Button></NavLink> &nbsp;
-                    <Button type='submit' variant='success'>Add</Button>
+                    <Button type='submit' variant='dark'>Add</Button>
                 </div>
             </Form></div>
     </>
