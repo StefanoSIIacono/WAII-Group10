@@ -1,9 +1,6 @@
 package com.lab2.server.exceptionsHandler
 
-import com.lab2.server.exceptionsHandler.exceptions.DuplicateProductException
-import com.lab2.server.exceptionsHandler.exceptions.DuplicateProfileException
-import com.lab2.server.exceptionsHandler.exceptions.ProductNotFoundException
-import com.lab2.server.exceptionsHandler.exceptions.ProfileNotFoundException
+import com.lab2.server.exceptionsHandler.exceptions.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -28,5 +25,9 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler(DuplicateProfileException::class)
     fun handleDuplicateProfile (e: DuplicateProfileException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.CONFLICT, e.message!!)
+
+    @ExceptionHandler(ProfileEmailChangeNotAllowedException::class)
+    fun handleProfileEmailChange (e: ProfileEmailChangeNotAllowedException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
 
 }
