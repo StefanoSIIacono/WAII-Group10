@@ -12,7 +12,7 @@ class ProductServiceTest {
 
     @Test
     fun getAllTest() {
-        // Arrange
+        // given
         val productList = mutableListOf(
             Product("1", "Shirt", "Tommy Hilfiger"),
             Product("2", "Shoes", "Vans")
