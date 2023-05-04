@@ -15,7 +15,7 @@ class Profile (
     var surname: String
 )
 {
-    @OneToMany
+    @OneToMany(mappedBy = "profile")
     var tickets = mutableListOf<Ticket>()
 
     fun addTicket(t: Ticket){

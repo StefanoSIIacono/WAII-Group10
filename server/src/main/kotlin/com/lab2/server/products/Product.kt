@@ -8,14 +8,17 @@ import jakarta.persistence.*
 class Product (
     @Id
     @Column(updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: String,
     var name: String,
     var brand: String
 )
 // PARTE AGGIUNTA DA LAB3, TUTTAVIA FORSE E' MEGLIO TOGLIERE IL PRODOTTO DAL TICKET
 {
+    @OneToMany(mappedBy = "product")
+    val tickets = mutableListOf<Ticket>()
 
-    @OneToMany(mappedBy = "ticket")
-    var tickets = mutableListOf<Ticket>()
+    fun addTicket(t: Ticket){
+        t.product = this;
+        this.tickets.add(t);
+    }
 }

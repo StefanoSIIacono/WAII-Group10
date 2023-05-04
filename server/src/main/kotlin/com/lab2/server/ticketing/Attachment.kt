@@ -12,7 +12,7 @@ class Attachment(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val attachmentId: Long,
 
-    val binary: BlobJavaType,
+    val attachment: BlobJavaType,
     val size: Byte,
     val contentType: String,
 
