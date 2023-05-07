@@ -4,8 +4,6 @@ import com.lab2.server.Chatter
 import com.lab2.server.EntityBase
 import com.lab2.server.StatusChanger
 import jakarta.persistence.*
-import org.aspectj.weaver.IntMap
-import javax.management.monitor.StringMonitor
 
 @Entity
 @Table (name = "experts")
@@ -34,7 +32,7 @@ class Expert(
         TODO("Not yet implemented")
     }
 
-    override fun write() {
+    override fun writeMessage() {
         TODO("Not yet implemented")
     }
 }

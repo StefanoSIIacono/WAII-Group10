@@ -4,5 +4,5 @@ import jakarta.persistence.MappedSuperclass
 
 
 interface Chatter {
-    fun write()
+    fun writeMessage()
 }

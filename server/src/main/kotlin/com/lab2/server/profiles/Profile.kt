@@ -27,7 +27,7 @@ class Profile (
         this.tickets.add(t);
     }
 
-    override fun write() {
+    override fun writeMessage() {
         TODO("Not yet implemented")
     }
 }

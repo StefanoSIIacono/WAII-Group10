@@ -11,7 +11,7 @@ class Ticket (
 
     val obj: String,
     val arg: String,
-    var priority: Int,
+    var priority: Int? = null,
 
     @ManyToOne
     // AL POSTO DI EMAIL, PERCHE' DOBBIAMO MAPPARE L'ENTITA'
