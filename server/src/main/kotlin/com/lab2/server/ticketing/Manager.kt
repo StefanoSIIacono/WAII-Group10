@@ -13,6 +13,6 @@ class Manager (
 ): EntityBase<Long>(), StatusChanger
 {
     override fun changeStatus() {
-        TODO("Not yet implemented")
+        //
     }
 }

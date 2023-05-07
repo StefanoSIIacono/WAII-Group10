@@ -31,11 +31,11 @@ class Expert(
     }
 
     override fun changeStatus() {
-        TODO("Not yet implemented")
+        //
     }
 
     override fun write() {
-        TODO("Not yet implemented")
+        //
     }
 }
 
