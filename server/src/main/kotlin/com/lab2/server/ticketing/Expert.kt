@@ -1,6 +1,8 @@
 package com.lab2.server.ticketing
 
+import com.lab2.server.Chatter
 import com.lab2.server.EntityBase
+import com.lab2.server.StatusChanger
 import jakarta.persistence.*
 import org.aspectj.weaver.IntMap
 import javax.management.monitor.StringMonitor
@@ -10,7 +12,7 @@ import javax.management.monitor.StringMonitor
 class Expert(
     var name: String,
     var surname: String
-): EntityBase<Long>()
+): EntityBase<Long>(),  StatusChanger, Chatter
 {
     @OneToMany(mappedBy = "expert")
     var inProgressTickets = mutableListOf<Ticket>();
@@ -26,6 +28,14 @@ class Expert(
     fun addTicketStatus(s: TicketStatus){
         s.expert = this;
         this.addTicketStatus(s);
+    }
+
+    override fun changeStatus() {
+        TODO("Not yet implemented")
+    }
+
+    override fun write() {
+        TODO("Not yet implemented")
     }
 }
 

@@ -1,6 +1,7 @@
 package com.lab2.server.ticketing
 
 import com.lab2.server.EntityBase
+import com.lab2.server.StatusChanger
 import jakarta.persistence.*
 
 @Entity
@@ -13,7 +14,7 @@ class TicketStatus (
     val timestamp: java.util.Date,
 
     // TODO: da implementare le superclassi che possono cambiare lo status, momentaneamente stringa
-    val author: String,
+    val statusChanger: StatusChanger,
 
     @ManyToOne
     var ticket: Ticket,

@@ -1,6 +1,8 @@
 package com.lab2.server.ticketing
 
+import ch.qos.logback.core.status.StatusListener
 import com.lab2.server.EntityBase
+import com.lab2.server.StatusChanger
 import jakarta.persistence.*
 
 @Entity
@@ -8,6 +10,9 @@ import jakarta.persistence.*
 class Manager (
     var name: String,
     var surname: String
-): EntityBase<Long>()
+): EntityBase<Long>(), StatusChanger
 {
+    override fun changeStatus() {
+        TODO("Not yet implemented")
+    }
 }

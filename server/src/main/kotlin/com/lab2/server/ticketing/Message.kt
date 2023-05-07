@@ -1,5 +1,6 @@
 package com.lab2.server.ticketing
 
+import com.lab2.server.Chatter
 import com.lab2.server.EntityBase
 import jakarta.persistence.*
 
@@ -11,7 +12,7 @@ class Message (
     val body: String,
 
     // TODO: la superclasse chatter deve essere ancora creata, momentaneamente è una stringa
-    val chatter: String,
+    val chatter: Chatter,
 
     @ManyToOne
     var ticket: Ticket
