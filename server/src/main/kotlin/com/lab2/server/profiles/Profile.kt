@@ -1,22 +1,20 @@
 package com.lab2.server.profiles
 
 import com.lab2.server.ticketing.Ticket
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.OneToMany
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "profiles")
 class Profile (
     @Id
+    @Column(updatable = false, nullable = false)
     var email: String,
     var name: String,
     var surname: String
 )
 {
     @OneToMany(mappedBy = "profile")
-    var tickets = mutableListOf<Ticket>()
+    val tickets = mutableListOf<Ticket>()
 
     fun addTicket(t: Ticket){
         t.profile = this;

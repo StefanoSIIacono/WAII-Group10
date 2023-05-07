@@ -1,16 +1,12 @@
 package com.lab2.server.ticketing
 
+import com.lab2.server.EntityBase
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "Statuses")
+@Table(name = "statuses")
 class TicketStatus (
 
-    @Id
-    @Column(updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-    val statusId: Long,
     var status: String,
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -20,13 +16,11 @@ class TicketStatus (
     val author: String,
 
     @ManyToOne
-    @JoinColumn(name="ticket_id", nullable = false)
     var ticket: Ticket,
 
     @ManyToOne
-    @JoinColumn(name="expert_id", nullable = true)
     var expert: Expert? = null,
-)
+): EntityBase<Long>()
 {
 
 }

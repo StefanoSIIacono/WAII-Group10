@@ -1,5 +1,6 @@
 package com.lab2.server.ticketing
 
+import com.lab2.server.EntityBase
 import com.lab2.server.products.Product
 import com.lab2.server.profiles.Profile
 import jakarta.persistence.*
@@ -8,28 +9,21 @@ import jakarta.persistence.*
 @Table (name = "tickets")
 class Ticket (
 
-    @Id
-    @Column(updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val ticketId: Long,
     val obj: String,
     val arg: String,
     var priority: Int,
 
     @ManyToOne
-    @JoinColumn(name="email", nullable = false)
     // AL POSTO DI EMAIL, PERCHE' DOBBIAMO MAPPARE L'ENTITA'
     var profile: Profile,
 
     @ManyToOne
-    @JoinColumn(name="expert_id", nullable = true)
     var expert: Expert? = null,
 
     // DA VERIFICARE SE VOGLIAMO MANTENERE IL PRODOTTO NEL TICKET
     @ManyToOne
-    @JoinColumn(name="product_id", nullable = false)
     var product: Product
-    )
+    ): EntityBase<Long>()
 {
     @OneToMany(mappedBy = "ticket")
     var statusHistory = mutableListOf<TicketStatus>()

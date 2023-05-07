@@ -1,14 +1,10 @@
 package com.lab2.server.ticketing
 
+import com.lab2.server.EntityBase
 import jakarta.persistence.*
 
 @Entity
 class Message (
-
-    @Id
-    @Column(updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val messageId: Long,
 
     @Temporal(TemporalType.TIMESTAMP)
     val timestamp: java.util.Date,
@@ -18,9 +14,8 @@ class Message (
     val chatter: String,
 
     @ManyToOne
-    @JoinColumn(name="ticket_id", nullable = false)
     var ticket: Ticket
-){
+): EntityBase<Long>() {
     @OneToMany(mappedBy = "message")
     var attachments = mutableListOf<Attachment>();
 

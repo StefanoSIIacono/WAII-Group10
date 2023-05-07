@@ -1,20 +1,16 @@
 package com.lab2.server.ticketing
 
+import com.lab2.server.EntityBase
 import jakarta.persistence.*
 import org.aspectj.weaver.IntMap
 import javax.management.monitor.StringMonitor
 
 @Entity
-@Table (name = "Experts")
+@Table (name = "experts")
 class Expert(
-
-    @Id
-    @Column(updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val expertId: Long,
     var name: String,
     var surname: String
-)
+): EntityBase<Long>()
 {
     @OneToMany(mappedBy = "expert")
     var inProgressTickets = mutableListOf<Ticket>();

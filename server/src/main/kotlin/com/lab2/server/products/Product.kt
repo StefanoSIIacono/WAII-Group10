@@ -8,7 +8,7 @@ import jakarta.persistence.*
 class Product (
     @Id
     @Column(updatable = false, nullable = false)
-    val id: String,
+    var id: String,
     var name: String,
     var brand: String
 )
