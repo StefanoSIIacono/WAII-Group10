@@ -12,7 +12,7 @@ class Message (
     val body: String,
 
     // TODO: la superclasse chatter deve essere ancora creata, momentaneamente è una stringa
-    val chatter: Chatter,
+    val chatter: String,
 
     @ManyToOne
     var ticket: Ticket

@@ -14,7 +14,7 @@ class TicketStatus (
     val timestamp: java.util.Date,
 
     // TODO: da implementare le superclassi che possono cambiare lo status, momentaneamente stringa
-    val statusChanger: StatusChanger,
+    val statusChanger: String,
 
     @ManyToOne
     var ticket: Ticket,
