@@ -1,5 +1,7 @@
 package com.lab2.server.products
 
+import com.lab2.server.profiles.Profile
+import com.lab2.server.profiles.ProfileDTO
 import com.lab2.server.ticketing.Ticket
 import jakarta.persistence.*
 
@@ -21,4 +23,8 @@ class Product (
         t.product = this;
         this.tickets.add(t);
     }
+}
+
+fun ProductDTO.toProduct(): Product {
+    return Product(productId, name, brand)
 }

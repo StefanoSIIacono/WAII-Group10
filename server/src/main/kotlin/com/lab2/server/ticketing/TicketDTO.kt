@@ -6,21 +6,27 @@ import com.lab2.server.products.ProductDTO
 import com.lab2.server.products.toDTO
 import com.lab2.server.profiles.ProfileDTO
 import com.lab2.server.profiles.toDTO
+import jakarta.persistence.Temporal
+import jakarta.persistence.TemporalType
 import org.hibernate.type.descriptor.java.BlobJavaType
 
 data class ExpertDTO(
         val name: String,
         val surname: String,
+        val expertises: MutableSet<ExpertiseDTO> = mutableSetOf()
 )
 
 data class TicketStatusDTO (
         val status: String,
+        @Temporal(TemporalType.TIMESTAMP)
         val timestamp: java.util.Date,
+        val ticket: Ticket,
         val statusChanger: String,
         val expert: ExpertDTO?,
 )
 
 data class MessageDTO (
+        @Temporal(TemporalType.TIMESTAMP)
         val timestamp: java.util.Date,
         val body: String,
         val chatter: String,
@@ -36,9 +42,8 @@ data class TicketDTO(
 
         val obj: String,
         val arg: String,
-        val priority: Int,
+        val priority: Priority,
         val profile: ProfileDTO,
-
         val expert: ExpertDTO?,
         val product: ProductDTO,
         val statusHistory: MutableList<TicketStatusDTO> = mutableListOf(),
@@ -47,7 +52,7 @@ data class TicketDTO(
 
 
 fun Expert.toDTO(): ExpertDTO {
-    return ExpertDTO(name, surname)
+    return ExpertDTO(name, surname, expertises.map { it.toDTO()}.toMutableSet())
 }
 
 fun Message.toDTO(): MessageDTO {
@@ -55,7 +60,7 @@ fun Message.toDTO(): MessageDTO {
 }
 
 fun TicketStatus.toDTO(): TicketStatusDTO {
-    return TicketStatusDTO(status, timestamp, statusChanger, expert?.toDTO())
+    return TicketStatusDTO(status, timestamp, ticket, statusChanger, expert?.toDTO())
 }
 
 fun Attachment.toDTO(): AttachmentDTO {

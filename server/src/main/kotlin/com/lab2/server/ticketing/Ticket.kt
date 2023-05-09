@@ -2,7 +2,10 @@ package com.lab2.server.ticketing
 
 import com.lab2.server.EntityBase
 import com.lab2.server.products.Product
+import com.lab2.server.products.toProduct
 import com.lab2.server.profiles.Profile
+import com.lab2.server.profiles.ProfileDTO
+import com.lab2.server.profiles.toProfile
 import jakarta.persistence.*
 
 @Entity
@@ -11,7 +14,8 @@ class Ticket (
 
     val obj: String,
     val arg: String,
-    var priority: Int? = null,
+    @Enumerated(value = EnumType.STRING)
+    var priority: Priority,
 
     @ManyToOne
     // AL POSTO DI EMAIL, PERCHE' DOBBIAMO MAPPARE L'ENTITA'
@@ -23,6 +27,7 @@ class Ticket (
     // DA VERIFICARE SE VOGLIAMO MANTENERE IL PRODOTTO NEL TICKET
     @ManyToOne
     var product: Product
+
     ): EntityBase<Long>()
 {
     @OneToMany(mappedBy = "ticket")
@@ -44,4 +49,7 @@ class Ticket (
         p.tickets.add(this);
         this.product = p;
     }
+}
+fun TicketDTO.toTicket(): Ticket {
+    return Ticket(obj, arg, priority, profile.toProfile(), null, product.toProduct())
 }
