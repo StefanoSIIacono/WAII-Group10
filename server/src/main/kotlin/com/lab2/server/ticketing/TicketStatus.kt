@@ -2,6 +2,8 @@ package com.lab2.server.ticketing
 
 import com.lab2.server.EntityBase
 import com.lab2.server.StatusChanger
+import com.lab2.server.profiles.Profile
+import com.lab2.server.profiles.ProfileDTO
 import jakarta.persistence.*
 
 @Entity
@@ -25,3 +27,8 @@ class TicketStatus (
 {
 
 }
+
+fun TicketStatusDTO.toTicketStatus(): TicketStatus {
+    return TicketStatus(status, timestamp, statusChanger, ticket, expert?.toExpert())
+}
+
