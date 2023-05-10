@@ -1,7 +1,11 @@
 package com.lab2.server.profiles
 
+import com.lab2.server.dto.toDTO
+import com.lab2.server.data.Profile
 import com.lab2.server.exceptionsHandler.exceptions.DuplicateProfileException
 import com.lab2.server.exceptionsHandler.exceptions.ProfileNotFoundException
+import com.lab2.server.repositories.ProfileRepository
+import com.lab2.server.serviceImpl.ProfileServiceImpl
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
