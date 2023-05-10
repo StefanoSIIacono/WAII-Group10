@@ -30,4 +30,12 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     fun handleProfileEmailChange (e: ProfileEmailChangeNotAllowedException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
 
+    @ExceptionHandler (ExpertNotFoundException::class)
+    fun handleExpertNotFound (e: ExpertNotFoundException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.NOT_FOUND, e.message!!)
+
+    @ExceptionHandler (IllegalStatusChangeException::class)
+    fun handleIllegalStatusChange (e: IllegalStatusChangeException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
+
 }

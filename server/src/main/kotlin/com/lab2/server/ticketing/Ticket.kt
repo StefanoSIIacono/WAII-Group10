@@ -30,7 +30,7 @@ class Ticket (
 
     ): EntityBase<Long>()
 {
-    @OneToMany(mappedBy = "ticket")
+    @OneToMany(mappedBy = "ticket", cascade = [CascadeType.ALL])
     var statusHistory = mutableListOf<TicketStatus>()
 
     @OneToMany(mappedBy = "ticket")
@@ -43,13 +43,11 @@ class Ticket (
 
     fun addStatus(s: TicketStatus){
         s.ticket = this;
+        statusHistory.add(s)
     }
 
     fun addProduct(p: Product){
         p.tickets.add(this);
         this.product = p;
     }
-}
-fun TicketDTO.toTicket(): Ticket {
-    return Ticket(obj, arg, priority, profile.toProfile(), null, product.toProduct())
 }

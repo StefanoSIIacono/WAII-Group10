@@ -12,7 +12,7 @@ class TicketingController(private val ticketService: TicketService) {
         return ticketService.getAll()
     }
 
-    @GetMapping("tickets/{id}")
+    @GetMapping("tickets/{ticketId}")
     @ResponseStatus(HttpStatus.OK)
     fun getTicketByID(@PathVariable ticketId:Long) : TicketDTO{
         return ticketService.getTicketByID(ticketId)
@@ -21,9 +21,42 @@ class TicketingController(private val ticketService: TicketService) {
 
     @PostMapping("tickets/")
     @ResponseStatus(HttpStatus.CREATED)
-    fun createTicket(@RequestBody ticket: TicketDTO?){
+    fun createTicket(@RequestBody ticket: TicketCreateBodyDTO?){
         if(ticket!=null)
             ticketService.insertTicket(ticket)
     }
+
+    @PutMapping("tickets/{ticketId}/open")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun openTicket(@PathVariable ticketId:Long){
+        ticketService.setTicketToOpen(ticketId)
+    }
+
+    @PutMapping("tickets/{ticketId}/close")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun closeTicket(@PathVariable ticketId:Long){
+        ticketService.setTicketToClosed(ticketId)
+    }
+
+    @PutMapping("tickets/{ticketId}/reopen")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun reopenTicket(@PathVariable ticketId:Long){
+        ticketService.setTicketToReopen(ticketId)
+    }
+
+    @PutMapping("tickets/{ticketId}/resolved")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun resolveTicket(@PathVariable ticketId:Long){
+        ticketService.setTicketToResolved(ticketId)
+    }
+
+    @PutMapping("tickets/{ticketId}/inprogress")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun progressTicket(@PathVariable ticketId:Long, @RequestBody body: TicketInProgressBodyDTO?){
+        if (body !== null) {
+            ticketService.setTicketToInProgress(ticketId, body.expert)
+        }
+    }
+
 
 }

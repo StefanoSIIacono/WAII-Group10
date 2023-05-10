@@ -10,7 +10,7 @@ import jakarta.persistence.*
 @Table(name = "statuses")
 class TicketStatus (
 
-    var status: String,
+    var status: Status,
 
     @Temporal(TemporalType.TIMESTAMP)
     val timestamp: java.util.Date,
@@ -28,7 +28,8 @@ class TicketStatus (
 
 }
 
+/*
 fun TicketStatusDTO.toTicketStatus(): TicketStatus {
     return TicketStatus(status, timestamp, statusChanger, ticket, expert?.toExpert())
 }
-
+*/
