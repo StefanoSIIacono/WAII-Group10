@@ -1,5 +1,6 @@
 package com.lab2.server.controllers
 
+import com.lab2.server.data.Status
 import com.lab2.server.dto.TicketCreateBodyDTO
 import com.lab2.server.dto.TicketDTO
 import com.lab2.server.dto.TicketInProgressBodyDTO
@@ -33,32 +34,32 @@ class TicketingController(private val ticketService: TicketService) {
     @PutMapping("tickets/{ticketId}/open")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun openTicket(@PathVariable ticketId:Long){
-        ticketService.setTicketToOpen(ticketId)
+        ticketService.setTicketStatus(ticketId, Status.OPEN, null)
     }
 
     @PutMapping("tickets/{ticketId}/close")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun closeTicket(@PathVariable ticketId:Long){
-        ticketService.setTicketToClosed(ticketId)
+        ticketService.setTicketStatus(ticketId, Status.CLOSED, null)
     }
 
     @PutMapping("tickets/{ticketId}/reopen")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun reopenTicket(@PathVariable ticketId:Long){
-        ticketService.setTicketToReopen(ticketId)
+        ticketService.setTicketStatus(ticketId, Status.REOPENED, null)
     }
 
     @PutMapping("tickets/{ticketId}/resolved")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun resolveTicket(@PathVariable ticketId:Long){
-        ticketService.setTicketToResolved(ticketId)
+        ticketService.setTicketStatus(ticketId, Status.RESOLVED, null)
     }
 
     @PutMapping("tickets/{ticketId}/inprogress")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun progressTicket(@PathVariable ticketId:Long, @RequestBody body: TicketInProgressBodyDTO?){
         if (body !== null) {
-            ticketService.setTicketToInProgress(ticketId, body.expert)
+            ticketService.setTicketStatus(ticketId, Status.IN_PROGRESS, body.expert)
         }
     }
 
