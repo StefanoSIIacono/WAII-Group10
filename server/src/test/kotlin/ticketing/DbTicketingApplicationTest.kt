@@ -1,17 +1,10 @@
 package com.lab2.server.ticketing
 
-import com.lab2.server.dto.ProductDTO
-import com.lab2.server.data.Priority
-import com.lab2.server.data.Ticket
-import com.lab2.server.data.toProduct
-import com.lab2.server.dto.ProfileDTO
-import com.lab2.server.repositories.ProfileRepository
-import com.lab2.server.data.toProfile
-import com.lab2.server.repositories.ProductRepository
-import com.lab2.server.repositories.TicketingRepository
-import com.lab2.server.serviceImpl.ProfileServiceImpl
-import com.lab2.server.serviceImpl.TicketServiceImpl
-import com.lab2.server.services.TicketService
+import com.lab2.server.dto.*
+import com.lab2.server.data.*
+import com.lab2.server.repositories.*
+import com.lab2.server.serviceImpl.*
+import com.lab2.server.services.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest

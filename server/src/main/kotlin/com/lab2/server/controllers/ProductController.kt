@@ -16,6 +16,7 @@ class ProductController(private val productService: ProductService) {
     fun getAll(): List<ProductDTO>{
         return productService.getAll()
     }
+
     @GetMapping("/products/{productId}")
     @ResponseStatus(HttpStatus.OK)
     fun getProduct(@PathVariable productId:String): ProductDTO {

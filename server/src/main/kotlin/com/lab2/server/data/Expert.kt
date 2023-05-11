@@ -12,18 +12,21 @@ class Expert(
 
     ): EntityBase<Long>()
 {
-    @OneToMany(mappedBy = "expert")
-    var inProgressTickets = mutableListOf<Ticket>()
-
-    @OneToMany(mappedBy = "expert")
-    var changedStatuses = mutableListOf<TicketStatus>()
-
     @ManyToMany
     @JoinTable(name = "expert_expertise",
         joinColumns = [JoinColumn(name="expert_id")],
         inverseJoinColumns = [JoinColumn(name = "expertise_id")]
     )
     val expertises: MutableSet<Expertise> = mutableSetOf()
+
+    @OneToMany(mappedBy = "expert")
+    var inProgressTickets = mutableListOf<Ticket>()
+
+    @OneToMany(mappedBy = "expert")
+    var changedStatuses = mutableListOf<TicketStatus>()
+
+    @OneToMany( mappedBy = "expert")
+    var messages: MutableSet<Message> = mutableSetOf()
 
     fun assignTicket(t: Ticket){
         t.expert = this

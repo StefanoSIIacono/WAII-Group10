@@ -1,13 +1,12 @@
 package com.lab2.server.data
 
 import com.lab2.server.dto.ExpertiseDTO
-import jakarta.persistence.Entity
-import jakarta.persistence.ManyToMany
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "expertises")
 class Expertise (
+    @Column(unique = true)
     val field: String
 ): EntityBase<Long>()
 {

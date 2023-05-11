@@ -21,7 +21,6 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
 
     override fun getAll(): List<TicketDTO> {
         return ticketingRepository.findAll().map{ it.toDTO() }
-
     }
 
     override fun getTicketByID(ticketId: Long): TicketDTO? {
@@ -61,4 +60,6 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
         ticket.addStatus(status)
         ticketingRepository.save(ticket)
     }
+
+
 }

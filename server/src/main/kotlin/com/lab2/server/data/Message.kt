@@ -9,12 +9,15 @@ class Message (
     val timestamp: java.util.Date,
     val body: String,
 
-    // TODO: la superclasse chatter deve essere ancora creata, momentaneamente è una stringa
-    val chatter: String,
+    @ManyToOne
+    val expert: Expert? = null,
 
     @ManyToOne
     var ticket: Ticket
+
 ): EntityBase<Long>() {
+
+
     @OneToMany(mappedBy = "message")
     var attachments = mutableListOf<Attachment>()
 

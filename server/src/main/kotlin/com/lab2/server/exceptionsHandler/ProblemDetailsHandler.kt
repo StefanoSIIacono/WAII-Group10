@@ -38,4 +38,10 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     fun handleIllegalStatusChange (e: IllegalStatusChangeException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
 
+    @ExceptionHandler (ManagerNotFoundException::class)
+    fun handleManagerNotFound (e: ManagerNotFoundException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.NOT_FOUND, e.message!!)
+    @ExceptionHandler (ExpertiseNotFoundException::class)
+    fun handleExpertiseNotFound (e: ExpertiseNotFoundException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.NOT_FOUND, e.message!!)
 }
