@@ -14,6 +14,3 @@ class Attachment(
     @ManyToOne
     var message: Message,
 ): EntityBase<Long>()
-{
-
-}

@@ -32,16 +32,21 @@ class Ticket (
 
     fun addMessage(m: Message){
         m.ticket = this
-        this.messages.add(m);
+        this.messages.add(m)
     }
 
     fun addStatus(s: TicketStatus){
-        s.ticket = this;
+        s.ticket = this
         statusHistory.add(s)
     }
 
     fun addProduct(p: Product){
-        p.tickets.add(this);
-        this.product = p;
+        p.tickets.add(this)
+        this.product = p
+    }
+
+    fun addProfile(p: Profile){
+        p.tickets.add(this)
+        this.profile = p
     }
 }

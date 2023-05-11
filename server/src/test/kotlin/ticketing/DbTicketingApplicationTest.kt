@@ -9,6 +9,9 @@ import com.lab2.server.repositories.ProfileRepository
 import com.lab2.server.data.toProfile
 import com.lab2.server.repositories.ProductRepository
 import com.lab2.server.repositories.TicketingRepository
+import com.lab2.server.serviceImpl.ProfileServiceImpl
+import com.lab2.server.serviceImpl.TicketServiceImpl
+import com.lab2.server.services.TicketService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
@@ -52,47 +55,146 @@ class DbTicketingApplicationTest {
     @Autowired
     lateinit var ProfileRepository: ProfileRepository
 
+
     @Test
     @Ignore
-    fun `when record is saved then the id is populated`() {
-        val product = ProductDTO("1234567890123456", "product1", "p1")
-        var profile = ProfileDTO("test1@test.com", "test1", "test")
+    fun testGetTicketID() {
+        TicketingRepository.deleteAll()
+        ProfileRepository.deleteAll()
+        ProductRepository.deleteAll()
 
-        var prof = profile.toProfile()
+
+        val product = ProductDTO("1234567890123456", "product1", "p1")
+        val profile = ProfileDTO("test1@test.com", "test1", "test")
+
+        val prof = profile.toProfile()
         ProfileRepository.save(prof)
 
-        var prod = product.toProduct()
+        val prod = product.toProduct()
         ProductRepository.save(prod)
 
         var actualTicket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
         //actualTicket.addProduct(prod)
-        prof.addTicket(actualTicket)
+        //prof.addTicket(actualTicket)
 
         actualTicket = TicketingRepository.save(actualTicket)
         assertEquals((actualTicket.getId()), 1)
-        //assertEquals((TicketingRepository.count()), 1)
     }
 
     @Test
-    fun `when record is saved then it's returned successfully`() {
-        val product = ProductDTO("1234567890123456", "product1", "p1")
-        var profile = ProfileDTO("test1@test.com", "test1", "test")
+    fun testTicketCount() {
+        TicketingRepository.deleteAll()
+        ProfileRepository.deleteAll()
+        ProductRepository.deleteAll()
 
-        var prof = profile.toProfile()
+        val product = ProductDTO("1234567890123457", "product2", "p2")
+        val profile = ProfileDTO("test2@test.com", "test2", "test2")
+
+        val prof = profile.toProfile()
         ProfileRepository.save(prof)
 
-        var prod = product.toProduct()
+        val prod = product.toProduct()
+        ProductRepository.save(prod)
+
+        val actualTicket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
+
+        TicketingRepository.save(actualTicket)
+        assertEquals((TicketingRepository.count()), 1)
+    }
+
+    @Test
+    fun testTicketGetAllCount() {
+        TicketingRepository.deleteAll()
+        ProfileRepository.deleteAll()
+        ProductRepository.deleteAll()
+
+        val product1 = ProductDTO("1234567890123456", "product1", "p1")
+        val product2 = ProductDTO("1234567890123457", "product2", "p2")
+        val profile1 = ProfileDTO("test1@test.com", "test1", "test1")
+        val profile2 = ProfileDTO("test2@test.com", "test2", "test2")
+
+        val prof1 = profile1.toProfile()
+        val prof2 = profile2.toProfile()
+        ProfileRepository.save(prof1)
+        ProfileRepository.save(prof2)
+
+        val prod1 = product1.toProduct()
+        val prod2 = product2.toProduct()
+        ProductRepository.save(prod1)
+        ProductRepository.save(prod2)
+
+
+        val actualTicket1 = Ticket("", "", Priority.TOASSIGN, prof1, null, prod1)
+        val actualTicket2 = Ticket("", "", Priority.TOASSIGN, prof2, null, prod2)
+        TicketingRepository.save(actualTicket1)
+        TicketingRepository.save(actualTicket2)
+
+        assertEquals((TicketingRepository.count()), 2)
+    }
+
+    @Test
+    fun testProductInsertInTicket() {
+        TicketingRepository.deleteAll()
+        ProfileRepository.deleteAll()
+        ProductRepository.deleteAll()
+
+        val product = ProductDTO("1234567890123456", "product1", "p1")
+        val profile = ProfileDTO("test1@test.com", "test1", "test")
+
+        val prof = profile.toProfile()
+        ProfileRepository.save(prof)
+
+        val prod = product.toProduct()
         ProductRepository.save(prod)
 
         var actualTicket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
-        //actualTicket.addProduct(prod)
-        prof.addTicket(actualTicket)
 
         actualTicket = TicketingRepository.save(actualTicket)
-        println(prod)
-        println(actualTicket.product)
         assertEquals((actualTicket.product), prod)
-        //assertEquals((TicketingRepository.count()), 1)
+    }
+
+    @Test
+    fun testCheckProductContainsTicket() {
+        TicketingRepository.deleteAll()
+        ProfileRepository.deleteAll()
+        ProductRepository.deleteAll()
+
+        val product = ProductDTO("1234567890123456", "product1", "p1")
+        val profile = ProfileDTO("test1@test.com", "test1", "test")
+
+        val prof = profile.toProfile()
+        ProfileRepository.save(prof)
+
+        val prod = product.toProduct()
+        ProductRepository.save(prod)
+
+        var actualTicket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
+        actualTicket.addProduct(prod)
+
+        actualTicket = TicketingRepository.save(actualTicket)
+        assertEquals((prod.tickets.contains(actualTicket)), true)
+    }
+
+    @Test
+    fun testCheckProfileContainsTicket() {
+        TicketingRepository.deleteAll()
+        ProfileRepository.deleteAll()
+        ProductRepository.deleteAll()
+
+        val product = ProductDTO("1234567890123456", "product1", "p1")
+        val profile = ProfileDTO("test1@test.com", "test1", "test")
+
+        val prof = profile.toProfile()
+        ProfileRepository.save(prof)
+
+        val prod = product.toProduct()
+        ProductRepository.save(prod)
+
+        var actualTicket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
+        actualTicket.addProfile(prof)
+
+        actualTicket = TicketingRepository.save(actualTicket)
+        assertEquals((prof.tickets.contains(actualTicket)), true)
     }
 
     /* TO BE IMPLEMENTED

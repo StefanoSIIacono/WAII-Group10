@@ -20,9 +20,6 @@ class TicketStatus (
     @ManyToOne
     var expert: Expert? = null,
 ): EntityBase<Long>()
-{
-
-}
 
 /*
 fun TicketStatusDTO.toTicketStatus(): TicketStatus {

@@ -1,8 +1,6 @@
 package com.lab2.server.dto
 
 import com.lab2.server.data.Expert
-import com.lab2.server.data.ExpertiseDTO
-import com.lab2.server.data.toDTO
 
 data class ExpertDTO(
     val name: String,

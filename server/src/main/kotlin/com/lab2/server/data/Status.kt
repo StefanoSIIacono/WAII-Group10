@@ -8,7 +8,7 @@ enum class Status {
     REOPENED
 }
 
-val validStatusChanges = mapOf<Status, Array<Status>>(
+val validStatusChanges = mapOf(
     Status.OPEN to arrayOf(Status.RESOLVED, Status.CLOSED, Status.IN_PROGRESS),
     Status.RESOLVED to arrayOf(Status.CLOSED, Status.REOPENED),
     Status.CLOSED to arrayOf(Status.REOPENED),

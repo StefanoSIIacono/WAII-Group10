@@ -18,8 +18,8 @@ class Product (
     val tickets = mutableListOf<Ticket>()
 
     fun addTicket(t: Ticket){
-        t.product = this;
-        this.tickets.add(t);
+        t.product = this
+        this.tickets.add(t)
     }
 }
 

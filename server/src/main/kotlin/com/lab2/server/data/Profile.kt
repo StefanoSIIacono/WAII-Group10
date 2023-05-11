@@ -13,12 +13,12 @@ class Profile (
     var surname: String
 )
 {
-    @OneToMany(mappedBy = "profile")
+    @OneToMany( mappedBy = "profile")
     val tickets = mutableListOf<Ticket>()
 
     fun addTicket(t: Ticket){
-        t.profile = this;
-        this.tickets.add(t);
+        t.profile = this
+        this.tickets.add(t)
     }
 
 }

@@ -16,10 +16,10 @@ class Message (
     var ticket: Ticket
 ): EntityBase<Long>() {
     @OneToMany(mappedBy = "message")
-    var attachments = mutableListOf<Attachment>();
+    var attachments = mutableListOf<Attachment>()
 
     fun addAttachment(a: Attachment){
-        a.message = this;
-        this.attachments.add(a);
+        a.message = this
+        this.attachments.add(a)
     }
 }

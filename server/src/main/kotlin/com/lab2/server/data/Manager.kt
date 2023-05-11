@@ -8,5 +8,3 @@ class Manager (
     var name: String,
     var surname: String
 ): EntityBase<Long>()
-{
-}
