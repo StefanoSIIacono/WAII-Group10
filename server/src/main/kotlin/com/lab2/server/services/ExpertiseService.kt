@@ -5,12 +5,9 @@ import com.lab2.server.dto.ExpertiseDTO
 
 interface ExpertiseService {
 
-    fun getExpertsByExpertise(field: String): List<ExpertDTO>
-
     fun getAll(): List<ExpertiseDTO>
-
+    fun getExpertsByExpertise(field: String): List<ExpertDTO>
     fun getExpertise(field: String): ExpertiseDTO?
-
     fun createExpertise(expertise: String)
     fun deleteExpertise(expertise: String)
 

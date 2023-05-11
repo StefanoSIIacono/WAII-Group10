@@ -10,7 +10,12 @@ data class ExpertDTO(
     val expertises: MutableSet<ExpertiseDTO> = mutableSetOf(),
     var changedStatuses: MutableList<TicketStatusDTO> = mutableListOf()
 )
-
+{
+    fun addExpertiseDTO(e: ExpertiseDTO) {
+        this.expertises.add(e)
+    }
+}
 fun Expert.toDTO(): ExpertDTO {
     return ExpertDTO(getId(), name, surname, expertises.map { it.toDTO()}.toMutableSet())
 }
+

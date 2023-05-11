@@ -12,10 +12,10 @@ class Expertise (
 {
     @ManyToMany(mappedBy = "expertises")
     val experts: MutableSet<Expert> = mutableSetOf()
-    fun addExpert(e: Expert) {
+    /*fun addExpert(e: Expert) {
         experts.add(e)
         e.expertises.add(this)
-    }
+    }*/
 }
 
 fun ExpertiseDTO.toExpertise(): Expertise {

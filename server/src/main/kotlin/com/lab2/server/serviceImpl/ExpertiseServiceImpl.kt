@@ -28,8 +28,7 @@ class ExpertiseServiceImpl (private val expertiseRepository: ExpertiseRepository
         expertiseRepository.save(Expertise(expertise))
     }
     override fun deleteExpertise(expertise: String){
-        val expertiseEntity = expertiseRepository.findAll().filter { it.field === expertise }
-        expertiseRepository.deleteAll(expertiseEntity)
-
+        val expertiseEntity = expertiseRepository.findByField(expertise)
+        expertiseRepository.delete(expertiseEntity)
     }
 }

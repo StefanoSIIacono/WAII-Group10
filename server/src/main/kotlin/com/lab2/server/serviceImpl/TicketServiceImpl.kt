@@ -46,7 +46,7 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
         val currentStatus = ticket.statusHistory.maxBy { it.timestamp }
 
         // IF expertId === null, THE STATUS IS CHANGED BY THE PROFILE WHEN THE TICKET IS OPENED/REOPENED
-        val expert = if (expertId === null) null else expertService.getExpertById(expertId).toExpert() ?: throw ExpertNotFoundException("Expert not found")
+        val expert = if (expertId === null) null else expertService.getExpertById(expertId)?.toExpert() ?: throw ExpertNotFoundException("Expert not found")
 
         if (!(validStatusChanges[currentStatus.status]!!.contains(inputStatus))) {
             throw IllegalStatusChangeException("can't go from ${currentStatus.status} to $inputStatus")
