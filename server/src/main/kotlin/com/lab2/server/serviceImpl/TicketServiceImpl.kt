@@ -8,6 +8,7 @@ import com.lab2.server.exceptionsHandler.exceptions.*
 import com.lab2.server.repositories.ProductRepository
 import com.lab2.server.repositories.ProfileRepository
 import com.lab2.server.repositories.TicketingRepository
+import com.lab2.server.services.ExpertService
 import com.lab2.server.services.ProductService
 import com.lab2.server.services.ProfileService
 import com.lab2.server.services.TicketService
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class TicketServiceImpl (private val ticketingRepository: TicketingRepository, private val profileService: ProfileService, private val productService: ProductService):
+class TicketServiceImpl (private val ticketingRepository: TicketingRepository, private val profileService: ProfileService, private val productService: ProductService, private val expertService: ExpertService):
     TicketService {
 
     override fun getAll(): List<TicketDTO> {
@@ -34,17 +35,17 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
 
         val newTicket = Ticket(ticket.obj, ticket.arg, Priority.TOASSIGN, profile.toProfile(), null, product.toProduct())
         val status = TicketStatus(Status.OPEN, Date(System.currentTimeMillis()), "unknown", newTicket)
-        // newTicket.statusHistory.add(status)
+
         newTicket.addStatus(status)
         ticketingRepository.save(newTicket)
     }
 
-    override fun setTicketStatus(ticketId: Long, inputStatus: Status, bodyExpert: Long?) {
+    override fun setTicketStatus(ticketId: Long, inputStatus: Status, expertId: Long?, priority: Priority?) {
         val ticket = ticketingRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException("Ticket not found")
 
         val currentStatus = ticket.statusHistory.maxBy { it.timestamp }
 
-        val expert = if (bodyExpert === null) null else /* TODO: find expert */ null
+        val expert = if (expertId === null) null else expertService.getExpertById(expertId).toExpert()
 
         if (!(validStatusChanges[currentStatus.status]!!.contains(inputStatus))) {
             throw IllegalStatusChangeException("can't go from ${currentStatus.status} to $inputStatus")
@@ -54,10 +55,17 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
             throw ExpertNotFoundException("Expert not found")
         }
 
+        if ((priority === null || priority === Priority.TOASSIGN) && inputStatus === Status.IN_PROGRESS) {
+            throw IllegalPriorityException("Priority not valid")
+        }
+
         val status = TicketStatus(
-            inputStatus, Date(System.currentTimeMillis()), "unknown", ticket, if (inputStatus === Status.IN_PROGRESS) expert else null
+            inputStatus, Date(System.currentTimeMillis()), "unknown", ticket, if (inputStatus === Status.IN_PROGRESS) expert else null,
         )
         ticket.addStatus(status)
+        if (inputStatus === Status.IN_PROGRESS) {
+            ticket.newPriority(priority!!)
+        }
         ticketingRepository.save(ticket)
     }
 

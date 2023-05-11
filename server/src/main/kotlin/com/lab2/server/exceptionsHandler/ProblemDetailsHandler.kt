@@ -44,4 +44,11 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler (ExpertiseNotFoundException::class)
     fun handleExpertiseNotFound (e: ExpertiseNotFoundException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.NOT_FOUND, e.message!!)
+    @ExceptionHandler (IllegalPriorityException::class)
+    fun handleIllegalPriority (e: IllegalPriorityException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
+
+    @ExceptionHandler (noBodyProvidedException::class)
+    fun handleNoBody (e: noBodyProvidedException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
 }

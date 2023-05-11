@@ -16,9 +16,8 @@ abstract class EntityBase <T: Serializable> {
         initialValue = 1,
         allocationSize = 1)
     @Column(updatable = false, nullable = false)
-    private var id:T?  = null
-
-    fun getId(): T? = id
+    var id:T?  = null
+    // fun getId(): T? = id
     override fun toString(): String {
         return "@Entity ${this.javaClass.name}(id=$id)"    }
     override fun equals(other: Any?): Boolean {

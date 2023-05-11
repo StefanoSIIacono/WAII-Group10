@@ -10,4 +10,8 @@ interface ExpertiseService {
     fun getAll(): List<ExpertiseDTO>
 
     fun getExpertise(field: String): ExpertiseDTO?
+
+    fun createExpertise(expertise: String)
+    fun deleteExpertise(expertise: String)
+
 }

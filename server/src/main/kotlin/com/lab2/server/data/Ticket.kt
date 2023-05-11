@@ -49,4 +49,8 @@ class Ticket (
         p.tickets.add(this)
         this.profile = p
     }
+
+    fun newPriority(p: Priority) {
+        this.priority = p
+    }
 }
