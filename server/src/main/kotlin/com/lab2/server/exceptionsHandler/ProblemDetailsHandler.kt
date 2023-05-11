@@ -48,7 +48,7 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     fun handleIllegalPriority (e: IllegalPriorityException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
 
-    @ExceptionHandler (noBodyProvidedException::class)
-    fun handleNoBody (e: noBodyProvidedException) = ProblemDetail
+    @ExceptionHandler (NoBodyProvidedException::class)
+    fun handleNoBody (e: NoBodyProvidedException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
 }

@@ -9,6 +9,7 @@ class Message (
     val timestamp: java.util.Date,
     val body: String,
 
+    // This field is filled only whether the message was written by the expert
     @ManyToOne
     val expert: Expert? = null,
 

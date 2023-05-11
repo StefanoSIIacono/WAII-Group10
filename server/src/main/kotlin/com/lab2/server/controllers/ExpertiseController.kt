@@ -5,7 +5,7 @@ import com.lab2.server.dto.ExpertiseDTO
 import com.lab2.server.exceptionsHandler.exceptions.ExpertiseNotFoundException
 import com.lab2.server.services.ExpertiseService
 import org.springframework.http.HttpStatus
-import com.lab2.server.exceptionsHandler.exceptions.noBodyProvidedException
+import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -34,7 +34,7 @@ class ExpertiseController(private val expertiseService: ExpertiseService) {
     @ResponseStatus(HttpStatus.CREATED)
     fun createExpertise(@RequestBody expertise: ExpertiseDTO?){
         if (expertise === null) {
-            throw noBodyProvidedException("You have to add a body")
+            throw NoBodyProvidedException("You have to add a body")
         }
         expertiseService.createExpertise(expertise.field)
 
@@ -42,7 +42,7 @@ class ExpertiseController(private val expertiseService: ExpertiseService) {
 
     @DeleteMapping("/expertise/{expertise}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteExpertise(@PathVariable expertise: ExpertiseDTO){
-        expertiseService.deleteExpertise(expertise.field)
+    fun deleteExpertise(@PathVariable expertise: String){
+        expertiseService.deleteExpertise(expertise)
     }
 }

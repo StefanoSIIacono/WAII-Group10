@@ -7,15 +7,15 @@ import jakarta.persistence.*
 @Entity
 @Table (name = "experts")
 class Expert(
-    var name: String,
-    var surname: String,
+        var name: String,
+        var surname: String,
 
-    ): EntityBase<Long>()
+        ): EntityBase<Long>()
 {
     @ManyToMany
     @JoinTable(name = "expert_expertise",
-        joinColumns = [JoinColumn(name="expert_id")],
-        inverseJoinColumns = [JoinColumn(name = "expertise_id")]
+            joinColumns = [JoinColumn(name="expert_id")],
+            inverseJoinColumns = [JoinColumn(name = "expertise_id")]
     )
     val expertises: MutableSet<Expertise> = mutableSetOf()
 
@@ -34,7 +34,7 @@ class Expert(
     }
 
     fun addTicketStatus(s: TicketStatus){
-        s.expert = this
+        //s.expert = this
         this.addTicketStatus(s)
     }
 
@@ -47,6 +47,6 @@ class Expert(
 
 fun ExpertDTO.toExpert(): Expert {
     val expert = Expert(name, surname)
-    expert.id = id
+    //expert.id = id
     return expert
 }

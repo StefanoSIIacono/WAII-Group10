@@ -13,4 +13,6 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository): ExpertS
     override fun getExpertById(expertId: Long): ExpertDTO {
         return expertRepository.findByIdOrNull(expertId)?.toDTO() ?: throw ExpertNotFoundException("Expert not found")
     }
+
+    //override fun addExpertise()
 }

@@ -1,8 +1,8 @@
 package com.lab2.server.controllers
 
 import com.lab2.server.dto.ProfileDTO
+import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
 import com.lab2.server.exceptionsHandler.exceptions.ProfileNotFoundException
-import com.lab2.server.exceptionsHandler.exceptions.noBodyProvidedException
 import com.lab2.server.services.ProfileService
 import org.springframework.http.HttpStatus
 import org.springframework.transaction.annotation.Transactional
@@ -26,7 +26,7 @@ class ProfileController(private val profileService: ProfileService) {
     @ResponseStatus(HttpStatus.CREATED)
     fun createProfile(@RequestBody profile: ProfileDTO?){
         if (profile === null) {
-            throw noBodyProvidedException("You have to add a body")
+            throw NoBodyProvidedException("You have to add a body")
         }
         profileService.insertProfile(profile)
 
@@ -36,7 +36,7 @@ class ProfileController(private val profileService: ProfileService) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun changeProfile(@PathVariable email:String, @RequestBody profile: ProfileDTO?){
         if (profile === null) {
-            throw noBodyProvidedException("You have to add a body")
+            throw NoBodyProvidedException("You have to add a body")
         }
         profileService.editProfile(email,profile)
     }

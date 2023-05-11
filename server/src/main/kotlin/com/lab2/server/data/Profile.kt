@@ -21,8 +21,13 @@ class Profile (
         this.tickets.add(t)
     }
 
+    /*fun getEmail(): String{
+        return this.email
+    }*/
 }
 
 fun ProfileDTO.toProfile(): Profile {
     return Profile(email, name, surname)
 }
+
+
