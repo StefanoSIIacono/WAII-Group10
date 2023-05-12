@@ -1,9 +1,10 @@
-package com.lab2.server.serviceImpl
+package com.lab2.server.unitTest
 
 import com.lab2.server.data.Expertise
 import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.DuplicatedExpertiseException
 import com.lab2.server.repositories.ExpertiseRepository
+import com.lab2.server.serviceImpl.ExpertiseServiceImpl
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

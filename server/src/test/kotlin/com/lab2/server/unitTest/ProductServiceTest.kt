@@ -1,4 +1,4 @@
-package com.lab2.server.products
+package com.lab2.server.unitTest
 
 import com.lab2.server.dto.toDTO
 import com.lab2.server.data.Product
