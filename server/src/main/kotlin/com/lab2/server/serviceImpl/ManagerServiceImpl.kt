@@ -5,8 +5,8 @@ import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.ManagerNotFoundException
 import com.lab2.server.repositories.ManagerRepository
 import com.lab2.server.services.ManagerService
-import org.springframework.stereotype.Service
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.stereotype.Service
 
 @Service
 class ManagerServiceImpl (private val managerRepository: ManagerRepository): ManagerService{

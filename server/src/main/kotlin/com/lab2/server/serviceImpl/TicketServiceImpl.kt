@@ -1,6 +1,7 @@
 package com.lab2.server.serviceImpl
 
 import com.lab2.server.data.*
+import com.lab2.server.dto.TicketCreateBodyDTO
 import com.lab2.server.dto.TicketDTO
 import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.*
@@ -25,10 +26,10 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
         return ticketingRepository.findByIdOrNull(ticketId)?.toDTO() ?: throw TicketNotFoundException("Ticket not found")
     }
 
-    override fun insertTicket(ticket: TicketDTO) {
-        val profile = profileService.getProfileByEmail(ticket.profile.email) ?: throw ProfileNotFoundException("Profile not found")
+    override fun insertTicket(ticket: TicketCreateBodyDTO) {
+        val profile = profileService.getProfileByEmail(ticket.profile) ?: throw ProfileNotFoundException("Profile not found")
 
-        val product = productService.getProduct(ticket.product.productId) ?: throw ProductNotFoundException("Product not found")
+        val product = productService.getProduct(ticket.product) ?: throw ProductNotFoundException("Product not found")
 
         val newTicket = Ticket(ticket.obj, ticket.arg, Priority.TOASSIGN, profile.toProfile(), null, product.toProduct())
         val status = TicketStatus(Status.OPEN, Date(System.currentTimeMillis()), newTicket)
@@ -37,13 +38,13 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
         ticketingRepository.save(newTicket)
     }
 
-    override fun setTicketStatus(ticketId: Long, inputStatus: Status, expertId: Long?, statusChanger: StatusChanger) {
+    override fun setTicketStatus(ticketId: Long, inputStatus: Status, statusChanger: StatusChanger, expertId: Long?, priority: Priority?) {
         val ticket = ticketingRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException("Ticket not found")
 
         val currentStatus = ticket.statusHistory.maxBy { it.timestamp }
 
         // IF expertId === null, THE STATUS IS CHANGED BY THE PROFILE WHEN THE TICKET IS OPENED/REOPENED
-        val expert = if (expertId === null) null else expertService.getExpertById(expertId)?.toExpert() ?: throw ExpertNotFoundException("Expert not found")
+        val expert = if (expertId === null) null else (expertService.getExpertById(expertId)?.toExpert() ?: throw ExpertNotFoundException("Expert not found"))
 
         if (!(validStatusChanges[currentStatus.status]!!.contains(inputStatus))) {
             throw IllegalStatusChangeException("can't go from ${currentStatus.status} to $inputStatus")
@@ -53,22 +54,20 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
             throw ExpertNotFoundException("Expert not found")
         }
 
-        /*if ((priority === null || priority === Priority.TOASSIGN) && inputStatus === Status.IN_PROGRESS) {
+        if ((priority === null || priority === Priority.TOASSIGN) && inputStatus === Status.IN_PROGRESS) {
             throw IllegalPriorityException("Priority not valid")
-        }*/
+        }
 
         val status = TicketStatus(
             inputStatus, Date(System.currentTimeMillis()), ticket, statusChanger,
                 if (inputStatus === Status.IN_PROGRESS) expert else null
         )
 
-        if (inputStatus === Status.IN_PROGRESS && expert != null)
-            expert.addTicketStatus(status)
-
         ticket.addStatus(status)
-        /*if (inputStatus === Status.IN_PROGRESS) {
-            ticket.newPriority(priority!!)
-        }*/
+        if (inputStatus === Status.IN_PROGRESS) {
+            expert!!.addTicketStatus(status)
+            this.setTicketPriority(ticketId, priority!!)
+        }
 
         ticketingRepository.save(ticket)
     }

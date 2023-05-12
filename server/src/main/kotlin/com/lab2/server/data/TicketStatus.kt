@@ -1,6 +1,5 @@
 package com.lab2.server.data
 
-import com.lab2.server.dto.TicketStatusDTO
 import jakarta.persistence.*
 
 
@@ -24,7 +23,8 @@ class TicketStatus (
 
 ): EntityBase<Long>()
 
+/*
 fun TicketStatusDTO.toTicketStatus(): TicketStatus {
-    return TicketStatus(status, timestamp, ticket!!.toTicket(), statusChanger, expert?.toExpert())
+    return TicketStatus(status, timestamp, ticket, statusChanger, expert?.toExpert())
 }
-
+*/

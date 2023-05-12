@@ -13,13 +13,13 @@ data class TicketStatusDTO (
     val timestamp: java.util.Date,
 
 
-    val ticket: TicketDTO?,
+    val ticket: Long,
 
     val statusChanger: StatusChanger,
 
-    val expert: ExpertDTO?,
+    val expert: Long?,
 )
 
 fun TicketStatus.toDTO(): TicketStatusDTO {
-    return TicketStatusDTO(status, timestamp, ticket.toDTO(), statusChanger, expert?.toDTO())
+    return TicketStatusDTO(status, timestamp, ticket.id!!, statusChanger, expert?.id)
 }

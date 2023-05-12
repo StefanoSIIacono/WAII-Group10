@@ -1,9 +1,9 @@
 package com.lab2.server.serviceImpl
 
 
-import com.lab2.server.dto.ExpertDTO
 import com.lab2.server.data.Expertise
 import com.lab2.server.data.toExpertise
+import com.lab2.server.dto.ExpertDTO
 import com.lab2.server.dto.ExpertiseDTO
 import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.DuplicatedExpertiseException
@@ -29,7 +29,10 @@ class ExpertiseServiceImpl (private val expertiseRepository: ExpertiseRepository
     }
 
     override fun createExpertise(field: String) {
-        expertiseRepository.findByField(field)?.toDTO() ?: throw DuplicatedExpertiseException("Expertise exists!")
+        println(expertiseRepository.findByField(field))
+        if (expertiseRepository.findByField(field) !== null) {
+            throw DuplicatedExpertiseException("Expertise exists!")
+        }
         expertiseRepository.save(Expertise(field))
     }
     override fun deleteExpertise(expertise: String){

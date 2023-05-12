@@ -1,6 +1,5 @@
 package com.lab2.server.dto
 
-import com.lab2.server.data.Expert
 import com.lab2.server.data.Message
 import jakarta.persistence.Temporal
 import jakarta.persistence.TemporalType
@@ -12,9 +11,9 @@ data class MessageDTO (
     val body: String,
     val attachments: MutableList<AttachmentDTO> = mutableListOf(),
     val expert: ExpertDTO? = null,
-    val ticket: TicketDTO
+    val ticket: Long
 )
 
 fun Message.toDTO(): MessageDTO {
-    return MessageDTO(id, timestamp, body, attachments.map {it.toDTO()}.toMutableList(), expert?.toDTO(), ticket.toDTO())
+    return MessageDTO(id, timestamp, body, attachments.map {it.toDTO()}.toMutableList(), expert?.toDTO(), ticket.id!!)
 }

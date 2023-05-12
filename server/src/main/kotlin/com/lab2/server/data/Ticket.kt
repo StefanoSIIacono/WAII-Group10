@@ -1,6 +1,5 @@
 package com.lab2.server.data
 
-import com.lab2.server.dto.TicketDTO
 import jakarta.persistence.*
 
 @Entity
@@ -56,6 +55,8 @@ class Ticket (
     }
 }
 
+/*
 fun TicketDTO.toTicket(): Ticket {
-    return Ticket (obj, arg, priority, profile.toProfile(), expert?.toExpert(), product.toProduct())
+    return Ticket (obj, arg, priority, profile, expert?.toExpert(), product.toProduct())
 }
+ */

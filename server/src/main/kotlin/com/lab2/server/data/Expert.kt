@@ -34,8 +34,8 @@ class Expert(
     }
 
     fun addTicketStatus(s: TicketStatus){
-        //s.expert = this
-        this.addTicketStatus(s)
+        s.expert = this
+        this.changedStatuses.add(s)
     }
 
     fun addExpertise(e: Expertise) {

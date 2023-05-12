@@ -1,7 +1,10 @@
 package com.lab2.server.data
 
 import com.lab2.server.dto.ExpertiseDTO
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.ManyToMany
+import jakarta.persistence.Table
 
 @Entity
 @Table(name = "expertises")
@@ -19,5 +22,7 @@ class Expertise (
 }
 
 fun ExpertiseDTO.toExpertise(): Expertise {
-    return Expertise(field)
+    val expertise = Expertise(field)
+    expertise.id = id
+    return expertise
 }

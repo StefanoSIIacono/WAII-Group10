@@ -1,7 +1,8 @@
 package com.lab2.server.data
 
 import com.lab2.server.dto.ManagerDTO
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.Table
 
 @Entity
 @Table(name="managers")

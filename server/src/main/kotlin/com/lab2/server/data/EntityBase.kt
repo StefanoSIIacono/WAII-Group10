@@ -1,8 +1,8 @@
 package com.lab2.server.data
 
-import java.io.Serializable
 import jakarta.persistence.*
 import org.springframework.data.util.ProxyUtils
+import java.io.Serializable
 
 @MappedSuperclass
 abstract class EntityBase <T: Serializable> {

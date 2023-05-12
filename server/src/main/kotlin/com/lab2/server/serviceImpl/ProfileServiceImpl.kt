@@ -1,9 +1,9 @@
 package com.lab2.server.serviceImpl
 
-import com.lab2.server.dto.ProfileDTO
-import com.lab2.server.dto.toDTO
 import com.lab2.server.data.toProfile
+import com.lab2.server.dto.ProfileDTO
 import com.lab2.server.dto.TicketDTO
+import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.DuplicateProfileException
 import com.lab2.server.exceptionsHandler.exceptions.ProfileEmailChangeNotAllowedException
 import com.lab2.server.exceptionsHandler.exceptions.ProfileNotFoundException

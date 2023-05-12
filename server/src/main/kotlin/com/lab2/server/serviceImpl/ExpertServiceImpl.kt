@@ -1,17 +1,14 @@
 package com.lab2.server.serviceImpl
 
 import com.lab2.server.data.Expert
-import com.lab2.server.data.Expertise
 import com.lab2.server.data.toExpert
 import com.lab2.server.data.toExpertise
 import com.lab2.server.dto.ExpertDTO
 import com.lab2.server.dto.ExpertiseDTO
 import com.lab2.server.dto.toDTO
-import com.lab2.server.exceptionsHandler.exceptions.DuplicatedExpertiseException
 import com.lab2.server.exceptionsHandler.exceptions.ExpertNotFoundException
 import com.lab2.server.repositories.ExpertRepository
 import com.lab2.server.services.ExpertService
-import com.lab2.server.services.ExpertiseService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 

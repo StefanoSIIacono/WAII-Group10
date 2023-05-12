@@ -1,7 +1,6 @@
 package com.lab2.server.dto
 
 import com.lab2.server.data.Expert
-import com.lab2.server.data.TicketStatus
 
 data class ExpertDTO(
     val id: Long?,

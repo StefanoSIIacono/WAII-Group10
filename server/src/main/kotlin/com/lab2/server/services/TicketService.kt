@@ -9,7 +9,7 @@ import com.lab2.server.dto.TicketDTO
 interface TicketService {
     fun getAll(): List<TicketDTO>
     fun getTicketByID(ticketId: Long): TicketDTO?
-    fun insertTicket(ticket: TicketDTO)
-    fun setTicketStatus(ticketId: Long, inputStatus: Status, expertId: Long?, statusChanger: StatusChanger)
+    fun insertTicket(ticket: TicketCreateBodyDTO)
+    fun setTicketStatus(ticketId: Long, inputStatus: Status, statusChanger: StatusChanger, expertId: Long?, priority: Priority?)
     fun setTicketPriority(ticketId: Long, priority: Priority)
 }

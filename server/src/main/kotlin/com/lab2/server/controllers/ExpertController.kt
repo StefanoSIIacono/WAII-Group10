@@ -1,7 +1,5 @@
 package com.lab2.server.controllers
 
-import com.lab2.server.data.toExpert
-import com.lab2.server.data.toExpertise
 import com.lab2.server.dto.ExpertDTO
 import com.lab2.server.dto.ExpertiseDTO
 import com.lab2.server.exceptionsHandler.exceptions.ExpertNotFoundException
@@ -22,7 +20,7 @@ class ExpertController(private val expertService: ExpertService, private val exp
         return expertService.getAll()
     }
 
-    @GetMapping("/experts/{expertId}/")
+    @GetMapping("/experts/{expertId}")
     @ResponseStatus(HttpStatus.OK)
     fun getById(@PathVariable expertId: Long): ExpertDTO? {
         return expertService.getExpertById(expertId) ?: throw ExpertNotFoundException("Expert not found")
@@ -37,15 +35,18 @@ class ExpertController(private val expertService: ExpertService, private val exp
         expertService.insertExpert(expert.name, expert.surname)
     }
 
-    @PutMapping("/{expertId}/addExpertise")
+    @PutMapping("/experts/{expertId}/addExpertise")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    fun addExpertise(@PathVariable expertId: Long, @RequestBody field: String) {
-        val expertise = expertiseService.getExpertise(field)
+    fun addExpertise(@PathVariable expertId: Long, @RequestBody expertise: ExpertiseDTO?) {
+        if (expertise === null) {
+            throw NoBodyProvidedException("No body")
+        }
+        val exp = expertiseService.getExpertise(expertise.field)
                 ?: throw ExpertiseNotFoundException("Expertise not found")
         val expert = expertService.getExpertById(expertId)
                 ?: throw ExpertNotFoundException("Expert not found")
         //val expertiseId = expertise.
-        expertService.addExpertiseToExpert(expert, expertise)
+        expertService.addExpertiseToExpert(expert, exp)
     }
 }

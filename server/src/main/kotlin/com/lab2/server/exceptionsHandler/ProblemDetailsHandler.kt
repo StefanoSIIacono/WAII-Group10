@@ -14,6 +14,10 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     fun handleProductNotFound (e: ProductNotFoundException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.NOT_FOUND, e.message!!)
 
+    @ExceptionHandler (TicketNotFoundException::class)
+    fun handleTicketNotFound (e: TicketNotFoundException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.NOT_FOUND, e.message!!)
+
     @ExceptionHandler(DuplicateProductException::class)
     fun handleDuplicateProduct (e: DuplicateProductException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.CONFLICT, e.message!!)
