@@ -1,12 +1,9 @@
 package com.lab2.server.serviceImpl
 
 import com.lab2.server.data.*
-import com.lab2.server.dto.TicketCreateBodyDTO
 import com.lab2.server.dto.TicketDTO
 import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.*
-import com.lab2.server.repositories.ProductRepository
-import com.lab2.server.repositories.ProfileRepository
 import com.lab2.server.repositories.TicketingRepository
 import com.lab2.server.services.ExpertService
 import com.lab2.server.services.ProductService
