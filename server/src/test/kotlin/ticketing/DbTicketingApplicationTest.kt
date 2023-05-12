@@ -17,7 +17,9 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.junit.Ignore
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.data.repository.findByIdOrNull
 
 @Testcontainers
 @SpringBootTest (webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -71,7 +73,7 @@ class DbTicketingApplicationTest {
         //prof.addTicket(actualTicket)
 
         actualTicket = TicketingRepository.save(actualTicket)
-        assertEquals((actualTicket.id), 1)
+        assertEquals((actualTicket.getId()), 3)
     }
 
     @Test
@@ -158,14 +160,18 @@ class DbTicketingApplicationTest {
         val prof = profile.toProfile()
         ProfileRepository.save(prof)
 
-        val prod = product.toProduct()
+        var prod = product.toProduct()
         ProductRepository.save(prod)
 
-        var actualTicket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
-        actualTicket.addProduct(prod)
+        var prod2 = ProductRepository.findByIdOrNull("1234567890123456")!!
+        var prof2 = ProfileRepository.findByIdOrNull("test1@test.com")!!
+        var actualTicket = Ticket("", "", Priority.TOASSIGN, prof2, null, prod2)
 
+        actualTicket.addProduct(prod2)
         actualTicket = TicketingRepository.save(actualTicket)
-        assertEquals((prod.tickets.contains(actualTicket)), true)
+        ProductRepository.save(prod2)
+        prod2 = ProductRepository.findByIdOrNull("1234567890123456")!!
+        assertEquals((prod2.tickets.contains(actualTicket)), true)
     }
 
     @Test

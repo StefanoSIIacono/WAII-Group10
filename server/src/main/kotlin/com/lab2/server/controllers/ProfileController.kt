@@ -1,6 +1,7 @@
 package com.lab2.server.controllers
 
 import com.lab2.server.dto.ProfileDTO
+import com.lab2.server.dto.TicketDTO
 import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
 import com.lab2.server.exceptionsHandler.exceptions.ProfileNotFoundException
 import com.lab2.server.services.ProfileService
@@ -40,4 +41,11 @@ class ProfileController(private val profileService: ProfileService) {
         }
         profileService.editProfile(email,profile)
     }
+
+    @GetMapping("/profiles/{email}/tickets/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getTicketsByEmail(@PathVariable email:String): MutableList<TicketDTO> {
+        return profileService.getTicketsByEmail(email)
+    }
+
 }
