@@ -11,26 +11,26 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class ExpertiseController(private val expertiseService: ExpertiseService) {
 
-    @GetMapping("/expertise/")
+    @GetMapping("/expertises/")
     @ResponseStatus(HttpStatus.OK)
     fun getAll(): List<ExpertiseDTO>{
         return expertiseService.getAll()
     }
 
-    @GetMapping("/expertise/{expertise}")
+    @GetMapping("/expertises/{field}")
     @ResponseStatus(HttpStatus.OK)
-    fun getExpertise(@PathVariable expertise: String): ExpertiseDTO{
-        return expertiseService.getExpertise(expertise)
+    fun getExpertise(@PathVariable field: String): ExpertiseDTO{
+        return expertiseService.getExpertise(field)
             ?: throw ExpertiseNotFoundException("Expertise not found")
     }
 
-    @GetMapping("/expertise/{expertise}/experts/")
+    @GetMapping("/expertises/{field}/experts/")
     @ResponseStatus(HttpStatus.OK)
-    fun getExpertsByExpertise(@PathVariable expertise: String): List<ExpertDTO> {
-        return expertiseService.getExpertsByExpertise(expertise)
+    fun getExpertsByExpertise(@PathVariable field: String): List<ExpertDTO> {
+        return expertiseService.getExpertsByExpertise(field)
     }
 
-    @PostMapping("/expertise/")
+    @PostMapping("/expertises/")
     @ResponseStatus(HttpStatus.CREATED)
     fun createExpertise(@RequestBody expertise: ExpertiseDTO?){
         if (expertise === null) {
@@ -40,7 +40,7 @@ class ExpertiseController(private val expertiseService: ExpertiseService) {
 
     }
 
-    @DeleteMapping("/expertise/{expertise}")
+    @DeleteMapping("/expertises/{expertise}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteExpertise(@PathVariable expertise: String){
         expertiseService.deleteExpertise(expertise)

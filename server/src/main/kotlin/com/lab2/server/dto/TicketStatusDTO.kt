@@ -21,5 +21,5 @@ data class TicketStatusDTO (
 )
 
 fun TicketStatus.toDTO(): TicketStatusDTO {
-    return TicketStatusDTO(status, timestamp, ticket?.toDTO(), statusChanger, expert?.toDTO())
+    return TicketStatusDTO(status, timestamp, ticket.toDTO(), statusChanger, expert?.toDTO())
 }

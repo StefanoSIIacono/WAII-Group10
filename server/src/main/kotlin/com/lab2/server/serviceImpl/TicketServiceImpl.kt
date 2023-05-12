@@ -76,5 +76,11 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
         ticketingRepository.save(ticket)
     }
 
+    override fun setTicketPriority(ticketId: Long, priority: Priority) {
+        val ticket = ticketingRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException("Ticket not found")
+        ticket.newPriority(priority)
+        ticketingRepository.save(ticket)
+    }
+
 
 }

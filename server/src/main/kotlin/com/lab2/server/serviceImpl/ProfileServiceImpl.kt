@@ -3,6 +3,7 @@ package com.lab2.server.serviceImpl
 import com.lab2.server.dto.ProfileDTO
 import com.lab2.server.dto.toDTO
 import com.lab2.server.data.toProfile
+import com.lab2.server.dto.TicketDTO
 import com.lab2.server.exceptionsHandler.exceptions.DuplicateProfileException
 import com.lab2.server.exceptionsHandler.exceptions.ProfileEmailChangeNotAllowedException
 import com.lab2.server.exceptionsHandler.exceptions.ProfileNotFoundException
@@ -20,6 +21,11 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
     override fun getProfileByEmail(email: String): ProfileDTO? {
         return profileRepository.findByIdOrNull(email)?.toDTO()
     }
+
+    override fun getTicketsByEmail(email: String): MutableList<TicketDTO> {
+        return profileRepository.findByIdOrNull(email)!!.tickets.map { it.toDTO() }.toMutableList()
+    }
+
     override fun insertProfile(profile: ProfileDTO){
         if (profileRepository.existsById(profile.email))
             throw DuplicateProfileException("Profile exists!")
