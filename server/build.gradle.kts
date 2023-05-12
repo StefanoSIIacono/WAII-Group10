@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "3.0.5"
 	id("io.spring.dependency-management") version "1.1.0"
+	id("com.google.cloud.tools.jib") version "3.3.1"
 	//id("plugin.jpa") version "1.8.20"
 	kotlin("plugin.allopen") version "1.8.20"
 	kotlin("jvm") version "1.8.20"
@@ -13,6 +14,15 @@ plugins {
 group = "com.lab2"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
+
+jib {
+	to {
+		image = "ticketing"
+	}
+	container {
+		ports = listOf("8080")
+	}
+}
 
 repositories {
 	mavenCentral()
