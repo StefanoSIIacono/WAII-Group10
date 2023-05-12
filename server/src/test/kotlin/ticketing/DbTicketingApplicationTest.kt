@@ -1,6 +1,7 @@
 package com.lab2.server.ticketing
 
 import com.lab2.server.data.*import com.lab2.server.repositories.*
+import jakarta.transaction.Transactional
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,24 +51,31 @@ class DbTicketingApplicationTest {
     lateinit var expertiseRepository: ExpertiseRepository
 
     val priority = Priority.MEDIUM
-    val statusChanger = StatusChanger.PROFILE
+    //val statusChanger = StatusChanger.PROFILE
 
     @BeforeEach
     fun populateRepositories(){
-        val product = Product("1234567890123456", "product1", "p1")
-        val profile = Profile("test1@test.com", "test1", "test")
-        val expert = Expert("expert", "expert")
+        var product = Product("1234567890123456", "product1", "p1")
+        var profile = Profile("test1@test.com", "test1", "test")
+        var expert = Expert("expert", "expert")
         val expertise = Expertise("expertise")
 
-        profileRepository.save(profile)
-        productRepository.save(product)
-        expertRepository.save(expert)
+        profile = profileRepository.save(profile)
+        product = productRepository.save(product)
+        expert = expertRepository.save(expert)
         expertiseRepository.save(expertise)
 
         val ticket = Ticket("obj", "arg", priority, profile, expert, product)
         val status = TicketStatus(Status.OPEN, Date(System.currentTimeMillis()), ticket)
 
         ticket.addStatus(status)
+        ticket.addProduct(product)
+        ticket.addProfile(profile)
+        expert.addTicket(ticket)
+
+        profileRepository.save(profile)
+        productRepository.save(product)
+        expertRepository.save(expert)
         ticketingRepository.save(ticket)
     }
 
@@ -81,7 +89,19 @@ class DbTicketingApplicationTest {
     }
 
     @Test
-    fun `creating a ticket maps the other entities correctly`() {
+    fun `the ticket is returned using the id correctly`() {
+        val product = productRepository.findByIdOrNull("1234567890123456")!!
+        val profile = profileRepository.findByIdOrNull("test1@test.com")!!
+
+        val ticket = Ticket("obj", "arg", priority, profile, null, product)
+        val actualTicket = ticketingRepository.save(ticket)
+
+        val returnedTicket = ticketingRepository.findByIdOrNull(actualTicket.id)
+        assertEquals(returnedTicket?.id, actualTicket.id)
+    }
+
+    @Test
+    fun `creating a ticket maps the other entities to the ticket correctly`() {
 
         var expert = Expert("expert", "expert")
         expert = expertRepository.save(expert)
@@ -99,22 +119,12 @@ class DbTicketingApplicationTest {
         val actualTicket = ticketingRepository.save(ticket)
 
         assertNotNull(actualTicket.id)
-        assertEquals((actualTicket.product), product)
-        assertEquals((actualTicket.profile), profile)
-        assertEquals((actualTicket.expert), expert)
-        assertEquals((actualTicket.statusHistory.size), 1)
-        assertEquals((actualTicket.statusHistory[0]), status)
+        assertEquals(product, (actualTicket.product))
+        assertEquals(profile, (actualTicket.profile))
+        assertEquals(expert, (actualTicket.expert))
+        assertEquals(1, (actualTicket.statusHistory.size))
+        assertEquals(status, (actualTicket.statusHistory[0]))
     }
-
-    /*@Test
-    fun testTicketCount() {
-        val prod = ProductRepository.findByIdOrNull("1234567890123456")!!
-        val prof = ProfileRepository.findByIdOrNull("test1@test.com")!!
-        val actualTicket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
-
-        TicketingRepository.save(actualTicket)
-        assertEquals((TicketingRepository.count()), 1)
-    }*/
 
     @Test
     fun `after inserting 2 more tickets the count is correct`() {
@@ -127,31 +137,8 @@ class DbTicketingApplicationTest {
         ticketingRepository.save(actualTicket1)
         ticketingRepository.save(actualTicket2)
 
-        assertEquals((ticketingRepository.count()), 3)
+        assertEquals(3, (ticketingRepository.count()))
     }
-
-    /*@Test
-    fun `inserting a product and profile into the ticket maps the ticket to them`() {
-        var prod = ProductRepository.findByIdOrNull("1234567890123456")!!
-        var prof = ProfileRepository.findByIdOrNull("test1@test.com")!!
-
-        var actualTicket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
-
-        actualTicket = TicketingRepository.save(actualTicket)
-
-        prod = ProductRepository.findByIdOrNull("1234567890123456")!!
-        prof = ProfileRepository.findByIdOrNull("test1@test.com")!!
-        println(prod.tickets[1])
-        println(prof.tickets[1])
-        //val ticketsProd = prod.tickets.contains(actualTicket)
-        //val ticketsProf = prof.tickets.contains(actualTicket)
-
-        //assertEquals(ticketsProd, true)
-        //assertEquals(ticketsProf, true)
-        //assertEquals(ticketsProd[1], actualTicket)
-        //assertEquals(ticketsProf[1], actualTicket)
-
-    }*/
 
     @Test
     fun `when the ticket isn't in the repository returns null`() {
@@ -164,23 +151,49 @@ class DbTicketingApplicationTest {
         val prod = productRepository.findByIdOrNull("1234567890123456")!!
         val prof = profileRepository.findByIdOrNull("test1@test.com")!!
 
-        val actualTicket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
+        val ticket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
 
-        val pastTicket = ticketingRepository.save(actualTicket)
+        val pastTicket = ticketingRepository.save(ticket)
 
-        val product = Product("1234567890123456", "product1", "p1")
+        val product = Product("1234567890123456", "newProduct", "np")
         productRepository.save(product)
-        actualTicket.product = product
-        val newTicket = ticketingRepository.save(actualTicket)
+        pastTicket.product = product
+        val newTicket = ticketingRepository.save(pastTicket)
 
         assertEquals(newTicket.id, pastTicket.id)
+    }
+
+    @Test
+    @Transactional
+    fun `inserting a product and a profile into the ticket maps the ticket to them`() {
+        var prod = productRepository.findByIdOrNull("1234567890123456")!!
+        var prof = profileRepository.findByIdOrNull("test1@test.com")!!
+
+        var actualTicket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
+        actualTicket = ticketingRepository.save(actualTicket)
+
+        prod = productRepository.findByIdOrNull("1234567890123456")!!
+        prof = profileRepository.findByIdOrNull("test1@test.com")!!
+
+        actualTicket.addProduct(prod)
+        actualTicket.addProfile(prof)
+
+        profileRepository.save(prof)
+        productRepository.save(prod)
+
+        val ticketsProd = prod.tickets.contains(actualTicket)
+        val ticketsProf = prof.tickets.contains(actualTicket)
+
+        assertEquals(true, ticketsProd)
+        assertEquals(true, ticketsProf)
+        //assertEquals(ticketsProd[1], actualTicket)
+        //assertEquals(ticketsProf[1], actualTicket)
+
     }
     /*
     (TODO) testCheckProductContainsTicket
     (TODO) testCheckProfileContainsTicket
     test product e profile don't exist when you try to add them to a ticket
-    get ticket by ID
-    change status to a ticket
     add expert to a ticket and check if the expert contains the ticket
     change priority
 

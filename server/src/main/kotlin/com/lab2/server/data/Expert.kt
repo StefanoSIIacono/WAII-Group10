@@ -28,7 +28,7 @@ class Expert(
     @OneToMany( mappedBy = "expert")
     var messages: MutableSet<Message> = mutableSetOf()
 
-    fun assignTicket(t: Ticket){
+    fun addTicket(t: Ticket){
         t.expert = this
         this.inProgressTickets.add(t)
     }
