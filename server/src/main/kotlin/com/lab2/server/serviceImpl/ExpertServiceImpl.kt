@@ -32,7 +32,9 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository): ExpertS
     }
 
     override fun addExpertiseToExpert(expert: ExpertDTO, expertise: ExpertiseDTO) {
-
+        if(expertRepository.findByIdOrNull(expert.id)?.toDTO() == null) {
+            throw ExpertNotFoundException("Expert not found")
+        }
         val exp = expert.toExpert()
         exp.addExpertise(expertise.toExpertise())
         expertRepository.save(exp)
