@@ -29,7 +29,6 @@ class ExpertiseServiceImpl (private val expertiseRepository: ExpertiseRepository
     }
 
     override fun createExpertise(field: String) {
-        println(expertiseRepository.findByField(field))
         if (expertiseRepository.findByField(field) !== null) {
             throw DuplicatedExpertiseException("Expertise exists!")
         }
