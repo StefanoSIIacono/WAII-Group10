@@ -75,6 +75,4 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
 
         ticketingRepository.save(ticket)
     }
-
-
 }

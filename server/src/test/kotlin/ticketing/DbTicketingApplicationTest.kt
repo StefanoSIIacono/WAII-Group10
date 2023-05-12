@@ -71,7 +71,7 @@ class DbTicketingApplicationTest {
         //prof.addTicket(actualTicket)
 
         actualTicket = TicketingRepository.save(actualTicket)
-        assertEquals((actualTicket.getId()), 1)
+        assertEquals((actualTicket.id), 1)
     }
 
     @Test

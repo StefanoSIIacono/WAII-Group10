@@ -17,11 +17,10 @@ class Manager (
     @OneToMany(mappedBy = "manager")
     var changedStatuses = mutableListOf<TicketStatus>()
     */
-
 }
 
 fun ManagerDTO.toManager(): Manager {
     val manager = Manager(name, surname)
-    //manager.id = id
+    manager.id = id
     return manager
 }

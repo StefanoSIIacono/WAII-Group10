@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ExpertiseRepository: JpaRepository<Expertise, Long> {
 
-    fun findByField(field: String): Expertise
+    fun findByField(field: String): Expertise?
 }

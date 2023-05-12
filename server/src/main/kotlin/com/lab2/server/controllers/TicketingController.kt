@@ -77,7 +77,6 @@ class TicketingController(private val ticketService: TicketService) {
         if (expertId === null) {
             throw NoBodyProvidedException("Wrong body")
         }
-
         ticketService.setTicketStatus(ticketId, Status.IN_PROGRESS, expertId, StatusChanger.MANAGER)
     }
 

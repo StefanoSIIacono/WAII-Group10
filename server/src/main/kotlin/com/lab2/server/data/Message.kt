@@ -1,5 +1,6 @@
 package com.lab2.server.data
 
+import com.lab2.server.dto.MessageDTO
 import jakarta.persistence.*
 
 @Entity
@@ -26,4 +27,11 @@ class Message (
         a.message = this
         this.attachments.add(a)
     }
+}
+
+fun MessageDTO.toMessage(): Message{
+    val message = Message(timestamp, body, expert?.toExpert(), ticket.toTicket())
+    message.id = id
+    return message
+
 }

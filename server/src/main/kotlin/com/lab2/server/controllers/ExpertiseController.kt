@@ -37,7 +37,6 @@ class ExpertiseController(private val expertiseService: ExpertiseService) {
             throw NoBodyProvidedException("You have to add a body")
         }
         expertiseService.createExpertise(expertise.field)
-
     }
 
     @DeleteMapping("/expertise/{expertise}")

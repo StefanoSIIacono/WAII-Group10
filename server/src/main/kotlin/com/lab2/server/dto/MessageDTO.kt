@@ -6,13 +6,15 @@ import jakarta.persistence.Temporal
 import jakarta.persistence.TemporalType
 
 data class MessageDTO (
+    val id: Long?,
     @Temporal(TemporalType.TIMESTAMP)
     val timestamp: java.util.Date,
     val body: String,
     val attachments: MutableList<AttachmentDTO> = mutableListOf(),
-    val expert: ExpertDTO? = null
+    val expert: ExpertDTO? = null,
+    val ticket: TicketDTO
 )
 
 fun Message.toDTO(): MessageDTO {
-    return MessageDTO(timestamp, body, attachments.map {it.toDTO()}.toMutableList(), expert?.toDTO())
+    return MessageDTO(id, timestamp, body, attachments.map {it.toDTO()}.toMutableList(), expert?.toDTO(), ticket.toDTO())
 }

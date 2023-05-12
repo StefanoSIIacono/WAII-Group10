@@ -26,5 +26,5 @@ data class TicketInProgressBodyDTO(
 )
 
 fun Ticket.toDTO(): TicketDTO {
-            return TicketDTO(getId(), obj, arg, priority, profile.toDTO(), expert?.toDTO(), product.toDTO(), statusHistory.maxBy { it.timestamp }.toDTO())
+            return TicketDTO(id, obj, arg, priority, profile.toDTO(), expert?.toDTO(), product.toDTO(), statusHistory.maxBy { it.timestamp }.toDTO())
 }

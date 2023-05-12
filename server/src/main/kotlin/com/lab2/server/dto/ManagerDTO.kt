@@ -4,6 +4,7 @@ import com.lab2.server.data.Manager
 import com.lab2.server.data.TicketStatus
 
 class ManagerDTO (
+    val id: Long?,
     var name: String,
     var surname: String
 )
@@ -11,5 +12,5 @@ class ManagerDTO (
 }
 
 fun Manager.toDTO(): ManagerDTO {
-    return ManagerDTO(name, surname)
+    return ManagerDTO(id, name, surname)
 }

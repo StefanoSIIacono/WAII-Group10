@@ -51,4 +51,8 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler (NoBodyProvidedException::class)
     fun handleNoBody (e: NoBodyProvidedException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
+
+    @ExceptionHandler (DuplicatedExpertiseException::class)
+    fun handleDuplicatedExpertise (e: DuplicatedExpertiseException) = ProblemDetail
+            .forStatusAndDetail(HttpStatus.CONFLICT, e.message!!)
 }
