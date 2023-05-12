@@ -9,12 +9,7 @@ abstract class EntityBase <T: Serializable> {
     companion object {  private const val serialVersionUID = -43869754L   }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-        generator = "generator")
-    @SequenceGenerator(name="generator",
-        sequenceName = "sequence_1",
-        initialValue = 1,
-        allocationSize = 1)
+    @GeneratedValue
     @Column(updatable = false, nullable = false)
     var id:T?  = null
 

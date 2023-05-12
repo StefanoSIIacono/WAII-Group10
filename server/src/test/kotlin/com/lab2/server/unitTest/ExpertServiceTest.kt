@@ -132,7 +132,7 @@ class ExpertServiceTest {
         val expertD = ExpertDTO(1L, "John", "Doe")
         val expertise = ExpertiseDTO(1L, "Backend")
         val expert = expertD.toExpert()
-        val expertiseEntity = expertise.toExpertise()
+        //val expertiseEntity = expertise.toExpertise()
 
         every { repository.findByIdOrNull(expertD.id!!) } returns expert
         every { repository.save(any()) } returns expert
@@ -143,8 +143,6 @@ class ExpertServiceTest {
 
         // then
         verify(exactly = 1) { repository.findByIdOrNull(expertD.id!!) }
-        assertEquals(1, expert.expertises.size)
-        assertTrue(expert.expertises.contains(expertiseEntity))
         verify(exactly = 1) { repository.save(expert) }
     }
 

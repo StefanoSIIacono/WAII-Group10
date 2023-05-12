@@ -33,7 +33,6 @@ class DbTicketingApplicationTest {
             registry.add("spring.datasource.password", postgres::getPassword)
             registry.add("spring.jpa.hibernate,ddl-auto") {"create-drop"}
         }
-
     }
     @LocalServerPort
     protected var port: Int = 0
@@ -170,32 +169,16 @@ class DbTicketingApplicationTest {
         var prof = profileRepository.findByIdOrNull("test1@test.com")!!
 
         var actualTicket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
+        actualTicket.addProduct(prod)
+        actualTicket.addProfile(prof)
         actualTicket = ticketingRepository.save(actualTicket)
 
         prod = productRepository.findByIdOrNull("1234567890123456")!!
         prof = profileRepository.findByIdOrNull("test1@test.com")!!
-
-        actualTicket.addProduct(prod)
-        actualTicket.addProfile(prof)
-
-        profileRepository.save(prof)
-        productRepository.save(prod)
-
         val ticketsProd = prod.tickets.contains(actualTicket)
         val ticketsProf = prof.tickets.contains(actualTicket)
 
         assertEquals(true, ticketsProd)
         assertEquals(true, ticketsProf)
-        //assertEquals(ticketsProd[1], actualTicket)
-        //assertEquals(ticketsProf[1], actualTicket)
-
     }
-    /*
-    (TODO) testCheckProductContainsTicket
-    (TODO) testCheckProfileContainsTicket
-    test product e profile don't exist when you try to add them to a ticket
-    add expert to a ticket and check if the expert contains the ticket
-    change priority
-
-     */
 }

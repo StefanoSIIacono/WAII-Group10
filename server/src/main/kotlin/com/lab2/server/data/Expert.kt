@@ -40,7 +40,7 @@ class Expert(
     }
 
     fun addExpertise(e: Expertise) {
-        expertises.add(e)
+        this.expertises.add(e)
         e.experts.add(this)
     }
 
