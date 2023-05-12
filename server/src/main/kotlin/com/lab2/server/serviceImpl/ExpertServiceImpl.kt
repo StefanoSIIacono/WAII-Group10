@@ -1,6 +1,7 @@
 package com.lab2.server.serviceImpl
 
 import com.lab2.server.data.Expert
+import com.lab2.server.data.Ticket
 import com.lab2.server.data.toExpert
 import com.lab2.server.data.toExpertise
 import com.lab2.server.dto.ExpertDTO
@@ -35,5 +36,11 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository): ExpertS
         val exp = expert.toExpert()
         exp.addExpertise(expertise.toExpertise())
         expertRepository.save(exp)
+    }
+
+    override fun addTicketToExpert(expert: Expert, ticket: Ticket) {
+
+        expert.inProgressTickets.add(ticket)
+        expertRepository.save(expert)
     }
 }

@@ -30,9 +30,14 @@ class Ticket (
     @OneToMany(mappedBy = "ticket")
     var messages = mutableListOf<Message>()
 
-    fun addMessage(m: Message){
+    /*fun addMessage(m: Message){
         m.ticket = this
         this.messages.add(m)
+    }*/
+
+    fun removeExpert(){
+        this.expert?.inProgressTickets?.remove(this)
+        this.expert = null
     }
 
     fun addStatus(s: TicketStatus){

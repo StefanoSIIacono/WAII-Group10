@@ -67,6 +67,10 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
         if (inputStatus === Status.IN_PROGRESS) {
             expert!!.addTicketStatus(status)
             this.setTicketPriority(ticketId, priority!!)
+            expert.assignTicket(ticket)
+            expertService.addTicketToExpert(expert, ticket)
+        } else if (ticket.expert != null){
+            ticket.removeExpert()
         }
 
         ticketingRepository.save(ticket)
