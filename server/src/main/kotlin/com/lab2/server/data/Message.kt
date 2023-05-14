@@ -3,6 +3,7 @@ package com.lab2.server.data
 import jakarta.persistence.*
 
 @Entity
+@Table(name="messages")
 class Message (
 
     @Temporal(TemporalType.TIMESTAMP)

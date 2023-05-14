@@ -1,5 +1,6 @@
 package com.lab2.server.ticketing
 
+import com.lab2.server.controllers.ExpertController
 import com.lab2.server.data.*import com.lab2.server.repositories.*
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.*
@@ -57,12 +58,12 @@ class DbTicketingApplicationTest {
         var product = Product("1234567890123456", "product1", "p1")
         var profile = Profile("test1@test.com", "test1", "test")
         var expert = Expert("expert", "expert")
-        val expertise = Expertise("expertise")
+        var expertise = Expertise("expertise")
 
         profile = profileRepository.save(profile)
         product = productRepository.save(product)
         expert = expertRepository.save(expert)
-        expertiseRepository.save(expertise)
+        expertise=expertiseRepository.save(expertise)
 
         val ticket = Ticket("obj", "arg", priority, profile, expert, product)
         val status = TicketStatus(Status.OPEN, Date(System.currentTimeMillis()), ticket)
@@ -178,7 +179,25 @@ class DbTicketingApplicationTest {
         val ticketsProd = prod.tickets.contains(actualTicket)
         val ticketsProf = prof.tickets.contains(actualTicket)
 
+
         assertEquals(true, ticketsProd)
         assertEquals(true, ticketsProf)
+    }
+    @Test
+    @Transactional
+    fun `mapping a expert to an expertise and viceversa`(){
+        var expertise=expertiseRepository.findByField("expertise")
+        var expert=expertRepository.findByIdOrNull(1)
+        //expert?.addExpertise(expertise!!)
+        expertise?.addExpert(expert!!)
+        //expert?.expertises?.add(expertise!!)
+        //expertise?.experts?.add(expert!!)
+        expertRepository.save(expert!!)
+        expertiseRepository.save(expertise!!)
+        var expertisee=expertiseRepository.findByField("expertise")
+        var expertt=expertRepository.findByIdOrNull(1)
+        assertEquals(1,expertt?.expertises?.size)
+        assertEquals(1, expertisee?.experts?.size )
+
     }
 }

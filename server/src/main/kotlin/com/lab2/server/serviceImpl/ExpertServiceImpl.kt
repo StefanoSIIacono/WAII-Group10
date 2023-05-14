@@ -35,6 +35,7 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository): ExpertS
         if(expertRepository.findByIdOrNull(expert.id)?.toDTO() == null) {
             throw ExpertNotFoundException("Expert not found")
         }
+        expert.addExpertiseDTO(expertise)
         val exp = expert.toExpert()
         exp.addExpertise(expertise.toExpertise())
         expertRepository.save(exp)
