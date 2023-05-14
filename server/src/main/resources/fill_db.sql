@@ -32,5 +32,8 @@ values(1,'Gino','Cuccagno'),
       (4,'Pino','Paolino'),
       (5,'Mastro','Gesualdo');
 
+insert into expert_expertise(expert_id, expertise_id)
+values (1,2);
+
 insert into managers(id,name,surname)
 values(1,'BIG','BOSS');
