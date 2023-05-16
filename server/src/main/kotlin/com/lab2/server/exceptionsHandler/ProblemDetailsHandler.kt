@@ -59,4 +59,8 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler (DuplicatedExpertiseException::class)
     fun handleDuplicatedExpertise (e: DuplicatedExpertiseException) = ProblemDetail
             .forStatusAndDetail(HttpStatus.CONFLICT, e.message!!)
+
+    @ExceptionHandler (AddressNotFoundException::class)
+    fun handleAddressNotFound (e: AddressNotFoundException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.NOT_FOUND, e.message!!)
 }

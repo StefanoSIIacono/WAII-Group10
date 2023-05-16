@@ -6,9 +6,17 @@ import com.lab2.server.data.Profile
 data class ProfileDTO(
     val email:String,
     val name:String,
+    val surname:String,
+    val address: AddressDTO?
+)
+
+data class CreateOrEditProfileDTO(
+    val email:String,
+    val name:String,
     val surname:String
 )
 
 fun Profile.toDTO(): ProfileDTO {
-    return ProfileDTO(email, name, surname)
+    return ProfileDTO(email, name, surname, address?.toDTO())
 }
+

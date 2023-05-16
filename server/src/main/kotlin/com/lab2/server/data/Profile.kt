@@ -10,7 +10,10 @@ class Profile (
     @Column(updatable = false, nullable = false)
     var email: String,
     var name: String,
-    var surname: String
+    var surname: String,
+
+    @OneToOne(mappedBy = "profile", cascade = [CascadeType.ALL])
+    var address: Address?
 )
 {
     @OneToMany( mappedBy = "profile")
@@ -24,10 +27,14 @@ class Profile (
     /*fun getEmail(): String{
         return this.email
     }*/
+
+    fun addAddress(a: Address){
+        this.address = a
+    }
 }
 
 fun ProfileDTO.toProfile(): Profile {
-    return Profile(email, name, surname)
+    return Profile(email, name, surname, address?.toAddress())
 }
 
 

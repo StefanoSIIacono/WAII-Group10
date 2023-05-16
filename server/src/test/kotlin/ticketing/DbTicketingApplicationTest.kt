@@ -1,10 +1,12 @@
 package com.lab2.server.ticketing
 
-import com.lab2.server.controllers.ExpertController
-import com.lab2.server.data.*import com.lab2.server.repositories.*
+import com.lab2.server.data.*
+import com.lab2.server.repositories.*
 import jakarta.transaction.Transactional
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
@@ -56,14 +58,18 @@ class DbTicketingApplicationTest {
     @BeforeEach
     fun populateRepositories(){
         var product = Product("1234567890123456", "product1", "p1")
-        var profile = Profile("test1@test.com", "test1", "test")
+        var profile = Profile("test1@test.com", "test1", "test", null)
         var expert = Expert("expert", "expert")
-        var expertise = Expertise("expertise")
+        val expertise = Expertise("expertise")
+        val address = Address("c", "c", "z", "s", "h", profile)
+
+        profile.addAddress(address)
+        expert.addExpertise(expertise)
 
         profile = profileRepository.save(profile)
         product = productRepository.save(product)
         expert = expertRepository.save(expert)
-        expertise=expertiseRepository.save(expertise)
+        //expertise = expertiseRepository.save(expertise)
 
         val ticket = Ticket("obj", "arg", priority, profile, expert, product)
         val status = TicketStatus(Status.OPEN, Date(System.currentTimeMillis()), ticket)
@@ -186,16 +192,16 @@ class DbTicketingApplicationTest {
     @Test
     @Transactional
     fun `mapping a expert to an expertise and viceversa`(){
-        var expertise=expertiseRepository.findByField("expertise")
-        var expert=expertRepository.findByIdOrNull(1)
+        val expertise=expertiseRepository.findByField("expertise")
+        val expert=expertRepository.findByIdOrNull(1)
         //expert?.addExpertise(expertise!!)
         expertise?.addExpert(expert!!)
         //expert?.expertises?.add(expertise!!)
         //expertise?.experts?.add(expert!!)
         expertRepository.save(expert!!)
         expertiseRepository.save(expertise!!)
-        var expertisee=expertiseRepository.findByField("expertise")
-        var expertt=expertRepository.findByIdOrNull(1)
+        val expertisee=expertiseRepository.findByField("expertise")
+        val expertt=expertRepository.findByIdOrNull(1)
         assertEquals(1,expertt?.expertises?.size)
         assertEquals(1, expertisee?.experts?.size )
 

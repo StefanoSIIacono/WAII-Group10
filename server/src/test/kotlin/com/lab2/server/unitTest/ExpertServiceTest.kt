@@ -151,7 +151,10 @@ class ExpertServiceTest {
         // given
         val expert = Expert("John", "Doe")
         val product = Product("1", "Shirt", "Tommy Hilfiger")
-        val profile = Profile("test@test1.com", "testName", "testSurname")
+        val profile = Profile("test@test1.com", "testName", "testSurname",
+                null)
+        val address = Address("c", "c", "z", "s", "h", profile)
+        profile.addAddress(address)
         val ticket = Ticket("Ticket", "ticket problem", Priority.TOASSIGN, profile, null, product)
 
         every { repository.save(any()) } returns expert
