@@ -2,11 +2,8 @@ package com.lab2.server.unitTest
 
 import com.lab2.server.data.Address
 import com.lab2.server.data.Profile
-import com.lab2.server.dto.CreateOrChangeProfileAddressDTO
-import com.lab2.server.dto.CreateOrEditProfileDTO
-import com.lab2.server.dto.toDTO
+import com.lab2.server.dto.*
 import com.lab2.server.exceptionsHandler.exceptions.DuplicateProfileException
-import com.lab2.server.exceptionsHandler.exceptions.ProfileNotFoundException
 import com.lab2.server.repositories.ProfileRepository
 import com.lab2.server.serviceImpl.ProfileServiceImpl
 import io.mockk.every
@@ -69,8 +66,8 @@ class ProfileServiceTest {
     @Test
     fun insertProfileTest() {
         // given
-        val createProfile = CreateOrEditProfileDTO("mariorossi@gmail.com", "mario", "ross")
-        val createAddress = CreateOrChangeProfileAddressDTO("c", "c", "z", "s", "h")
+        val createProfile = ProfileDTO("mariorossi@gmail.com", "mario", "ross", null)
+        val createAddress = AddressDTO("mariorossi@gmail.com", "c", "c", "z", "s", "h", createProfile)
         val profile = Profile("mariorossi@gmail.com", "mario", "rossi",null)
         val address = Address(createAddress.city,
                                 createAddress.country,
@@ -86,7 +83,7 @@ class ProfileServiceTest {
 
         val service = ProfileServiceImpl(repository)
         // when
-        service.insertProfile(createProfile, createAddress)
+        service.insertProfile(createProfile)
 
         // then
         verify(exactly = 1) { repository.existsById("mariorossi@gmail.com")  }
@@ -96,8 +93,8 @@ class ProfileServiceTest {
     @Test
     fun insertExistingProfileTest() {
         // given
-        val createProfile = CreateOrEditProfileDTO("mariorossi@gmail.com", "mario", "ross")
-        val createAddress = CreateOrChangeProfileAddressDTO("c", "c", "z", "s", "h")
+        val createProfile = ProfileDTO("mariorossi@gmail.com", "mario", "ross", null)
+        val createAddress = AddressDTO("mariorossi@gmail.com","c", "c", "z", "s", "h", createProfile)
         val profile = Profile("mariorossi@gmail.com", "mario", "rossi",null)
         val address = Address(createAddress.city,
                 createAddress.country,
@@ -114,7 +111,7 @@ class ProfileServiceTest {
         // when
         var exceptionThrown = false
         try {
-            service.insertProfile(createProfile, createAddress)
+            service.insertProfile(createProfile)
         } catch (e: DuplicateProfileException) {
             exceptionThrown = true
         }

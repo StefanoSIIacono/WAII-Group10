@@ -13,10 +13,8 @@ data class AddressDTO (
 )
 {
 }
-
 // FOR THE GET WE WANT TO DELETE THE PROFILE WHEN SHOWN TO THE CLIENT
 data class GetAddressDTO (
-        val id: String?,
         val city: String,
         val country: String,
         val zipCode: String,
@@ -24,13 +22,12 @@ data class GetAddressDTO (
         val houseNumber: String,
 )
 
-fun Address.toDTO(): AddressDTO {
-    return AddressDTO(  this.id,
+fun Address.toDTO(): GetAddressDTO {
+    return GetAddressDTO(
                         this.city,
                         this.country,
                         this.zipCode,
                         this.street,
-                        this.houseNumber,
-                        null
+                        this.houseNumber
                         );
 }

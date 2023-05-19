@@ -2,10 +2,10 @@ package com.lab2.server.serviceImpl
 
 import com.lab2.server.data.Address
 import com.lab2.server.data.Profile
-import com.lab2.server.data.toProfile
 import com.lab2.server.dto.*
 import com.lab2.server.exceptionsHandler.exceptions.DuplicateProfileException
-import com.lab2.server.exceptionsHandler.exceptions.ProfileEmailChangeNotAllowedException
+import com.lab2.server.exceptionsHandler.exceptions.IllegalEmailInAddressException
+import com.lab2.server.exceptionsHandler.exceptions.ProfileNotFoundException
 import com.lab2.server.repositories.ProfileRepository
 import com.lab2.server.services.ProfileService
 import org.springframework.data.repository.findByIdOrNull
@@ -25,7 +25,7 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
         return profileRepository.findByIdOrNull(email)!!.tickets.map { it.toDTO() }.toMutableList()
     }
 
-    override fun insertProfile(profile: ProfileDTO){//, address: CreateOrChangeProfileAddressDTO){
+    override fun insertProfile(profile: ProfileDTO){
         if (profileRepository.existsById(profile.email))
             throw DuplicateProfileException("Profile exists!")
 
@@ -41,51 +41,38 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
 
         newProfile.addAddress(newAddress)
 
-        // The save of the profile saves the address in cascade
+        // The save is in cascade for the address
         profileRepository.save(newProfile)
     }
-/*
-    // UNUSED
-    override fun getAddressByEmail(email: String): AddressDTO {
-        val profile = profileRepository.findByIdOrNull(email) ?:throw ProfileNotFoundException("Profile not found")
 
-        return profile.address!!.toDTO()
-    }
-*/
+    override fun editProfileInfo(email: String, newProfile: ChangeProfileInfoDTO){
 
-    /*--------------------------------------------------------------------------------------------------
-        I provided two new methods to change the address or the profile info (name, surname)
-    ---------------------------------------------------------------------------------------------------*/
-    override fun editProfileInfo(oldProfile: ProfileDTO, newProfile: ProfileDTO){
-        if (oldProfile.email != newProfile.email)
-            throw ProfileEmailChangeNotAllowedException("Can't change profile email")
+        val oldProfile = profileRepository.findByIdOrNull(email)
+            ?: throw IllegalEmailInAddressException("The email doesn't exist")
 
-        /* check already done in controller in order to pass a DTO to the service
-        if (!profileRepository.existsById(profile.email))
-            throw ProfileNotFoundException("Profile doesn't exist!")
-        */
-        val profile = oldProfile.toProfile()
-        profile.name = newProfile.name
-        profile.surname = newProfile.surname
+        oldProfile.name = newProfile.name
+        oldProfile.surname = newProfile.surname
 
-        profileRepository.save(profile)
+        profileRepository.save(oldProfile)
     }
 
-    //--------------------------------------------------------------------------------------------------------
-    // Function used to CHANGE ADDRESS TO THE ALREADY CREATED PROFILE
-    override fun editAddressByProfile(profileD: ProfileDTO, newAddress: AddressDTO) {
+    override fun editAddressByProfile(email: String, newAddress: GetAddressDTO) {
 
-        //val profile = profileRepository.findByIdOrNull(newAddress.email) ?: throw ProfileNotFoundException("Profile not found")
-        val profile = profileD.toProfile()
-        profile
-                .addAddress(Address(newAddress.city,
+        val profile = profileRepository.findByIdOrNull(email)
+            ?: throw ProfileNotFoundException("Profile not found")
+
+        profile.addAddress(Address(newAddress.city,
                         newAddress.country,
                         newAddress.zipCode,
                         newAddress.street,
                         newAddress.houseNumber,
                         profile,
                         profile.email))
-        println("qua")
+
         profileRepository.save(profile)
+    }
+    // FOR OTHER SERVICES ONLY - DO NOT EXPOSE TO THE CLIENT, SINCE IT RETURNS PROFILE ENTITIES
+    override fun provideProfileByEmail(email: String): Profile? {
+        return profileRepository.findByIdOrNull(email)
     }
 }

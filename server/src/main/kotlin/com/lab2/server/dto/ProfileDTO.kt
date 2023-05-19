@@ -7,10 +7,19 @@ data class ProfileDTO(
     val email:String,
     val name:String,
     val surname:String,
-    val address: AddressDTO?
+    val address: GetAddressDTO?
+)
+
+data class ChangeProfileInfoDTO(
+    val name:String,
+    val surname:String
 )
 
 fun Profile.toDTO(): ProfileDTO {
-    return ProfileDTO(email, name, surname, address?.toDTO())
+    return ProfileDTO(   this.email,
+                            this.name,
+                            this.surname,
+                            this.address?.toDTO()
+    )
 }
 

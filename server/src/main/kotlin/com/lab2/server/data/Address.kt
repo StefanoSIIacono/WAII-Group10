@@ -1,7 +1,6 @@
 package com.lab2.server.data
 
 import com.lab2.server.dto.AddressDTO
-import com.lab2.server.dto.GetAddressDTO
 import jakarta.persistence.*
 
 @Entity
@@ -15,7 +14,7 @@ class Address (
 
     @OneToOne (fetch = FetchType.LAZY)
     var profile: Profile,
-    @Id var id: String? = null
+    @Id @Column(name = "address_id") var id: String? = null
 )
 {
 }
@@ -28,5 +27,5 @@ fun AddressDTO.toAddress(): Address {
             this.houseNumber,
             this.profile!!.toProfile(),
             this.id)
-    //return address
 }
+

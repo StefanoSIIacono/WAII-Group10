@@ -27,11 +27,11 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
     }
 
     override fun insertTicket(ticket: TicketCreateBodyDTO) {
-        val profile = profileService.getProfileByEmail(ticket.profile) ?: throw ProfileNotFoundException("Profile not found")
+        val profile = profileService.provideProfileByEmail(ticket.profile) ?: throw ProfileNotFoundException("Profile not found")
 
         val product = productService.getProduct(ticket.product) ?: throw ProductNotFoundException("Product not found")
 
-        val newTicket = Ticket(ticket.obj, ticket.arg, Priority.TOASSIGN, profile.toProfile(), null, product.toProduct())
+        val newTicket = Ticket(ticket.obj, ticket.arg, Priority.TOASSIGN, profile, null, product.toProduct())
         val status = TicketStatus(Status.OPEN, Date(System.currentTimeMillis()), newTicket)
 
         newTicket.addStatus(status)

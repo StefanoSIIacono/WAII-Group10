@@ -63,4 +63,7 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler (AddressNotFoundException::class)
     fun handleAddressNotFound (e: AddressNotFoundException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.NOT_FOUND, e.message!!)
+    @ExceptionHandler (IllegalEmailInAddressException::class)
+    fun handleIllegalEmailInAddress (e: IllegalEmailInAddressException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.NOT_FOUND, e.message!!)
 }
