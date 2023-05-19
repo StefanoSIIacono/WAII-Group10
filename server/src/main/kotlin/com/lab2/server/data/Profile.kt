@@ -18,23 +18,24 @@ class Profile (
 {
     @OneToMany( mappedBy = "profile")
     val tickets = mutableListOf<Ticket>()
+/*
+fun addTicket(t: Ticket){
+    t.profile = this
+    this.tickets.add(t)
+}
 
-    fun addTicket(t: Ticket){
-        t.profile = this
-        this.tickets.add(t)
-    }
+fun getEmail()String{
+    return this.email
+}*/
 
-    /*fun getEmail(): String{
-        return this.email
-    }*/
-
-    fun addAddress(a: Address){
-        this.address = a
-    }
+fun addAddress(a: Address){
+    this.address = a
+}
 }
 
 fun ProfileDTO.toProfile(): Profile {
-    return Profile(email, name, surname, address?.toAddress())
+return Profile(this.email, this.name, this.surname, this.address?.toAddress())
 }
+
 
 

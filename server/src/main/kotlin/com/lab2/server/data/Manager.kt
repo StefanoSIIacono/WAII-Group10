@@ -21,7 +21,7 @@ class Manager (
 }
 
 fun ManagerDTO.toManager(): Manager {
-    val manager = Manager(name, surname)
-    manager.id = id
+    val manager = Manager(this.name, this.surname)
+    manager.id = this.id
     return manager
 }

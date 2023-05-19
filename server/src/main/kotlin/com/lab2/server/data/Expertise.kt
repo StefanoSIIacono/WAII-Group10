@@ -23,7 +23,7 @@ class Expertise (
 }
 
 fun ExpertiseDTO.toExpertise(): Expertise {
-    val expertise = Expertise(field)
-    expertise.id = id
+    val expertise = Expertise(this.field)
+    expertise.id = this.id
     return expertise
 }

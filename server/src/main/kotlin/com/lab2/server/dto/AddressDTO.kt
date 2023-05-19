@@ -3,34 +3,34 @@ package com.lab2.server.dto
 import com.lab2.server.data.Address
 
 data class AddressDTO (
-    val id: Long?,
+    val id: String?,
     val city: String,
     val country: String,
     val zipCode: String,
     val street: String,
     val houseNumber: String,
-    val profile: ProfileDTO
+    val profile: ProfileDTO?
 )
 {
 }
 
-/*data class ChangeProfileAddressDTO(
-    val city: String,
-    val country: String,
-    val zipCode: String,
-    val street: String,
-    val houseNumber: String,
-    val profile: String
-)*/
-
-data class CreateOrChangeProfileAddressDTO(
-    val city: String,
-    val country: String,
-    val zipCode: String,
-    val street: String,
-    val houseNumber: String,
+// FOR THE GET WE WANT TO DELETE THE PROFILE WHEN SHOWN TO THE CLIENT
+data class GetAddressDTO (
+        val id: String?,
+        val city: String,
+        val country: String,
+        val zipCode: String,
+        val street: String,
+        val houseNumber: String,
 )
 
 fun Address.toDTO(): AddressDTO {
-    return AddressDTO(id, city, country, zipCode, street, houseNumber, profile.toDTO());
+    return AddressDTO(  this.id,
+                        this.city,
+                        this.country,
+                        this.zipCode,
+                        this.street,
+                        this.houseNumber,
+                        null
+                        );
 }

@@ -34,12 +34,11 @@ class ProfileController(private val profileService: ProfileService) {
     @PostMapping("/profiles/")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    fun createProfile(@RequestBody profile: CreateOrEditProfileDTO?, @RequestBody address: CreateOrChangeProfileAddressDTO?){
-        if (profile === null || address === null) {
+    fun createProfile(@RequestBody profile: ProfileDTO?){//, @RequestBody address: CreateOrChangeProfileAddressDTO?){
+        if (profile === null || profile.address === null) {
             throw NoBodyProvidedException("You have to add a body")
         }
-        profileService.insertProfile(profile, address)
-
+        profileService.insertProfile(profile)
     }
     //********************************************************************************************************
     // FIX: before that, there was a function that, provided a DTO, had to change the profile information
@@ -49,7 +48,7 @@ class ProfileController(private val profileService: ProfileService) {
     @Transactional
     @PutMapping("/profiles/{email}/newEmail")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun changeProfileInfo(@PathVariable email:String, @RequestBody newProfile: CreateOrEditProfileDTO?){
+    fun changeProfileInfo(@PathVariable email:String, @RequestBody newProfile: ProfileDTO?){
 
         if(newProfile === null) throw NoBodyProvidedException("No body provided")
 
@@ -60,10 +59,11 @@ class ProfileController(private val profileService: ProfileService) {
     @Transactional
     @PutMapping("/profiles/{email}/newAddress")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun changeProfileAddress(@PathVariable email:String,
-                             @RequestBody newAddress: CreateOrChangeProfileAddressDTO?){
+    fun changeProfileAddress(@PathVariable email: String,
+                             @RequestBody newAddress: AddressDTO?){
         if (newAddress === null) throw NoBodyProvidedException("No body provided")
-        val profile = profileService.getProfileByEmail(email) ?: throw NoBodyProvidedException("You have to add a body")
+        println("prima della get")
+        val profile = profileService.getProfileByEmail(email) ?: throw NoBodyProvidedException("Email doesn't exist")
 
         profileService.editAddressByProfile(profile , newAddress)
     }
@@ -74,6 +74,5 @@ class ProfileController(private val profileService: ProfileService) {
     fun getTicketsByEmail(@PathVariable email:String): MutableList<TicketDTO> {
         return profileService.getTicketsByEmail(email)
     }
-
 
 }

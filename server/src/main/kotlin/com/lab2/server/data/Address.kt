@@ -1,10 +1,8 @@
 package com.lab2.server.data
 
 import com.lab2.server.dto.AddressDTO
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.OneToOne
-import jakarta.persistence.Table
+import com.lab2.server.dto.GetAddressDTO
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "addresses")
@@ -15,15 +13,20 @@ class Address (
     val street: String,
     val houseNumber: String,
 
-    @OneToOne
+    @OneToOne (fetch = FetchType.LAZY)
     var profile: Profile,
-    @Id var id: Long? = null
+    @Id var id: String? = null
 )
 {
 }
-
 fun AddressDTO.toAddress(): Address {
-    val address = Address(city, country, zipCode, street, houseNumber, profile.toProfile())
-    address.id = id
-    return address
+    return Address(
+            this.city,
+            this.country,
+            this.zipCode,
+            this.street,
+            this.houseNumber,
+            this.profile!!.toProfile(),
+            this.id)
+    //return address
 }

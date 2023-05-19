@@ -47,7 +47,7 @@ class Expert(
 }
 
 fun ExpertDTO.toExpert(): Expert {
-    val expert = Expert(name, surname)
-    expert.id = id
+    val expert = Expert(this.name, this.surname)
+    expert.id = this.id
     return expert
 }

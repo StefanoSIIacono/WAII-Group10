@@ -10,12 +10,6 @@ data class ProfileDTO(
     val address: AddressDTO?
 )
 
-data class CreateOrEditProfileDTO(
-    val email:String,
-    val name:String,
-    val surname:String
-)
-
 fun Profile.toDTO(): ProfileDTO {
     return ProfileDTO(email, name, surname, address?.toDTO())
 }
