@@ -33,11 +33,14 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.mockk:mockk:1.9.3")
 	testImplementation("org.testcontainers:junit-jupiter:1.16.3")
 	testImplementation("org.testcontainers:postgresql:1.16.3")
+	testImplementation("org.springframework.security:spring-security-test")
 }
 
 dependencyManagement {
