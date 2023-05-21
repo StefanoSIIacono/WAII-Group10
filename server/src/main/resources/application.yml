@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: springboot-keycloak
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/test
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ticket_service
+    username: postgres
+    password: mysecretpassword
+  jpa:
+    show-sql: true
+    hibernate.ddl-auto: create
+
+jwt:
+  auth:
+    converter:
+      resource-id: myclient
+      principal-attribute: preferred_username
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+server:
+  port: '8080'
+  servlet:
+    context-path: /api
