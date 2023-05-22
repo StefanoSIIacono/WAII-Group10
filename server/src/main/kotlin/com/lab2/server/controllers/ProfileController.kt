@@ -5,6 +5,7 @@ import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
 import com.lab2.server.exceptionsHandler.exceptions.ProfileNotFoundException
 import com.lab2.server.services.ProfileService
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.annotation.Secured
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
@@ -12,11 +13,13 @@ import org.springframework.web.bind.annotation.*
 class ProfileController(private val profileService: ProfileService) {
     @GetMapping("/profiles/")
     @ResponseStatus(HttpStatus.OK)
+    @Secured("MANAGER", "EXPERT", "PROFILE")
     fun getAll(): List<ProfileDTO>{
         return profileService.getAll()
     }
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
+    @Secured("MANAGER", "EXPERT", "PROFILE")
     fun getProfileByEmail(@PathVariable email:String): ProfileDTO {
         return profileService.getProfileByEmail(email)
             ?: throw ProfileNotFoundException("Profile not found")
@@ -35,6 +38,7 @@ class ProfileController(private val profileService: ProfileService) {
 
     @Transactional
     @PutMapping("/profiles/{email}/newEmail")
+    @Secured("PROFILE")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun changeProfileInfo(@PathVariable email:String, @RequestBody newProfile: ChangeProfileInfoDTO?){
 
@@ -46,6 +50,7 @@ class ProfileController(private val profileService: ProfileService) {
     @Transactional
     @PutMapping("/profiles/{email}/newAddress")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Secured("PROFILE")
     fun changeProfileAddress(@PathVariable email: String,
                              @RequestBody newAddress: GetAddressDTO?){
         if (newAddress === null) throw NoBodyProvidedException("No body provided")
@@ -55,6 +60,7 @@ class ProfileController(private val profileService: ProfileService) {
 
     @GetMapping("/profiles/{email}/tickets/")
     @ResponseStatus(HttpStatus.OK)
+    @Secured("PROFILE")
     fun getTicketsByEmail(@PathVariable email:String): MutableList<TicketDTO> {
         return profileService.getTicketsByEmail(email)
     }

@@ -40,7 +40,8 @@ class JwtAuthConverter(
         return resourceAccess[properties.resourceId]?.get("roles")?.stream()
             ?.map { role: String ->
                 SimpleGrantedAuthority(
-                    "ROLE_$role"
+                    // "ROLE_$role"
+                    role
                 )
             }
             ?.collect(Collectors.toSet()) ?: setOf()
