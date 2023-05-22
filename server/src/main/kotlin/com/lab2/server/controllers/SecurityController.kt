@@ -1,35 +1,44 @@
 package com.lab2.server.controllers
 
-import org.springframework.http.ResponseEntity
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
+import com.lab2.server.dto.LoginDTO
+import com.lab2.server.dto.TokenDTO
+import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
+import com.lab2.server.exceptionsHandler.exceptions.WrongCredentialsException
+import com.lab2.server.security.JwtAuthConverterProperties
+import org.springframework.core.env.Environment
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import java.security.Principal
+import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.client.WebClient
 
 
 @RestController
-@RequestMapping("/test")
-class SecurityController {
-    @GetMapping("/anonymous")
-    fun anonymous(): ResponseEntity<String> {
-        return ResponseEntity.ok("Hello Anonymous")
-    }
+class SecurityController(private val env: Environment, private val properties: JwtAuthConverterProperties) {
+    @GetMapping("/login")
+    fun login(@RequestBody body: LoginDTO?): TokenDTO {
+        if (body === null) {
+            throw NoBodyProvidedException("You have to add a body")
+        }
+        try {
+            val client: WebClient = WebClient.create(env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri")!!)
 
-    @GetMapping("/admin")
-    fun getAdmin(principal: Principal): ResponseEntity<String> {
-        val token = principal as JwtAuthenticationToken
-        val userName = token.tokenAttributes["name"] as String?
-        val userEmail = token.tokenAttributes["email"] as String?
-        return ResponseEntity.ok("Hello Admin \nUser Name : $userName\nUser Email : $userEmail")
-    }
+            val response = client.post().uri("/protocol/openid-connect/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(
+                    BodyInserters.fromFormData("grant_type", "password")
+                    .with("client_id", properties.resourceId!!)
+                    .with("username", body.username)
+                    .with("password", body.password)
+                )
+                .retrieve()
+                .bodyToMono(TokenDTO::class.java)
+                .block()
 
-    @GetMapping("/user")
-    fun getUser(principal: Principal): ResponseEntity<String> {
-        val token = principal as JwtAuthenticationToken
-        println(token.tokenAttributes)
-        val userName = token.tokenAttributes["name"] as String?
-        val userEmail = token.tokenAttributes["email"] as String?
-        return ResponseEntity.ok("Hello User \nUser Name : $userName\nUser Email : $userEmail")
+            return response ?: throw WrongCredentialsException("Wrong username or password")
+        } catch (e: Exception) {
+            throw WrongCredentialsException("Wrong username or password")
+        }
     }
 }

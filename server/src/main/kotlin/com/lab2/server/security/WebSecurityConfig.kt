@@ -20,7 +20,7 @@ class WebSecurityConfig (private val jwtAuthConverter: JwtAuthConverter) {
     @Throws(Exception::class)
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.authorizeHttpRequests()
-            .requestMatchers(HttpMethod.GET, "/test/anonymous", "/test/anonymous/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/login").permitAll()
             .requestMatchers(HttpMethod.GET, "/test/admin", "/test/admin/**").hasRole(ADMIN)
             .requestMatchers(HttpMethod.GET, "/test/user").hasAnyRole(ADMIN, USER)
             .anyRequest().authenticated()

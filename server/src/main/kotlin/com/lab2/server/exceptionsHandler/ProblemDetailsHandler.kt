@@ -66,4 +66,8 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler (IllegalEmailInAddressException::class)
     fun handleIllegalEmailInAddress (e: IllegalEmailInAddressException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.NOT_FOUND, e.message!!)
+
+    @ExceptionHandler (WrongCredentialsException::class)
+    fun handleWrongCredentials (e: WrongCredentialsException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.message!!)
 }

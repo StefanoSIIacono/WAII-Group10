@@ -7,8 +7,6 @@ class ManagerDTO (
     var name: String,
     var surname: String
 )
-{
-}
 
 fun Manager.toDTO(): ManagerDTO {
     return ManagerDTO(id, name, surname)
