@@ -6,13 +6,16 @@ import com.lab2.server.data.StatusChanger
 import com.lab2.server.dto.TicketCreateBodyDTO
 import com.lab2.server.dto.TicketDTO
 import com.lab2.server.dto.TicketInProgressBodyDTO
+import com.lab2.server.exceptionsHandler.exceptions.IllegalStatusChangeException
 import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
 import com.lab2.server.exceptionsHandler.exceptions.TicketNotFoundException
 import com.lab2.server.services.TicketService
 import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.annotation.Secured
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 import java.util.*
 
 @RestController
@@ -56,24 +59,20 @@ class TicketingController(private val ticketService: TicketService) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("MANAGER", "EXPERT", "PROFILE")
     @Transactional
-    fun closeTicket(@PathVariable ticketId:Long){
-        /*
-        val s : StatusChanger = if(statusChanger.uppercase() == "MANAGER") {
-            StatusChanger.MANAGER
-        } else if (statusChanger.uppercase() == "EXPERT"){
-            StatusChanger.EXPERT
-        } else{
-            throw IllegalStatusChangeException("Illegal status changer")
+    fun closeTicket(principal: Principal, @PathVariable ticketId:Long){
+        val token = principal as JwtAuthenticationToken
+
+        val statusChanger = StatusChanger.values().firstOrNull { sc -> token.authorities.map { it.authority }.contains(sc.name) }
+        if (statusChanger === null) {
+            throw IllegalStatusChangeException("")
         }
-         */
-        // TODO: put the right profile when authentication implemented
-        ticketService.setTicketStatus(ticketId, Status.CLOSED, StatusChanger.PROFILE, null, null)
+        ticketService.setTicketStatus(ticketId, Status.CLOSED, statusChanger, null, null)
     }
 
     // MADE BY THE PROFILE
     @PutMapping("tickets/{ticketId}/reopen")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("MANAGER", "EXPERT", "PROFILE")
+    @Secured("PROFILE")
     @Transactional
     fun reopenTicket(@PathVariable ticketId:Long){
         ticketService.setTicketStatus(ticketId, Status.REOPENED, StatusChanger.PROFILE, null, null)
@@ -82,7 +81,7 @@ class TicketingController(private val ticketService: TicketService) {
     // MADE BY THE PROFILE
     @PutMapping("tickets/{ticketId}/resolved")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("MANAGER", "EXPERT", "PROFILE")
+    @Secured("PROFILE")
     @Transactional
     fun resolveTicket(@PathVariable ticketId:Long){
         ticketService.setTicketStatus(ticketId, Status.RESOLVED, StatusChanger.PROFILE, null, null)
