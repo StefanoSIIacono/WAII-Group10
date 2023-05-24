@@ -8,11 +8,14 @@ services:
     container_name: server
     depends_on:
       - db
+      - keycloak
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=mysecretpassword
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI=http://keycloak:8080/realms/ticketing
+      - JWT_AUTH_CONVERTER_RESOURCE-ID=ticketingclient
     ports:
       - "8080:8080"
   db:
@@ -21,3 +24,12 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=mysecretpassword
+  keycloak:
+    image: 'quay.io/keycloak/keycloak:21.1.1'
+    container_name: keycloak
+    command: 'start-dev --import-realm'
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - ../resources/keycloak_settings:/opt/keycloak/data/import
