@@ -102,7 +102,7 @@ class TicketingController(private val ticketService: TicketService) {
     @PutMapping("tickets/{ticketId}/set_priority/{priority}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("MANAGER")
-    fun setTicketPriority(@PathVariable ticketId:Long, @PathVariable priority: Priority){
+    fun setTicketPriority(@PathVariable ticketId:Long, @PathVariable priority: String){
         ticketService.setTicketPriority(ticketId, priority)
     }
 }

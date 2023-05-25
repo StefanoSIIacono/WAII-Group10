@@ -70,4 +70,8 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler (WrongCredentialsException::class)
     fun handleWrongCredentials (e: WrongCredentialsException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.message!!)
+
+    @ExceptionHandler (ExpertIsNullException::class)
+    fun handleExpertIsNull (e: ExpertIsNullException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
 }

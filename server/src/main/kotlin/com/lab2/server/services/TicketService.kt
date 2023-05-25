@@ -11,5 +11,5 @@ interface TicketService {
     fun getTicketByID(ticketId: Long): TicketDTO?
     fun insertTicket(ticket: TicketCreateBodyDTO)
     fun setTicketStatus(ticketId: Long, inputStatus: Status, statusChanger: StatusChanger, expertId: Long?, priority: Priority?)
-    fun setTicketPriority(ticketId: Long, priority: Priority)
+    fun setTicketPriority(ticketId: Long, priority: String)
 }

@@ -7,7 +7,7 @@ data class ProfileDTO(
     val email:String,
     val name:String,
     val surname:String,
-    val address: GetAddressDTO?
+    var address: GetAddressDTO?
 )
 
 data class ChangeProfileInfoDTO(

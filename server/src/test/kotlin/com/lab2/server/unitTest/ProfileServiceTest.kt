@@ -2,7 +2,9 @@ package com.lab2.server.unitTest
 
 import com.lab2.server.data.Address
 import com.lab2.server.data.Profile
-import com.lab2.server.dto.*
+import com.lab2.server.dto.AddressDTO
+import com.lab2.server.dto.ProfileDTO
+import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.DuplicateProfileException
 import com.lab2.server.repositories.ProfileRepository
 import com.lab2.server.serviceImpl.ProfileServiceImpl

@@ -37,7 +37,7 @@ class ProfileController(private val profileService: ProfileService) {
     }
 
     @Transactional
-    @PutMapping("/profiles/{email}/newEmail")
+    @PutMapping("/profiles/{email}/newInfo")
     @Secured("PROFILE")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun changeProfileInfo(@PathVariable email:String, @RequestBody newProfile: ChangeProfileInfoDTO?){
@@ -62,6 +62,7 @@ class ProfileController(private val profileService: ProfileService) {
     @ResponseStatus(HttpStatus.OK)
     @Secured("PROFILE")
     fun getTicketsByEmail(@PathVariable email:String): MutableList<TicketDTO> {
+        profileService.getProfileByEmail(email) ?: throw ProfileNotFoundException("Profile not found")
         return profileService.getTicketsByEmail(email)
     }
 

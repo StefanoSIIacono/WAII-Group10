@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service
 class ExpertiseServiceImpl (private val expertiseRepository: ExpertiseRepository): ExpertiseService {
 
     override fun getExpertsByExpertise(field: String): List<ExpertDTO>{
-        val exp = expertiseRepository.findByField(field)?.toDTO() ?:throw DuplicatedExpertiseException("Expertise exists!")
-        return exp.toExpertise().experts.map { it.toDTO() }
+        val exp = expertiseRepository.findByField(field) ?:throw ExpertiseNotFoundException("Expertise doesn't exists!")
+        return exp.experts.map { it.toDTO() }
     }
 
     override fun getAll(): List<ExpertiseDTO>{

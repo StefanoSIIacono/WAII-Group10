@@ -1,0 +1,120 @@
+/*
+    @Test
+    @Ignore
+    fun `the ticket is returned using the id correctly`() {
+        val product = productRepository.findByIdOrNull("1234567890123456")!!
+        val profile = profileRepository.findByIdOrNull("test1@test.com")!!
+
+        val ticket = Ticket("obj", "arg", priority, profile, null, product)
+        val actualTicket = ticketingRepository.save(ticket)
+
+        val returnedTicket = ticketingRepository.findByIdOrNull(actualTicket.id)
+        assertEquals(returnedTicket?.id, actualTicket.id)
+    }
+
+    @Test
+    @Ignore
+    fun `creating a ticket maps the other entities to the ticket correctly`() {
+
+        var expert = Expert("expert", "expert")
+        expert = expertRepository.save(expert)
+
+        expert = expertRepository.findByIdOrNull(expert.id)!!
+
+        val product = productRepository.findByIdOrNull("1234567890123456")!!
+        val profile = profileRepository.findByIdOrNull("test1@test.com")!!
+
+        val ticket = Ticket("obj", "arg", priority, profile, expert, product)
+        val status = TicketStatus(Status.OPEN, Date(System.currentTimeMillis()), ticket)
+
+        ticket.addStatus(status)
+
+        val actualTicket = ticketingRepository.save(ticket)
+
+        assertNotNull(actualTicket.id)
+        assertEquals(product, (actualTicket.product))
+        assertEquals(profile, (actualTicket.profile))
+        assertEquals(expert, (actualTicket.expert))
+        assertEquals(1, (actualTicket.statusHistory.size))
+        assertEquals(status, (actualTicket.statusHistory[0]))
+    }
+
+    @Test
+    @Ignore
+    fun `after inserting 2 more tickets the count is correct`() {
+
+        val prod = productRepository.findByIdOrNull("1234567890123456")!!
+        val prof = profileRepository.findByIdOrNull("test1@test.com")!!
+
+        val actualTicket1 = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
+        val actualTicket2 = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
+        ticketingRepository.save(actualTicket1)
+        ticketingRepository.save(actualTicket2)
+
+        assertEquals(3, (ticketingRepository.count()))
+    }
+
+    @Test
+    @Ignore
+    fun `when the ticket isn't in the repository returns null`() {
+        val actualTicket = ticketingRepository.findByIdOrNull(10000000)
+        assertNull(actualTicket)
+    }
+
+    @Test
+    @Ignore
+    fun `when the ticket is already in the repository the id doesn't change`() {
+        val prod = productRepository.findByIdOrNull("1234567890123456")!!
+        val prof = profileRepository.findByIdOrNull("test1@test.com")!!
+
+        val ticket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
+
+        val pastTicket = ticketingRepository.save(ticket)
+
+        val product = Product("1234567890123456", "newProduct", "np")
+        productRepository.save(product)
+        pastTicket.product = product
+        val newTicket = ticketingRepository.save(pastTicket)
+
+        assertEquals(newTicket.id, pastTicket.id)
+    }
+
+    @Test
+    @Ignore
+    @Transactional
+    fun `inserting a product and a profile into the ticket maps the ticket to them`() {
+        var prod = productRepository.findByIdOrNull("1234567890123456")!!
+        var prof = profileRepository.findByIdOrNull("test1@test.com")!!
+
+        var actualTicket = Ticket("", "", Priority.TOASSIGN, prof, null, prod)
+        actualTicket.addProduct(prod)
+        actualTicket.addProfile(prof)
+        actualTicket = ticketingRepository.save(actualTicket)
+
+        prod = productRepository.findByIdOrNull("1234567890123456")!!
+        prof = profileRepository.findByIdOrNull("test1@test.com")!!
+        val ticketsProd = prod.tickets.contains(actualTicket)
+        val ticketsProf = prof.tickets.contains(actualTicket)
+
+
+        assertEquals(true, ticketsProd)
+        assertEquals(true, ticketsProf)
+    }
+    @Test
+    @Ignore
+    @Transactional
+    fun `mapping a expert to an expertise and viceversa`(){
+        val expertise=expertiseRepository.findByField("expertise")
+        val expert=expertRepository.findByIdOrNull(1)
+        //expert?.addExpertise(expertise!!)
+        expertise?.addExpert(expert!!)
+        //expert?.expertises?.add(expertise!!)
+        //expertise?.experts?.add(expert!!)
+        expertRepository.save(expert!!)
+        expertiseRepository.save(expertise!!)
+        val expertisee=expertiseRepository.findByField("expertise")
+        val expertt=expertRepository.findByIdOrNull(1)
+        assertEquals(1,expertt?.expertises?.size)
+        assertEquals(1, expertisee?.experts?.size )
+    }
+ */
