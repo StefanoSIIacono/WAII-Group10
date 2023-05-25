@@ -1289,4 +1289,25 @@ class DbTicketingApplicationTest {
         assertNotNull(response)
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
     }
+    @Test
+    fun testLogin(){
+
+        val logindto = LoginDTO("expert", "password")
+
+        val headers = HttpHeaders()
+        headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
+        headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
+
+
+        val postEntity: HttpEntity<LoginDTO> = HttpEntity(logindto, headers)
+        val resp = restTemplate.exchange(
+            "/login/",
+            HttpMethod.POST,
+            postEntity,
+            TokenDTO::class.java )
+
+        assertNotNull(resp)
+        assertEquals(HttpStatus.CREATED, resp.statusCode)
+    }
+
 }
