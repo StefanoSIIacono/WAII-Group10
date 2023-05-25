@@ -8,6 +8,7 @@ import com.lab2.server.security.JwtAuthConverterProperties
 import org.springframework.core.env.Environment
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.reactive.function.BodyInserters
@@ -16,7 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @RestController
 class SecurityController(private val env: Environment, private val properties: JwtAuthConverterProperties) {
-    @GetMapping("/login")
+    @PostMapping("/login/")
     fun login(@RequestBody body: LoginDTO?): TokenDTO {
         if (body === null) {
             throw NoBodyProvidedException("You have to add a body")
@@ -35,7 +36,7 @@ class SecurityController(private val env: Environment, private val properties: J
                 .retrieve()
                 .bodyToMono(TokenDTO::class.java)
                 .block()
-
+            println(response)
             return response ?: throw WrongCredentialsException("Wrong username or password")
         } catch (e: Exception) {
             throw WrongCredentialsException("Wrong username or password")

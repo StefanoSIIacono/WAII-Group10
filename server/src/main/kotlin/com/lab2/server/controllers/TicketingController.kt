@@ -27,7 +27,7 @@ class TicketingController(private val ticketService: TicketService) {
         return ticketService.getAll()
     }
 
-    @GetMapping("tickets/{ticketId}")
+    @GetMapping("/tickets/{ticketId}")
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER", "EXPERT", "PROFILE")
     fun getTicketByID(@PathVariable ticketId:Long) : TicketDTO {
@@ -36,7 +36,7 @@ class TicketingController(private val ticketService: TicketService) {
     }
 
     // MADE BY THE PROFILE
-    @PostMapping("tickets/")
+    @PostMapping("/tickets/")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     @Secured("PROFILE")
@@ -47,7 +47,7 @@ class TicketingController(private val ticketService: TicketService) {
         ticketService.insertTicket(ticket)
     }
 
-    @PutMapping("tickets/{ticketId}/open")
+    @PutMapping("/tickets/{ticketId}/open")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("PROFILE")
     fun openTicket(@PathVariable ticketId:Long){
@@ -55,7 +55,7 @@ class TicketingController(private val ticketService: TicketService) {
     }
 
     // MADE BY THE  MANAGER OR THE EXPERT
-    @PutMapping("tickets/{ticketId}/close")
+    @PutMapping("/tickets/{ticketId}/close")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("MANAGER", "EXPERT", "PROFILE")
     @Transactional
@@ -70,7 +70,7 @@ class TicketingController(private val ticketService: TicketService) {
     }
 
     // MADE BY THE PROFILE
-    @PutMapping("tickets/{ticketId}/reopen")
+    @PutMapping("/tickets/{ticketId}/reopen")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("PROFILE")
     @Transactional
@@ -79,7 +79,7 @@ class TicketingController(private val ticketService: TicketService) {
     }
 
     // MADE BY THE PROFILE
-    @PutMapping("tickets/{ticketId}/resolved")
+    @PutMapping("/tickets/{ticketId}/resolved")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("PROFILE")
     @Transactional
@@ -88,7 +88,7 @@ class TicketingController(private val ticketService: TicketService) {
     }
 
     // MADE BY THE MANAGER
-    @PutMapping("tickets/{ticketId}/inprogress")
+    @PutMapping("/tickets/{ticketId}/inprogress")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("MANAGER")
     @Transactional
@@ -99,7 +99,7 @@ class TicketingController(private val ticketService: TicketService) {
         ticketService.setTicketStatus(ticketId, Status.IN_PROGRESS, StatusChanger.MANAGER, body.expert, body.priority)
     }
 
-    @PutMapping("tickets/{ticketId}/set_priority/{priority}")
+    @PutMapping("/tickets/{ticketId}/set_priority/{priority}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("MANAGER")
     fun setTicketPriority(@PathVariable ticketId:Long, @PathVariable priority: String){
