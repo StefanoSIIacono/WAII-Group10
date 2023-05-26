@@ -13,8 +13,9 @@ spring:
     password: mysecretpassword
   jpa:
     show-sql: true
-    hibernate.ddl-auto: validate
-
+    hibernate.ddl-auto: create
+keycloak:
+  enabled: true
 jwt:
   auth:
     converter:

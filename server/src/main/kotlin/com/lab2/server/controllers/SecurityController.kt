@@ -11,10 +11,9 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
-
-@ResponseStatus(HttpStatus.CREATED)
 @RestController
 class SecurityController(private val env: Environment, private val properties: JwtAuthConverterProperties) {
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/login/")
     fun login(@RequestBody body: LoginDTO?): TokenDTO {
         if (body === null) {

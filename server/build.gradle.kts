@@ -37,7 +37,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.keycloak:keycloak-spring-boot-starter:11.0.3")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
-	implementation("com.github.dasniko:testcontainers-keycloak:2.1.2")
 	runtimeOnly("org.postgresql:postgresql")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
@@ -47,6 +46,7 @@ dependencies {
 	testImplementation("org.testcontainers:junit-jupiter:1.16.3")
 	testImplementation("org.testcontainers:postgresql:1.16.3")
 	testImplementation("org.springframework.security:spring-security-test")
+	testImplementation("com.github.dasniko:testcontainers-keycloak:2.1.2")
 }
 
 dependencyManagement {
