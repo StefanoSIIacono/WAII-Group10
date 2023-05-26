@@ -374,7 +374,6 @@
   "otpPolicyDigits" : 6,
   "otpPolicyLookAheadWindow" : 1,
   "otpPolicyPeriod" : 30,
-  "otpPolicyCodeReusable" : false,
   "otpSupportedApplications" : [ "totpAppMicrosoftAuthenticatorName", "totpAppFreeOTPName", "totpAppGoogleName" ],
   "webAuthnPolicyRpEntityName" : "keycloak",
   "webAuthnPolicySignatureAlgorithms" : [ "ES256" ],
@@ -1836,5 +1835,81 @@
   },
   "clientPolicies" : {
     "policies" : [ ]
-  }
+  },
+  "users" : [ {
+    "id" : "9ebb6f6f-40a4-49dd-953c-d3e50c54cdf9",
+    "createdTimestamp" : 1684954735397,
+    "username" : "expert",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "6deee0a3-c581-455c-abbb-5cbc10842e94",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1684954744527,
+      "secretData" : "{\"value\":\"FWmkCadZ+qti5Gfb4/NbWQhI96wPiJit6mPkMO9ZDvM=\",\"salt\":\"hgpOuvjTpn7A7GaYFwfZ4g==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticketing" ],
+    "clientRoles" : {
+      "ticketingclient" : [ "EXPERT" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "fc69a985-cc8a-4342-aeda-04e4f9204148",
+    "createdTimestamp" : 1684954713825,
+    "username" : "manager",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "9c02ca3b-43c4-44a5-ada0-4c110cdadae1",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1684954726837,
+      "secretData" : "{\"value\":\"o4cV4pwFjKEpfCx8LpFBLF4B387rVOw+1WY9deI79bc=\",\"salt\":\"cKTddGKepp6vcm9KlNNtrw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticketing" ],
+    "clientRoles" : {
+      "ticketingclient" : [ "MANAGER" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "ac6de123-ee3a-493e-92d9-dcc72e8e48ab",
+    "createdTimestamp" : 1684954668382,
+    "username" : "profile",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "31d68693-8c51-46d8-90f3-9637823f58f8",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1684954680447,
+      "secretData" : "{\"value\":\"E5u+RBrzz1N9p85M990GGrrYsR5UD8bpS5CHVW974qY=\",\"salt\":\"QKYh8AGMHZ6GivLaT0W7/A==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticketing" ],
+    "clientRoles" : {
+      "ticketingclient" : [ "PROFILE" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
 }

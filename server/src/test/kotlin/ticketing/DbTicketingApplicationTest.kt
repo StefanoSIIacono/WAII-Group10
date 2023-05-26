@@ -1,17 +1,15 @@
 package com.lab2.server.ticketing
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.lab2.server.data.*
 import com.lab2.server.dto.*
 import com.lab2.server.repositories.*
 import dasniko.testcontainers.keycloak.KeycloakContainer
-import org.apache.http.client.utils.URIBuilder
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.keycloak.admin.client.KeycloakBuilder
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.json.JacksonJsonParser
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -21,16 +19,9 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
-import org.springframework.web.reactive.function.BodyInserters
-import org.springframework.web.reactive.function.client.WebClient
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import org.testcontainers.shaded.org.awaitility.Awaitility.given
-import org.testcontainers.shaded.org.hamcrest.Matchers.equalTo
-import java.net.URI
 import java.util.*
 
 
@@ -42,12 +33,14 @@ class DbTicketingApplicationTest {
         @Container
         val postgres = PostgreSQLContainer("postgres:latest")
 
-        /*@Container
+
+        //@JsonIgnoreProperties(ignoreUnknown = true)
+        @Container
         val keycloak: KeycloakContainer = KeycloakContainer()
                 .withRealmImportFile(
                         "/keycloak_settings/ticketing-realm.json"
                 )
-        */
+
         // application properties used and defined specifically for tests
         @JvmStatic
         @DynamicPropertySource
@@ -56,8 +49,11 @@ class DbTicketingApplicationTest {
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
             registry.add("spring.jpa.hibernate,ddl-auto") {"create-drop"}
-            //registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri")
-            //{ keycloak.authServerUrl + "/realms/ticketing" }
+            registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri")
+            { keycloak.authServerUrl + "/realms/ticketing" }
+            registry.add("jwt.auth.converter.resource-id"){"ticketingclient"}
+            registry.add("jwt.auth.converter.principal-attribute"){ "preferred_username"}
+            registry.add("keycloack.enabled"){true}
         }
 
     }
@@ -202,6 +198,16 @@ class DbTicketingApplicationTest {
         // actually the function header() doesn't exist, oc it's Java
         * */
     }
+    fun getBearerToken(username: String, password: String): String {
+        val keycloakAdminClient = KeycloakBuilder.builder()
+            .serverUrl(keycloak.authServerUrl)
+            .realm("ticketing")
+            .clientId("ticketingclient")
+            .username(username)
+            .password(password)
+            .build()
+        return "Bearer" + keycloakAdminClient.tokenManager().accessToken.token
+    }
 
 
     @AfterEach
@@ -218,7 +224,7 @@ class DbTicketingApplicationTest {
     @Test
     fun `containers are up and running`(){
         assertTrue(postgres.isRunning)
-        //assertTrue(keycloak.isRunning)
+        assertTrue(keycloak.isRunning)
     }
 
     // PROFILE CONTROLLER TESTS
@@ -270,8 +276,12 @@ class DbTicketingApplicationTest {
     fun testGetTicketsByEmail(){
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
 
-        val reqEntity: HttpEntity<MutableList<TicketDTO>> = HttpEntity<MutableList<TicketDTO>>(headers)
+        val reqEntity: HttpEntity<MutableList<TicketDTO>> = HttpEntity(null, headers)
 
         val resp: ResponseEntity<MutableList<TicketDTO>> =
                 restTemplate.exchange(
@@ -391,6 +401,10 @@ class DbTicketingApplicationTest {
         val profile = ChangeProfileInfoDTO("change", "change" )
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
         val putEntity = HttpEntity<ChangeProfileInfoDTO>(profile, headers)
         val response = restTemplate.exchange(
                 "/profiles/test1@test.com/newInfo",
