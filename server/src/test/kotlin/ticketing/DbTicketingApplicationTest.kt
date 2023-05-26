@@ -1,5 +1,5 @@
 package com.lab2.server.ticketing
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
 import com.lab2.server.data.*
 import com.lab2.server.dto.*
 import com.lab2.server.repositories.*
@@ -141,62 +141,7 @@ class DbTicketingApplicationTest {
         expert.addTicket(ticket)
 
         ticketingRepository.save(ticket)
-/* *********************************************************************************************************
-**********************************************************************************************************
-                    HERE AN EXAMPLE FOR MANAGING ACCESS TOKENS IN TESTS
-     ***************************************************************************************
-     **************************************************************************
-     1)   // API used to fetch the access token from the keycloak server
-        val keycloakAdminClient = KeycloakBuilder.builder()
-                .serverUrl(keycloak.authServerUrl)
-                .realm("ticketing")
-                .clientId("ticketingclient")
-                .username(keycloak.adminUsername)
-                .password(keycloak.adminPassword)
-                .build()
 
-        val bearer_token = "Bearer" + keycloakAdminClient.tokenManager().accessToken.token
-        // HERE THAT SHOULD BE AN ERROR HANDLER FOR THE ACCESS TOKEN EXTRACTION
-
-      2)  // OTHER WAY TO TAKE THE ACCESS TOKEN USING THE WEBCLIENT API
-        val authorizationURI: URI = URIBuilder(
-                keycloak.authServerUrl +
-                "realms/ticketing/protocol/openid-connect/token")
-                .build()
-        val webclient = WebClient.builder().build()
-        val formData: MultiValueMap<String, String> = LinkedMultiValueMap()
-        formData["grant_type"] = Collections.singletonList("password")
-
-        // grant types:         implicit, refresh_token, password, client_credentials
-        //                      "urn:ietf:params:oauth:grant-type:device_code"
-        //                      "urn:openid:params:grant-type:ciba"
-        // nelle guide c'è scritto password di solito
-
-        formData["client_id"] = Collections.singletonList("ticketingclient")
-        formData["username"] = Collections.singletonList(keycloak.adminUsername)
-        formData["password"] = Collections.singletonList(keycloak.adminPassword)
-
-        val result: String = webclient.post()
-                .uri(authorizationURI)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(BodyInserters.fromFormData(formData))
-                .retrieve()
-                .bodyToMono<String>(String::class.java)
-                .block()!!
-
-        val jsonParser = JacksonJsonParser()
-        val bearer_token = "Bearer" + jsonParser.parseMap(result).get("access_token").toString()
-        // HERE THAT SHOULD BE AN ERROR HANDLER FOR THE ACCESS TOKEN EXTRACTION
-
-        // AT THE END IT SHOULD BE POSSIBLE TO GET THE TOKEN IN THIS WAY
-        given().header("Authorization", bearer_token)
-                .when()
-                .get("/users/me")
-                .then()
-                .body("username", equalTo("admin"))
-
-        // actually the function header() doesn't exist, oc it's Java
-        * */
     }
     fun getBearerToken(username: String, password: String): String {
         val keycloakAdminClient = KeycloakBuilder.builder()
@@ -208,7 +153,6 @@ class DbTicketingApplicationTest {
             .build()
         return "Bearer " + keycloakAdminClient.tokenManager().accessToken.token
     }
-
 
     @AfterEach
     fun cleanUpRepositories(){
@@ -232,12 +176,15 @@ class DbTicketingApplicationTest {
     fun testGetAllProfiles() {
 
         val headers = HttpHeaders()
-        headers.setBasicAuth("username", "password")
-
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<List<ProfileDTO>> = restTemplate.exchange(
                 "/profiles/",
                 HttpMethod.GET,
-                null,
+                getEntity,
                 typeRef())
         val list: List<ProfileDTO> = resp.body!!
 
@@ -250,10 +197,23 @@ class DbTicketingApplicationTest {
     fun testGetProfileByEmail(){
 
         val prof = profileRepository.findByIdOrNull("test1@test.com")!!.toDTO()
-
-        val resp: ResponseEntity<ProfileDTO> = restTemplate.getForEntity(
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
+        val resp: ResponseEntity<ProfileDTO> = restTemplate.exchange(
+            "/profiles/test1@test.com",
+            HttpMethod.GET,
+            getEntity,
+            ProfileDTO::class.java
+        )
+        /*val resp: ResponseEntity<ProfileDTO> = restTemplate.getForEntity(
                 "/profiles/test1@test.com",
-                ProfileDTO::class.java)
+                ProfileDTO::class.java
+                )
+         */
 
         assertNotNull(resp)
         assertEquals(HttpStatus.OK, resp.statusCode)
@@ -263,10 +223,23 @@ class DbTicketingApplicationTest {
     @Test
     fun testGetProfileByEmail_EmailNotFoundFailure(){
 
-        val resp: ResponseEntity<String> = restTemplate.getForEntity(
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
+        val resp: ResponseEntity<String> = restTemplate.exchange(
+            "/profiles/notfound@test.com",
+            HttpMethod.GET,
+            getEntity,
+            String::class.java
+        )
+        /*val resp: ResponseEntity<String> = restTemplate.getForEntity(
                 "/profiles/notfound@test.com",
                 String::class.java
         )
+         */
 
         assertNotNull(resp)
         assertEquals(HttpStatus.NOT_FOUND, resp.statusCode)
@@ -281,13 +254,13 @@ class DbTicketingApplicationTest {
             getBearerToken("profile", "password")
         )
 
-        val reqEntity: HttpEntity<MutableList<TicketDTO>> = HttpEntity(null, headers)
+        val getEntity: HttpEntity<MutableList<TicketDTO>> = HttpEntity(null, headers)
 
         val resp: ResponseEntity<MutableList<TicketDTO>> =
                 restTemplate.exchange(
                     "/profiles/test1@test.com/tickets/",
                         HttpMethod.GET,
-                        reqEntity,
+                        getEntity,
                         typeRef())
 
         val list: MutableList<TicketDTO> = resp.body!!
@@ -301,14 +274,18 @@ class DbTicketingApplicationTest {
     fun testGetTicketsByEmail_EmailNotFoundFailure(){
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
 
-        val reqEntity: HttpEntity<MutableList<TicketDTO>> = HttpEntity<MutableList<TicketDTO>>(headers)
+        val getEntity: HttpEntity<MutableList<TicketDTO>> = HttpEntity<MutableList<TicketDTO>>(headers)
 
         val resp: ResponseEntity<String> =
                 restTemplate.exchange(
                     "/profiles/notfound@failure.com/tickets/",
                         HttpMethod.GET,
-                        reqEntity,
+                        getEntity,
                         String::class.java
                 )
         assertNotNull(resp)
@@ -329,6 +306,10 @@ class DbTicketingApplicationTest {
         profile.address = address
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
 
@@ -346,8 +327,12 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testCreateProfile_NoBodyFailure(){
-        val headers = HttpHeaders()
 
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
 
@@ -381,9 +366,13 @@ class DbTicketingApplicationTest {
         profile.address = address
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
+
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
-
 
         val postEntity: HttpEntity<ProfileDTO> = HttpEntity(profile, headers)
         val resp = restTemplate.exchange(
@@ -421,6 +410,11 @@ class DbTicketingApplicationTest {
     fun testChangeProfileInfo_NoBodyFailure() {
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
+
         headers.contentType = MediaType.APPLICATION_PROBLEM_JSON
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
 
@@ -447,6 +441,10 @@ class DbTicketingApplicationTest {
         )
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
 
         val putEntity = HttpEntity<GetAddressDTO> (address, headers)
         val response = restTemplate.exchange(
@@ -464,6 +462,10 @@ class DbTicketingApplicationTest {
     fun testChangeProfileAddress_NoBodyFailure(){
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
 
         val putEntity = HttpEntity<GetAddressDTO> (null, headers)
         val response = restTemplate.exchange(
@@ -481,10 +483,16 @@ class DbTicketingApplicationTest {
     @Test
     fun testGetAllProducts () {
 
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<List<ProductDTO>> = restTemplate.exchange(
                 "/products/",
                 HttpMethod.GET,
-                null,
+                getEntity,
                 typeRef())
         val list: List<ProductDTO> = resp.body!!
 
@@ -497,10 +505,23 @@ class DbTicketingApplicationTest {
     fun testGetProductById(){
 
         val prod = productRepository.findByIdOrNull("1234567890123456")!!.toDTO()
-
-        val resp: ResponseEntity<ProductDTO> = restTemplate.getForEntity(
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
+        val resp: ResponseEntity<ProductDTO> = restTemplate.exchange(
+            "/products/1234567890123456",
+            HttpMethod.GET,
+            getEntity,
+            ProductDTO::class.java
+        )
+        /*val resp: ResponseEntity<ProductDTO> = restTemplate.getForEntity(
                 "/products/1234567890123456",
-                ProductDTO::class.java)
+                ProductDTO::class.java
+                )
+         */
 
         assertNotNull(resp)
         assertEquals(HttpStatus.OK, resp.statusCode)
@@ -510,10 +531,22 @@ class DbTicketingApplicationTest {
     @Test
     fun testGetProductById_NotFound(){
 
-        val resp: ResponseEntity<String> = restTemplate.getForEntity(
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
+        val resp: ResponseEntity<String> = restTemplate.exchange(
                 "/products/productnotfound",
+                HttpMethod.GET,
+                getEntity,
                 String::class.java
         )
+        /*val resp: ResponseEntity<String> = restTemplate.getForEntity(
+                "/products/productnotfound",
+                String::class.java
+        )*/
 
         assertNotNull(resp)
         assertEquals(HttpStatus.NOT_FOUND, resp.statusCode)
@@ -524,10 +557,16 @@ class DbTicketingApplicationTest {
     @Test
     fun testGetAllExperts () {
 
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<MutableSet<ExpertDTO>> = restTemplate.exchange(
                 "/experts/",
                 HttpMethod.GET,
-                null,
+                getEntity,
                 typeRef())
         val set: MutableSet<ExpertDTO> = resp.body!!
 
@@ -540,10 +579,22 @@ class DbTicketingApplicationTest {
     fun testGetExpertById(){
 
         val expert = expertRepository.save(Expert("n", "s")).toDTO()
-
-        val resp: ResponseEntity<ExpertDTO> = restTemplate.getForEntity(
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
+        val resp: ResponseEntity<ExpertDTO> = restTemplate.exchange(
                 "/experts/" + expert.id,
-                ExpertDTO::class.java)
+                HttpMethod.GET,
+                getEntity,
+                ExpertDTO::class.java
+        )
+        /*val resp: ResponseEntity<ExpertDTO> = restTemplate.getForEntity(
+                "/experts/" + expert.id,
+                ExpertDTO::class.java
+        )*/
 
         assertNotNull(resp)
         assertEquals(HttpStatus.OK, resp.statusCode)
@@ -553,10 +604,22 @@ class DbTicketingApplicationTest {
     @Test
     fun testGetExpertById_ExpertNotFound(){
 
-        val resp: ResponseEntity<String> = restTemplate.getForEntity(
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
+        val resp: ResponseEntity<String> = restTemplate.exchange(
                 "/products/productnotfound",
+                HttpMethod.GET,
+                getEntity,
                 String::class.java
         )
+        /*val resp: ResponseEntity<String> = restTemplate.getForEntity(
+                "/products/productnotfound",
+                String::class.java
+        )*/
 
         assertNotNull(resp)
         assertEquals(HttpStatus.NOT_FOUND, resp.statusCode)
@@ -569,6 +632,10 @@ class DbTicketingApplicationTest {
         val expert = ExpertDTO(null, "e1", "e2", exSet)
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
 
@@ -588,6 +655,10 @@ class DbTicketingApplicationTest {
     fun testCreateExpert_NoBodyFailure(){
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
 
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
@@ -610,6 +681,10 @@ class DbTicketingApplicationTest {
         val expertise = expertiseRepository.save(Expertise("e1"))
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
 
         val putEntity = HttpEntity<ExpertiseDTO> (expertise.toDTO(), headers)
         val response = restTemplate.exchange(
@@ -627,6 +702,10 @@ class DbTicketingApplicationTest {
     fun testAddExpertiseToExpert_NoBodyFailure(){
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
 
         val putEntity = HttpEntity<ExpertiseDTO> (null, headers)
         val response = restTemplate.exchange(
@@ -646,6 +725,10 @@ class DbTicketingApplicationTest {
         val expertise = expertiseRepository.save(Expertise("e1"))
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
 
         val putEntity = HttpEntity<ExpertiseDTO> (expertise.toDTO(), headers)
         val response = restTemplate.exchange(
@@ -665,6 +748,10 @@ class DbTicketingApplicationTest {
         val expertise = ExpertiseDTO(null, "notfoundfailure")
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
 
         val putEntity = HttpEntity<ExpertiseDTO> (expertise, headers)
         val response = restTemplate.exchange(
@@ -683,10 +770,16 @@ class DbTicketingApplicationTest {
     @Test
     fun testGetAllExpertises () {
 
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<List<ExpertiseDTO>> = restTemplate.exchange(
                 "/expertises/",
                 HttpMethod.GET,
-                null,
+                getEntity,
                 typeRef())
 
         val list: List<ExpertiseDTO> = resp.body!!
@@ -700,11 +793,22 @@ class DbTicketingApplicationTest {
     fun testGetExpertiseByField(){
 
         val expertise = expertiseRepository.save(Expertise("test"))
-
-        val resp: ResponseEntity<ExpertiseDTO> = restTemplate.getForEntity(
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
+        val getEntity: HttpEntity<ExpertiseDTO> = HttpEntity(null, headers)
+        val resp: ResponseEntity<ExpertiseDTO> = restTemplate.exchange(
+            "/expertises/" + expertise.field,
+            HttpMethod.GET,
+            getEntity,
+            ExpertiseDTO::class.java
+        )
+        /*val resp: ResponseEntity<ExpertiseDTO> = restTemplate.getForEntity(
                 "/expertises/" + expertise.field,
                 ExpertiseDTO::class.java)
-
+*/
         assertNotNull(resp)
         assertEquals(HttpStatus.OK, resp.statusCode)
         assertEquals(expertise.toDTO(), resp.body)
@@ -715,10 +819,22 @@ class DbTicketingApplicationTest {
 
         val expertise = ExpertiseDTO(null, "test")
 
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
+        val resp: ResponseEntity<String> = restTemplate.exchange(
+            "/expertises/" + expertise.field,
+            HttpMethod.GET,
+            getEntity,
+            String::class.java
+        )/*
         val resp: ResponseEntity<String> = restTemplate.getForEntity(
                 "/expertises/" + expertise.field,
                 String::class.java)
-
+*/
         assertNotNull(resp)
         assertEquals(HttpStatus.NOT_FOUND, resp.statusCode)
     }
@@ -727,12 +843,18 @@ class DbTicketingApplicationTest {
     @Test
     fun testGetExpertsByExpertise(){
 
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
         val expertise = expertiseRepository.findByField("expertise")
 
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<List<ExpertDTO>> = restTemplate.exchange(
                 "/expertises/" + expertise!!.field + "/experts/",
                 HttpMethod.GET,
-                null,
+                getEntity,
                 typeRef())
 
         val list: List<ExpertDTO> = resp.body!!
@@ -744,11 +866,16 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testGetExpertsByExpertise_ExpertiseNotFoundFailure(){
-
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<String> = restTemplate.exchange(
             "/expertises/notfoundfailure/experts/",
             HttpMethod.GET,
-            null,
+            getEntity,
             String::class.java
         )
         assertNotNull(resp)
@@ -761,6 +888,10 @@ class DbTicketingApplicationTest {
         val expertise = ExpertiseDTO(null, "test")
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
 
@@ -780,6 +911,10 @@ class DbTicketingApplicationTest {
     fun testCreateExpertise_NoBodyFailure(){
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
 
@@ -800,6 +935,10 @@ class DbTicketingApplicationTest {
         val expertise = expertiseRepository.save(Expertise("test"))
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
 
@@ -819,6 +958,10 @@ class DbTicketingApplicationTest {
     fun testDeleteExpertise_ExpertiseNotFoundFailure(){
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
 
@@ -837,10 +980,16 @@ class DbTicketingApplicationTest {
     @Test
     fun testGetAllTickets(){
 
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
+        val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<List<TicketDTO>> = restTemplate.exchange(
                 "/tickets/",
                 HttpMethod.GET,
-                null,
+                getEntity,
                 typeRef()
         )
 
@@ -867,9 +1016,23 @@ class DbTicketingApplicationTest {
         ticket.addStatus(status)
         ticketingRepository.save(ticket)
 
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
+        val getEntity: HttpEntity<TicketDTO> = HttpEntity(null, headers)
+        val resp: ResponseEntity<TicketDTO> = restTemplate.exchange(
+            "/tickets/" + ticket.id,
+            HttpMethod.GET,
+            getEntity,
+            TicketDTO::class.java
+        )
+        /*
         val resp: ResponseEntity<TicketDTO> = restTemplate.getForEntity(
                 "/tickets/" + ticket.id,
-                TicketDTO::class.java)
+                TicketDTO::class.java
+                )*/
 
         assertNotNull(resp)
         assertEquals(HttpStatus.OK, resp.statusCode)
@@ -878,10 +1041,23 @@ class DbTicketingApplicationTest {
     @Test
     fun testGetTicketById_TicketNotFound(){
 
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
+        val getEntity: HttpEntity<TicketDTO> = HttpEntity(null, headers)
+        val resp: ResponseEntity<String> = restTemplate.exchange(
+            "/tickets/1000",
+            HttpMethod.GET,
+            getEntity,
+            String::class.java
+        )
+        /*
         val resp: ResponseEntity<String> = restTemplate.getForEntity(
                 "/tickets/1000",
                 String::class.java
-        )
+        )*/
 
         assertNotNull(resp)
         assertEquals(HttpStatus.NOT_FOUND, resp.statusCode)
@@ -893,9 +1069,12 @@ class DbTicketingApplicationTest {
         val ticket = TicketCreateBodyDTO("o", "a", "test1@test.com", "1234567890123456")
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
-
 
         val postEntity: HttpEntity<TicketCreateBodyDTO> = HttpEntity(ticket, headers)
         val resp = restTemplate.exchange(
@@ -912,6 +1091,10 @@ class DbTicketingApplicationTest {
     fun testCreateTicket_NoBodyFailure(){
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
 
@@ -934,6 +1117,10 @@ class DbTicketingApplicationTest {
         val ticket = TicketCreateBodyDTO("o", "a", "notfound@failure.com", "1234567890123456")
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
 
@@ -956,9 +1143,12 @@ class DbTicketingApplicationTest {
         val ticket = TicketCreateBodyDTO("o", "a", "test1@test.com", "notfoundfailure")
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
-
 
         val postEntity: HttpEntity<TicketCreateBodyDTO> = HttpEntity(ticket, headers)
         val resp = restTemplate.exchange(
@@ -988,6 +1178,10 @@ class DbTicketingApplicationTest {
         ticketingRepository.save(ticket)
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
 
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
@@ -1005,6 +1199,10 @@ class DbTicketingApplicationTest {
     fun testOpenTicket_TicketNotFoundFailure() {
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
 
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
@@ -1035,6 +1233,10 @@ class DbTicketingApplicationTest {
         ticketingRepository.save(ticket)
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
             "/tickets/" + ticket.id + "/close",
@@ -1051,6 +1253,10 @@ class DbTicketingApplicationTest {
     fun testCloseTicket_TicketNotFoundFailure() {
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
 
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
@@ -1082,6 +1288,10 @@ class DbTicketingApplicationTest {
         ticketingRepository.save(ticket)
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
 
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
@@ -1099,6 +1309,10 @@ class DbTicketingApplicationTest {
     fun testReOpenTicket_TicketNotFoundFailure() {
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
 
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
@@ -1129,6 +1343,10 @@ class DbTicketingApplicationTest {
         ticketingRepository.save(ticket)
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
             "/tickets/" + ticket.id + "/resolved",
@@ -1145,6 +1363,10 @@ class DbTicketingApplicationTest {
     fun testResolveTicket_TicketNotFoundFailure() {
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("profile", "password")
+        )
 
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
@@ -1177,6 +1399,10 @@ class DbTicketingApplicationTest {
         ticketingRepository.save(ticket)
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
 
         val ticketInProgress = TicketInProgressBodyDTO(expert.id!!, Priority.HIGH)
 
@@ -1209,6 +1435,10 @@ class DbTicketingApplicationTest {
         ticketingRepository.save(ticket)
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
 
         val putEntity = HttpEntity<TicketInProgressBodyDTO>(null, headers)
         val response = restTemplate.exchange(
@@ -1228,6 +1458,10 @@ class DbTicketingApplicationTest {
         val expert = expertRepository.save(Expert("e", "e"))
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
 
         val ticketInProgress = TicketInProgressBodyDTO(expert.id!!, Priority.HIGH)
 
@@ -1259,6 +1493,10 @@ class DbTicketingApplicationTest {
         ticketingRepository.save(ticket)
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
 
         val ticketInProgress = TicketInProgressBodyDTO(10000, Priority.HIGH)
 
@@ -1293,6 +1531,10 @@ class DbTicketingApplicationTest {
         ticketingRepository.save(ticket)
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
 
         val ticketInProgress = TicketInProgressBodyDTO(expert.id!!, Priority.HIGH)
 
@@ -1327,6 +1569,10 @@ class DbTicketingApplicationTest {
         ticketingRepository.save(ticket)
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
 
         val ticketInProgress = TicketInProgressBodyDTO(expert.id!!, Priority.TOASSIGN)
 
@@ -1359,6 +1605,10 @@ class DbTicketingApplicationTest {
         ticketingRepository.save(ticket)
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
             "/tickets/" + ticket.id + "/set_priority/high",
@@ -1375,6 +1625,10 @@ class DbTicketingApplicationTest {
     fun testSetTicketPriority_TicketNotFoundFailure(){
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
             "/tickets/10000/set_priority/high",
@@ -1403,6 +1657,10 @@ class DbTicketingApplicationTest {
         ticketingRepository.save(ticket)
 
         val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("manager", "password")
+        )
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
             "/tickets/" + ticket.id + "/set_priority/illegal",
@@ -1434,4 +1692,37 @@ class DbTicketingApplicationTest {
         assertEquals(HttpStatus.CREATED, resp.statusCode)
     }
 
+    @Test
+    fun testSetTicketPriority_Unauthorized(){
+
+        val ticket = Ticket(
+            "o",
+            "a",
+            Priority.TOASSIGN,
+            profileRepository.findByIdOrNull("test1@test.com")!!,
+            null,
+            productRepository.findByIdOrNull("1234567890123456")!!
+        )
+        val status = TicketStatus(Status.OPEN, Date(System.currentTimeMillis()), ticket)
+
+        ticket.addStatus(status)
+        ticketingRepository.save(ticket)
+
+        val headers = HttpHeaders()
+        headers.set(
+            "Authorization",
+            getBearerToken("expert", "password")
+        )
+
+        val putEntity = HttpEntity<String>(null, headers)
+        val response = restTemplate.exchange(
+            "/tickets/" + ticket.id + "/set_priority/high",
+            HttpMethod.PUT,
+            putEntity,
+            String::class.java
+        )
+
+        assertNotNull(response)
+        assertEquals(HttpStatus.FORBIDDEN, response.statusCode)
+    }
 }
