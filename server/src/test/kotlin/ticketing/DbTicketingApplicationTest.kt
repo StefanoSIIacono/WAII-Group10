@@ -3,11 +3,15 @@ package com.lab2.server.ticketing
 import com.lab2.server.data.*
 import com.lab2.server.dto.*
 import com.lab2.server.repositories.*
+import dasniko.testcontainers.keycloak.KeycloakContainer
+import org.apache.http.client.utils.URIBuilder
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.keycloak.admin.client.KeycloakBuilder
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.json.JacksonJsonParser
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -17,9 +21,16 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
+import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.client.WebClient
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import org.testcontainers.shaded.org.awaitility.Awaitility.given
+import org.testcontainers.shaded.org.hamcrest.Matchers.equalTo
+import java.net.URI
 import java.util.*
 
 
@@ -31,6 +42,13 @@ class DbTicketingApplicationTest {
         @Container
         val postgres = PostgreSQLContainer("postgres:latest")
 
+        /*@Container
+        val keycloak: KeycloakContainer = KeycloakContainer()
+                .withRealmImportFile(
+                        "/keycloak_settings/ticketing-realm.json"
+                )
+        */
+        // application properties used and defined specifically for tests
         @JvmStatic
         @DynamicPropertySource
         fun properties(registry: DynamicPropertyRegistry) {
@@ -38,6 +56,8 @@ class DbTicketingApplicationTest {
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
             registry.add("spring.jpa.hibernate,ddl-auto") {"create-drop"}
+            //registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri")
+            //{ keycloak.authServerUrl + "/realms/ticketing" }
         }
 
     }
@@ -65,17 +85,37 @@ class DbTicketingApplicationTest {
     @BeforeEach
     fun setUp(){
 
-        var product = Product("1234567890123456", "product1", "p1")
+        var product = Product(
+                "1234567890123456",
+                "product1",
+                "p1"
+        )
 
-        var profile = Profile("test1@test.com", "test1", "test", null)
-        val address = Address("c", "c", "z", "s", "h", profile, profile.email)
+        var profile = Profile(
+                "test1@test.com",
+                "test1",
+                "test",
+                null
+        )
+        val address = Address(
+                "c",
+                "c",
+                "z",
+                "s",
+                "h",
+                profile,
+                profile.email
+        )
 
         profile.addAddress(address)
 
         product = productRepository.save(product)
         profile = profileRepository.save(profile)
 
-        var expert = Expert("expert", "expert")
+        var expert = Expert(
+                "expert",
+                "expert"
+        )
         val expertise = Expertise("expertise")
 
         expert.addExpertise(expertise)
@@ -85,8 +125,19 @@ class DbTicketingApplicationTest {
         expert = expertRepository.save(expert)
 
 
-        val ticket = Ticket("obj", "arg", priority, profile, expert, product)
-        val status = TicketStatus(Status.OPEN, Date(System.currentTimeMillis()), ticket)
+        val ticket = Ticket(
+                "obj",
+                "arg",
+                priority,
+                profile,
+                expert,
+                product
+        )
+        val status = TicketStatus(
+                Status.OPEN,
+                Date(System.currentTimeMillis()),
+                ticket
+        )
 
         ticket.addStatus(status)
         ticket.addProduct(product)
@@ -94,6 +145,62 @@ class DbTicketingApplicationTest {
         expert.addTicket(ticket)
 
         ticketingRepository.save(ticket)
+/* *********************************************************************************************************
+**********************************************************************************************************
+                    HERE AN EXAMPLE FOR MANAGING ACCESS TOKENS IN TESTS
+     ***************************************************************************************
+     **************************************************************************
+     1)   // API used to fetch the access token from the keycloak server
+        val keycloakAdminClient = KeycloakBuilder.builder()
+                .serverUrl(keycloak.authServerUrl)
+                .realm("ticketing")
+                .clientId("ticketingclient")
+                .username(keycloak.adminUsername)
+                .password(keycloak.adminPassword)
+                .build()
+
+        val bearer_token = "Bearer" + keycloakAdminClient.tokenManager().accessToken.token
+        // HERE THAT SHOULD BE AN ERROR HANDLER FOR THE ACCESS TOKEN EXTRACTION
+
+      2)  // OTHER WAY TO TAKE THE ACCESS TOKEN USING THE WEBCLIENT API
+        val authorizationURI: URI = URIBuilder(
+                keycloak.authServerUrl +
+                "realms/ticketing/protocol/openid-connect/token")
+                .build()
+        val webclient = WebClient.builder().build()
+        val formData: MultiValueMap<String, String> = LinkedMultiValueMap()
+        formData["grant_type"] = Collections.singletonList("password")
+
+        // grant types:         implicit, refresh_token, password, client_credentials
+        //                      "urn:ietf:params:oauth:grant-type:device_code"
+        //                      "urn:openid:params:grant-type:ciba"
+        // nelle guide c'è scritto password di solito
+
+        formData["client_id"] = Collections.singletonList("ticketingclient")
+        formData["username"] = Collections.singletonList(keycloak.adminUsername)
+        formData["password"] = Collections.singletonList(keycloak.adminPassword)
+
+        val result: String = webclient.post()
+                .uri(authorizationURI)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(formData))
+                .retrieve()
+                .bodyToMono<String>(String::class.java)
+                .block()!!
+
+        val jsonParser = JacksonJsonParser()
+        val bearer_token = "Bearer" + jsonParser.parseMap(result).get("access_token").toString()
+        // HERE THAT SHOULD BE AN ERROR HANDLER FOR THE ACCESS TOKEN EXTRACTION
+
+        // AT THE END IT SHOULD BE POSSIBLE TO GET THE TOKEN IN THIS WAY
+        given().header("Authorization", bearer_token)
+                .when()
+                .get("/users/me")
+                .then()
+                .body("username", equalTo("admin"))
+
+        // actually the function header() doesn't exist, oc it's Java
+        * */
     }
 
 
@@ -109,13 +216,17 @@ class DbTicketingApplicationTest {
     // for authentication -> headers.setBasicAuth()
 
     @Test
-    fun `container is up and running`(){
+    fun `containers are up and running`(){
         assertTrue(postgres.isRunning)
+        //assertTrue(keycloak.isRunning)
     }
 
     // PROFILE CONTROLLER TESTS
     @Test
     fun testGetAllProfiles() {
+
+        val headers = HttpHeaders()
+        headers.setBasicAuth("username", "password")
 
         val resp: ResponseEntity<List<ProfileDTO>> = restTemplate.exchange(
                 "/profiles/",
@@ -1297,7 +1408,6 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
-
 
         val postEntity: HttpEntity<LoginDTO> = HttpEntity(logindto, headers)
         val resp = restTemplate.exchange(
