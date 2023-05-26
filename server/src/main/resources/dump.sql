@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.2 (Debian 15.2-1.pgdg110+1)
--- Dumped by pg_dump version 15.2 (Debian 15.2-1.pgdg110+1)
+-- Dumped from database version 15.3 (Debian 15.3-1.pgdg110+1)
+-- Dumped by pg_dump version 15.3 (Ubuntu 15.3-0ubuntu0.23.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -16,6 +16,27 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+
+\connect postgres
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: DATABASE postgres; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON DATABASE postgres IS 'default administrative connection database';
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -25,13 +46,13 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.addresses (
-    address_id character varying(255) NOT NULL,
-    city character varying(255),
-    country character varying(255),
-    house_number character varying(255),
-    street character varying(255),
-    zip_code character varying(255),
-    profile_email character varying(255)
+                                  address_id character varying(255) NOT NULL,
+                                  city character varying(255),
+                                  country character varying(255),
+                                  house_number character varying(255),
+                                  street character varying(255),
+                                  zip_code character varying(255),
+                                  profile_email character varying(255)
 );
 
 
@@ -42,11 +63,11 @@ ALTER TABLE public.addresses OWNER TO postgres;
 --
 
 CREATE TABLE public.attachments (
-    id bigint NOT NULL,
-    attachment bytea,
-    content_type character varying(255),
-    size smallint NOT NULL,
-    message_id bigint
+                                    id bigint NOT NULL,
+                                    attachment bytea,
+                                    content_type character varying(255),
+                                    size smallint NOT NULL,
+                                    message_id bigint
 );
 
 
@@ -71,8 +92,8 @@ ALTER TABLE public.attachments_seq OWNER TO postgres;
 --
 
 CREATE TABLE public.expert_expertise (
-    expert_id bigint NOT NULL,
-    expertise_id bigint NOT NULL
+                                         expert_id bigint NOT NULL,
+                                         expertise_id bigint NOT NULL
 );
 
 
@@ -83,8 +104,8 @@ ALTER TABLE public.expert_expertise OWNER TO postgres;
 --
 
 CREATE TABLE public.expertises (
-    id bigint NOT NULL,
-    field character varying(255)
+                                   id bigint NOT NULL,
+                                   field character varying(255)
 );
 
 
@@ -109,9 +130,9 @@ ALTER TABLE public.expertises_seq OWNER TO postgres;
 --
 
 CREATE TABLE public.experts (
-    id bigint NOT NULL,
-    name character varying(255),
-    surname character varying(255)
+                                id bigint NOT NULL,
+                                name character varying(255),
+                                surname character varying(255)
 );
 
 
@@ -136,9 +157,9 @@ ALTER TABLE public.experts_seq OWNER TO postgres;
 --
 
 CREATE TABLE public.managers (
-    id bigint NOT NULL,
-    name character varying(255),
-    surname character varying(255)
+                                 id bigint NOT NULL,
+                                 name character varying(255),
+                                 surname character varying(255)
 );
 
 
@@ -163,11 +184,11 @@ ALTER TABLE public.managers_seq OWNER TO postgres;
 --
 
 CREATE TABLE public.messages (
-    id bigint NOT NULL,
-    body character varying(255),
-    "timestamp" timestamp(6) without time zone,
-    expert_id bigint,
-    ticket_id bigint
+                                 id bigint NOT NULL,
+                                 body character varying(255),
+                                 "timestamp" timestamp(6) without time zone,
+                                 expert_id bigint,
+                                 ticket_id bigint
 );
 
 
@@ -192,9 +213,9 @@ ALTER TABLE public.messages_seq OWNER TO postgres;
 --
 
 CREATE TABLE public.products (
-    id character varying(255) NOT NULL,
-    brand character varying(255),
-    name character varying(255)
+                                 id character varying(255) NOT NULL,
+                                 brand character varying(255),
+                                 name character varying(255)
 );
 
 
@@ -205,9 +226,9 @@ ALTER TABLE public.products OWNER TO postgres;
 --
 
 CREATE TABLE public.profiles (
-    email character varying(255) NOT NULL,
-    name character varying(255),
-    surname character varying(255)
+                                 email character varying(255) NOT NULL,
+                                 name character varying(255),
+                                 surname character varying(255)
 );
 
 
@@ -232,12 +253,12 @@ ALTER TABLE public.sequence_1 OWNER TO postgres;
 --
 
 CREATE TABLE public.statuses (
-    id bigint NOT NULL,
-    status smallint,
-    status_changer character varying(255),
-    "timestamp" timestamp(6) without time zone,
-    expert_id bigint,
-    ticket_id bigint
+                                 id bigint NOT NULL,
+                                 status smallint,
+                                 status_changer character varying(255),
+                                 "timestamp" timestamp(6) without time zone,
+                                 expert_id bigint,
+                                 ticket_id bigint
 );
 
 
@@ -262,13 +283,13 @@ ALTER TABLE public.statuses_seq OWNER TO postgres;
 --
 
 CREATE TABLE public.tickets (
-    id bigint NOT NULL,
-    arg character varying(255),
-    obj character varying(255),
-    priority character varying(255),
-    expert_id bigint,
-    product_id character varying(255),
-    profile_email character varying(255)
+                                id bigint NOT NULL,
+                                arg character varying(255),
+                                obj character varying(255),
+                                priority character varying(255),
+                                expert_id bigint,
+                                product_id character varying(255),
+                                profile_email character varying(255)
 );
 
 
@@ -292,128 +313,106 @@ ALTER TABLE public.tickets_seq OWNER TO postgres;
 -- Data for Name: addresses; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.addresses (address_id, city, country, house_number, street, zip_code, profile_email) FROM stdin;
-1	turin	italy	12	via vigone	10138	mario.rossi@gmail.com
-2	narnia	italy	2	via narnia	98172	luigi.verdi@gmail.com
-3	scampia	italy	18	via mun	12121	sergio.bianchi@gmail.com
-\.
+INSERT INTO public.addresses (address_id, city, country, house_number, street, zip_code, profile_email) VALUES ('1', 'turin', 'italy', '12', 'via vigone', '10138', 'mario.rossi@gmail.com');
+INSERT INTO public.addresses (address_id, city, country, house_number, street, zip_code, profile_email) VALUES ('2', 'narnia', 'italy', '2', 'via narnia', '98172', 'luigi.verdi@gmail.com');
+INSERT INTO public.addresses (address_id, city, country, house_number, street, zip_code, profile_email) VALUES ('3', 'scampia', 'italy', '18', 'via mun', '12121', 'sergio.bianchi@gmail.com');
 
 
 --
 -- Data for Name: attachments; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.attachments (id, attachment, content_type, size, message_id) FROM stdin;
-\.
 
 
 --
 -- Data for Name: expert_expertise; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.expert_expertise (expert_id, expertise_id) FROM stdin;
-1	2
-2	3
-4	4
-5	1
-\.
+INSERT INTO public.expert_expertise (expert_id, expertise_id) VALUES (1, 2);
+INSERT INTO public.expert_expertise (expert_id, expertise_id) VALUES (2, 3);
+INSERT INTO public.expert_expertise (expert_id, expertise_id) VALUES (4, 4);
+INSERT INTO public.expert_expertise (expert_id, expertise_id) VALUES (5, 1);
 
 
 --
 -- Data for Name: expertises; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.expertises (id, field) FROM stdin;
-1	WRONG-DELIVERY
-2	DAMAGED-PRODUCT
-3	COMPUTER
-4	ELECTRONIC
-5	MECHANICAL
-6	ELECTRIC
-\.
+INSERT INTO public.expertises (id, field) VALUES (1, 'WRONG-DELIVERY');
+INSERT INTO public.expertises (id, field) VALUES (2, 'DAMAGED-PRODUCT');
+INSERT INTO public.expertises (id, field) VALUES (3, 'COMPUTER');
+INSERT INTO public.expertises (id, field) VALUES (4, 'ELECTRONIC');
+INSERT INTO public.expertises (id, field) VALUES (5, 'MECHANICAL');
+INSERT INTO public.expertises (id, field) VALUES (6, 'ELECTRIC');
 
 
 --
 -- Data for Name: experts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.experts (id, name, surname) FROM stdin;
-1	Gino	Cuccagno
-2	Mohamed	Letija
-3	Pickle	Rick
-4	Pino	Paolino
-5	Mastro	Gesualdo
-\.
+INSERT INTO public.experts (id, name, surname) VALUES (1, 'Gino', 'Cuccagno');
+INSERT INTO public.experts (id, name, surname) VALUES (2, 'Mohamed', 'Letija');
+INSERT INTO public.experts (id, name, surname) VALUES (3, 'Pickle', 'Rick');
+INSERT INTO public.experts (id, name, surname) VALUES (4, 'Pino', 'Paolino');
+INSERT INTO public.experts (id, name, surname) VALUES (5, 'Mastro', 'Gesualdo');
 
 
 --
 -- Data for Name: managers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.managers (id, name, surname) FROM stdin;
-1	BIG	BOSS
-\.
+INSERT INTO public.managers (id, name, surname) VALUES (1, 'BIG', 'BOSS');
 
 
 --
 -- Data for Name: messages; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.messages (id, body, "timestamp", expert_id, ticket_id) FROM stdin;
-\.
 
 
 --
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.products (id, brand, name) FROM stdin;
-9780702305511	Scholastic	Welsh Fairy Tales, Myths and Legends by Claire Fayers (Paperback, 2021)
-9781292204482	Pearson Education The Limited	Accounting and Finance: An Introduction 9th edition by Peter Atrill, Eddie McLaney (Paperback, 2018)
-9781788307017	Olympia Publishers	Vegans Deserve Better than a Fruit Salad by Danielle Maupertuis (Paperback, 2020)
-9781942275732	Zenescope Entertainment	The Black Sable by Joe Brusha (Paperback, 2018)
-9781941610428	Fons Vitae,US	The Prophetic Ethics and the Courtesies of Living by Al-Ghazali (Paperback, 2019)
-9781617137082	Hal Leonard Corporation	My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)
-9781617137080	Hal Leonard Corporation	My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)
-9781617137083	Hal Leonard Corporation	My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)
-9781617137084	Hal Leonard Corporation	My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)
-5707286436169	Nissens	Nissens 95601 Dryer Air Conditioning OE Replacement Top Quality
-9786420945091	Mercedes-Benz	MERCEDES CLS 320 CDI C219 2007 RHD Air Intake Hose Pipe Tube A6420945097
-5030917124013	Sony	PlayStation 3 Ps3 Destiny Vanguard Edition UK IMPORT a VideoGames
-\.
+INSERT INTO public.products (id, brand, name) VALUES ('9780702305511', 'Scholastic', 'Welsh Fairy Tales, Myths and Legends by Claire Fayers (Paperback, 2021)');
+INSERT INTO public.products (id, brand, name) VALUES ('9781292204482', 'Pearson Education The Limited', 'Accounting and Finance: An Introduction 9th edition by Peter Atrill, Eddie McLaney (Paperback, 2018)');
+INSERT INTO public.products (id, brand, name) VALUES ('9781788307017', 'Olympia Publishers', 'Vegans Deserve Better than a Fruit Salad by Danielle Maupertuis (Paperback, 2020)');
+INSERT INTO public.products (id, brand, name) VALUES ('9781942275732', 'Zenescope Entertainment', 'The Black Sable by Joe Brusha (Paperback, 2018)');
+INSERT INTO public.products (id, brand, name) VALUES ('9781941610428', 'Fons Vitae,US', 'The Prophetic Ethics and the Courtesies of Living by Al-Ghazali (Paperback, 2019)');
+INSERT INTO public.products (id, brand, name) VALUES ('9781617137082', 'Hal Leonard Corporation', 'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)');
+INSERT INTO public.products (id, brand, name) VALUES ('9781617137080', 'Hal Leonard Corporation', 'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)');
+INSERT INTO public.products (id, brand, name) VALUES ('9781617137083', 'Hal Leonard Corporation', 'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)');
+INSERT INTO public.products (id, brand, name) VALUES ('9781617137084', 'Hal Leonard Corporation', 'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)');
+INSERT INTO public.products (id, brand, name) VALUES ('5707286436169', 'Nissens', 'Nissens 95601 Dryer Air Conditioning OE Replacement Top Quality');
+INSERT INTO public.products (id, brand, name) VALUES ('9786420945091', 'Mercedes-Benz', 'MERCEDES CLS 320 CDI C219 2007 RHD Air Intake Hose Pipe Tube A6420945097');
+INSERT INTO public.products (id, brand, name) VALUES ('5030917124013', 'Sony', 'PlayStation 3 Ps3 Destiny Vanguard Edition UK IMPORT a VideoGames');
 
 
 --
 -- Data for Name: profiles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.profiles (email, name, surname) FROM stdin;
-mario.rossi@gmail.com	mario	rossi
-luigi.verdi@gmail.com	luigi	verdi
-sergio.bianchi@gmail.com	sergio	bianchi
-\.
+INSERT INTO public.profiles (email, name, surname) VALUES ('mario.rossi@gmail.com', 'mario', 'rossi');
+INSERT INTO public.profiles (email, name, surname) VALUES ('luigi.verdi@gmail.com', 'luigi', 'verdi');
+INSERT INTO public.profiles (email, name, surname) VALUES ('sergio.bianchi@gmail.com', 'sergio', 'bianchi');
 
 
 --
 -- Data for Name: statuses; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.statuses (id, status, status_changer, "timestamp", expert_id, ticket_id) FROM stdin;
-1	1	MANAGER	1999-01-08 01:05:06	1	1
-2	2	EXPERT	2000-02-18 05:25:46	2	2
-3	3	PROFILE	2006-06-13 22:21:46	4	3
-\.
+INSERT INTO public.statuses (id, status, status_changer, "timestamp", expert_id, ticket_id) VALUES (1, 1, 'MANAGER', '1999-01-08 01:05:06', 1, 1);
+INSERT INTO public.statuses (id, status, status_changer, "timestamp", expert_id, ticket_id) VALUES (2, 2, 'EXPERT', '2000-02-18 05:25:46', 2, 2);
+INSERT INTO public.statuses (id, status, status_changer, "timestamp", expert_id, ticket_id) VALUES (3, 3, 'PROFILE', '2006-06-13 22:21:46', 4, 3);
 
 
 --
 -- Data for Name: tickets; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.tickets (id, arg, obj, priority, expert_id, product_id, profile_email) FROM stdin;
-1	argument	obj	LOW	1	9781292204482	mario.rossi@gmail.com
-2	please help	i need help	HIGH	2	9786420945091	mario.rossi@gmail.com
-3	broken gift	you ruined my birthday	MEDIUM	3	9781617137080	luigi.verdi@gmail.com
-\.
+INSERT INTO public.tickets (id, arg, obj, priority, expert_id, product_id, profile_email) VALUES (1, 'argument', 'obj', 'LOW', 1, '9781292204482', 'mario.rossi@gmail.com');
+INSERT INTO public.tickets (id, arg, obj, priority, expert_id, product_id, profile_email) VALUES (2, 'please help', 'i need help', 'HIGH', 2, '9786420945091', 'mario.rossi@gmail.com');
+INSERT INTO public.tickets (id, arg, obj, priority, expert_id, product_id, profile_email) VALUES (3, 'broken gift', 'you ruined my birthday', 'MEDIUM', 3, '9781617137080', 'luigi.verdi@gmail.com');
 
 
 --
