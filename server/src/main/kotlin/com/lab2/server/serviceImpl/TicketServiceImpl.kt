@@ -51,7 +51,7 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
         }
 
         if (expert === null && inputStatus === Status.IN_PROGRESS) {
-            throw ExpertNotFoundException("Expert not found")
+            throw ExpertIsNullException("Expert cannot be null when status is in progress")
         }
 
         if ((priority === null || priority === Priority.TOASSIGN) && inputStatus === Status.IN_PROGRESS) {
@@ -66,7 +66,7 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
         ticket.addStatus(status)
         if (inputStatus === Status.IN_PROGRESS) {
             expert!!.addTicketStatus(status)
-            this.setTicketPriority(ticketId, priority!!)
+            this.setTicketPriority(ticketId, priority!!.toString())
             expert.addTicket(ticket)
             expertService.addTicketToExpert(expert, ticket)
         } else if (ticket.expert != null){
@@ -76,9 +76,19 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
         ticketingRepository.save(ticket)
     }
 
-    override fun setTicketPriority(ticketId: Long, priority: Priority) {
+    override fun setTicketPriority(ticketId: Long, priority: String) {
         val ticket = ticketingRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException("Ticket not found")
-        ticket.newPriority(priority)
+
+        if (priority.uppercase() == "HIGH")
+            ticket.newPriority(Priority.HIGH)
+        else if (priority.uppercase() == "MEDIUM")
+            ticket.newPriority(Priority.MEDIUM)
+        else if (priority.uppercase() == "LOW")
+            ticket.newPriority(Priority.LOW)
+        else if (priority.uppercase() == "TOASSIGN")
+            ticket.newPriority(Priority.TOASSIGN)
+        else throw IllegalPriorityException("Priority is illegal")
+
         ticketingRepository.save(ticket)
     }
 

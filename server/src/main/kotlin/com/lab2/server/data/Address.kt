@@ -16,8 +16,7 @@ class Address (
     var profile: Profile,
     @Id @Column(name = "address_id") var id: String? = null
 )
-{
-}
+
 fun AddressDTO.toAddress(): Address {
     return Address(
             this.city,

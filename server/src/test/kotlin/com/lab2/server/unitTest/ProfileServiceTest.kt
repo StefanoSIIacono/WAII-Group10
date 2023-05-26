@@ -2,7 +2,9 @@ package com.lab2.server.unitTest
 
 import com.lab2.server.data.Address
 import com.lab2.server.data.Profile
-import com.lab2.server.dto.*
+import com.lab2.server.dto.AddressDTO
+import com.lab2.server.dto.ProfileDTO
+import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.DuplicateProfileException
 import com.lab2.server.repositories.ProfileRepository
 import com.lab2.server.serviceImpl.ProfileServiceImpl
@@ -66,7 +68,7 @@ class ProfileServiceTest {
     @Test
     fun insertProfileTest() {
         // given
-        val createProfile = ProfileDTO("mariorossi@gmail.com", "mario", "ross", null)
+        var createProfile = ProfileDTO("mariorossi@gmail.com", "mario", "rossi", null)
         val createAddress = AddressDTO("mariorossi@gmail.com", "c", "c", "z", "s", "h", createProfile)
         val profile = Profile("mariorossi@gmail.com", "mario", "rossi",null)
         val address = Address(createAddress.city,
@@ -75,7 +77,8 @@ class ProfileServiceTest {
                                 createAddress.street,
                                 createAddress.houseNumber,
                                 profile)
-
+        val getaddresdto=address.toDTO()
+        createProfile.address=getaddresdto
         profile.addAddress(address)
         every { repository.existsById("mariorossi@gmail.com") } returns false
         every { repository.save(any())  } returns profile

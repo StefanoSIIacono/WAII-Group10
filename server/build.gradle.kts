@@ -33,11 +33,21 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.keycloak:keycloak-spring-boot-starter:11.0.3")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation ("org.springframework.boot:spring-boot-starter-validation")
 	runtimeOnly("org.postgresql:postgresql")
+	compileOnly("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.mockk:mockk:1.9.3")
 	testImplementation("org.testcontainers:junit-jupiter:1.16.3")
 	testImplementation("org.testcontainers:postgresql:1.16.3")
+	testImplementation("org.springframework.security:spring-security-test")
+	testImplementation("com.github.dasniko:testcontainers-keycloak:2.1.2")
 }
 
 dependencyManagement {

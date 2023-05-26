@@ -15,6 +15,6 @@ data class ExpertDTO(
     }
 }
 fun Expert.toDTO(): ExpertDTO {
-    return ExpertDTO(id, name, surname, expertises.map { it.toDTO()}.toMutableSet())
+    return ExpertDTO(this.id, this.name, this.surname, this.expertises.map { it.toDTO()}.toMutableSet())
 }
 

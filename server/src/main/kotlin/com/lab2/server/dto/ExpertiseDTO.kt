@@ -8,5 +8,5 @@ data class ExpertiseDTO(
 )
 
 fun Expertise.toDTO(): ExpertiseDTO {
-    return ExpertiseDTO(id, field)
+    return ExpertiseDTO(this.id, this.field)
 }

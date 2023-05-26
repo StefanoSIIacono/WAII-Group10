@@ -32,10 +32,10 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
         val newProfile = Profile(profile.email, profile.name, profile.surname, null)
         val newAddress = Address(
                 profile.address!!.city,
-                profile.address.country,
-                profile.address.zipCode,
-                profile.address.street,
-                profile.address.houseNumber,
+                profile.address!!.country,
+                profile.address!!.zipCode,
+                profile.address!!.street,
+                profile.address!!.houseNumber,
                 newProfile,
                 newProfile.email)
 

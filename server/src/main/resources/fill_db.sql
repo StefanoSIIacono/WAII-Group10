@@ -13,9 +13,9 @@ values(9780702305511,'Welsh Fairy Tales, Myths and Legends by Claire Fayers (Pap
       (5030917124013,'PlayStation 3 Ps3 Destiny Vanguard Edition UK IMPORT a VideoGames','Sony');
 
 insert into profiles(email, name, surname)
-values('mariorossi@gmail.com', 'mario', 'rossi'),
-      ('luigiverdi@gmail.com', 'luigi', 'verdi'),
-      ('sergiobianchi@gmail.com', 'sergio', 'bianchi');
+values('mario.rossi@gmail.com', 'mario', 'rossi'),
+      ('luigi.verdi@gmail.com', 'luigi', 'verdi'),
+      ('sergio.bianchi@gmail.com', 'sergio', 'bianchi');
 
 insert into expertises(id,field)
 values(1,'WRONG-DELIVERY'),
@@ -33,8 +33,25 @@ values(1,'Gino','Cuccagno'),
       (5,'Mastro','Gesualdo');
 
 insert into expert_expertise(expert_id, expertise_id)
-values (1,2);
+values(1,2),
+      (2,3),
+      (4,4),
+      (5,1);
 
 insert into managers(id,name,surname)
 values(1,'BIG','BOSS');
 
+insert into addresses(address_id, city, country, house_number, street, zip_code, profile_email)
+values(1, 'turin', 'italy', 12, 'via vigone', 10138, 'mario.rossi@gmail.com'),
+      (2, 'narnia', 'italy', 2, 'via narnia', 98172, 'luigi.verdi@gmail.com'),
+      (3, 'scampia', 'italy', 18, 'via mun', 12121, 'sergio.bianchi@gmail.com');
+
+INSERT INTO tickets (id, arg, obj, priority, expert_id, product_id, profile_email)
+values (1, 'argument', 'obj', 'LOW', 1, 9781292204482, 'mario.rossi@gmail.com'),
+       (2, 'please help', 'i need help', 'HIGH', 2, 9786420945091, 'mario.rossi@gmail.com'),
+       (3, 'broken gift', 'you ruined my birthday', 'MEDIUM', 3, 9781617137080, 'luigi.verdi@gmail.com');
+
+INSERT INTO statuses (id, status, status_changer, timestamp, expert_id, ticket_id)
+values  (1, 1, 'MANAGER', '1999-01-08 01:05:06', 1, 1),
+        (2, 2, 'EXPERT', '2000-02-18 05:25:46', 2, 2),
+        (3, 3, 'PROFILE', '2006-06-13 22:21:46', 4, 3)
