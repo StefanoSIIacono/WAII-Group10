@@ -21,26 +21,7 @@ class WebSecurityConfig (private val jwtAuthConverter: JwtAuthConverter) {
     @Throws(Exception::class)
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf().disable()
-        http.authorizeHttpRequests()
-            .requestMatchers(HttpMethod.POST, "/login/").permitAll()
-            .requestMatchers(HttpMethod.GET,
-                "/",
-                "/login",
-                "/products",
-                "/index.html",
-                "/static/**",
-                "/background.jpg",
-                "/products/**",
-                "/login",
-                "/notFound").permitAll()
-            //.requestMatchers(HttpMethod.GET,
-            //    "/experts/**",
-             //   "/expertises/**").hasRole(MANAGER)
-            //.requestMatchers(HttpMethod.GET,
-             //   "/profiles",
-             //   "/profiles/**",
-             //   "/tickets/**").hasAnyRole(PROFILE, MANAGER, EXPERT)
-            .anyRequest().authenticated()
+        http.authorizeHttpRequests().anyRequest().permitAll()
         http.oauth2ResourceServer()
             .jwt()
             .jwtAuthenticationConverter(jwtAuthConverter)
