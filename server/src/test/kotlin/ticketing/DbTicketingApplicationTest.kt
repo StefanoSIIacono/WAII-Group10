@@ -51,6 +51,7 @@ class DbTicketingApplicationTest {
             registry.add("spring.jpa.hibernate,ddl-auto") {"create-drop"}
             registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri")
             { keycloak.authServerUrl + "/realms/ticketing" }
+            registry.add("jwk-set-uri"){ keycloak.authServerUrl + "/realms/ticketing/protocol/openid-connect/certs"}
             registry.add("jwt.auth.converter.resource-id"){"ticketingclient"}
             registry.add("jwt.auth.converter.principal-attribute"){ "preferred_username"}
             registry.add("keycloack.enabled"){true}
@@ -206,7 +207,9 @@ class DbTicketingApplicationTest {
             .username(username)
             .password(password)
             .build()
-        return "Bearer" + keycloakAdminClient.tokenManager().accessToken.token
+        val token= "Bearer" + keycloakAdminClient.tokenManager().accessToken.token
+        //println("token: ${token}")
+        return token
     }
 
 

@@ -33,13 +33,13 @@ class WebSecurityConfig (private val jwtAuthConverter: JwtAuthConverter) {
                 "/products/**",
                 "/login",
                 "/notFound").permitAll()
-            .requestMatchers(HttpMethod.GET,
-                "/experts/**",
-                "/expertises/**").hasRole(MANAGER)
-            .requestMatchers(HttpMethod.GET,
-                "/profiles",
-                "/profiles/**",
-                "/tickets/**").hasAnyRole(PROFILE, MANAGER, EXPERT)
+            //.requestMatchers(HttpMethod.GET,
+            //    "/experts/**",
+             //   "/expertises/**").hasRole(MANAGER)
+            //.requestMatchers(HttpMethod.GET,
+             //   "/profiles",
+             //   "/profiles/**",
+             //   "/tickets/**").hasAnyRole(PROFILE, MANAGER, EXPERT)
             .anyRequest().authenticated()
         http.oauth2ResourceServer()
             .jwt()
