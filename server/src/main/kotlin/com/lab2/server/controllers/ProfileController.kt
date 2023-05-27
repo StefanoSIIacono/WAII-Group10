@@ -16,25 +16,27 @@ class ProfileController(private val profileService: ProfileService) {
     @Secured("MANAGER", "EXPERT", "PROFILE")
     fun getAll(): List<ProfileDTO>{
         return profileService.getAll()
-    }
+    } // MANAGER ONLY
+
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER", "EXPERT", "PROFILE")
     fun getProfileByEmail(@PathVariable email:String): ProfileDTO {
         return profileService.getProfileByEmail(email)
             ?: throw ProfileNotFoundException("Profile not found")
-    }
+    } // ADD A CHECK FOR PROFILE -> COMPARE JWT EMAIL WITH SEARCHED ONE
+        // EXCLUDE EXPERT
 
     @PostMapping("/profiles/")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     fun createProfile(@RequestBody profile: ProfileDTO?){
-        // FIX EXCPETION HANDLING -> AN EMPTY ADDRESS IS NOT RECOGNIZED
+        // FIX EXCEPTION HANDLING -> AN EMPTY ADDRESS IS NOT RECOGNIZED (SERVICE SIDE)
         if (profile === null || profile.address === null) {
             throw NoBodyProvidedException("You have to add a body")
         }
         profileService.insertProfile(profile)
-    }
+    } // IMPROVE SIGN IN WITH KEYCLOAK AND SO ON
 
     @Transactional
     @PutMapping("/profiles/{email}/newInfo")
@@ -46,7 +48,7 @@ class ProfileController(private val profileService: ProfileService) {
 
         profileService.editProfileInfo(email, newProfile)
     }
-    // New implementation for the changeProfileAddress
+
     @Transactional
     @PutMapping("/profiles/{email}/newAddress")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -64,6 +66,6 @@ class ProfileController(private val profileService: ProfileService) {
     fun getTicketsByEmail(@PathVariable email:String): MutableList<TicketDTO> {
         profileService.getProfileByEmail(email) ?: throw ProfileNotFoundException("Profile not found")
         return profileService.getTicketsByEmail(email)
-    }
+    } // PROFILE AND MANAGER ONLY
 
 }

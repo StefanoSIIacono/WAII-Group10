@@ -1,6 +1,5 @@
 package com.lab2.server.controllers
 
-import com.lab2.server.data.Priority
 import com.lab2.server.data.Status
 import com.lab2.server.data.StatusChanger
 import com.lab2.server.dto.TicketCreateBodyDTO
@@ -25,7 +24,7 @@ class TicketingController(private val ticketService: TicketService) {
     @Secured("MANAGER", "EXPERT", "PROFILE")
     fun getAll(): List<TicketDTO>{
         return ticketService.getAll()
-    }
+    } // MANAGER ONLY -> CHECK USEFULNESS
 
     @GetMapping("/tickets/{ticketId}")
     @ResponseStatus(HttpStatus.OK)
@@ -33,9 +32,9 @@ class TicketingController(private val ticketService: TicketService) {
     fun getTicketByID(@PathVariable ticketId:Long) : TicketDTO {
         return ticketService.getTicketByID(ticketId)
             ?: throw TicketNotFoundException("Ticket not found")
-    }
+    } // MANAGER ONLY -> CHECK USEFULNESS
+      // MANAGER ONLY -> IMPLEMENT GET TICKETS BY ARG
 
-    // MADE BY THE PROFILE
     @PostMapping("/tickets/")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
@@ -45,6 +44,7 @@ class TicketingController(private val ticketService: TicketService) {
             throw NoBodyProvidedException("You have to add a body")
         }
         ticketService.insertTicket(ticket)
+        // ADD SERVICE IMPLEMENTATION FOR THE FIRST MESSAGE TO BE LINKED
     }
 
     @PutMapping("/tickets/{ticketId}/open")
@@ -52,9 +52,8 @@ class TicketingController(private val ticketService: TicketService) {
     @Secured("PROFILE")
     fun openTicket(@PathVariable ticketId:Long){
         ticketService.setTicketStatus(ticketId, Status.OPEN, StatusChanger.PROFILE, null, null)
-    }
+    } // MANAGER ONLY -> SERVICE IMPLEMENTATION TO BE CHECKED
 
-    // MADE BY THE  MANAGER OR THE EXPERT
     @PutMapping("/tickets/{ticketId}/close")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("MANAGER", "EXPERT", "PROFILE")
@@ -67,32 +66,29 @@ class TicketingController(private val ticketService: TicketService) {
             throw IllegalStatusChangeException("")
         }
         ticketService.setTicketStatus(ticketId, Status.CLOSED, statusChanger, null, null)
-    }
+    }// TO BE DISCUSSED
 
-    // MADE BY THE PROFILE
     @PutMapping("/tickets/{ticketId}/reopen")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("PROFILE")
     @Transactional
-    fun reopenTicket(@PathVariable ticketId:Long){
+    fun reOpenTicket(@PathVariable ticketId:Long){
         ticketService.setTicketStatus(ticketId, Status.REOPENED, StatusChanger.PROFILE, null, null)
     }
 
-    // MADE BY THE PROFILE
     @PutMapping("/tickets/{ticketId}/resolved")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("PROFILE")
     @Transactional
     fun resolveTicket(@PathVariable ticketId:Long){
         ticketService.setTicketStatus(ticketId, Status.RESOLVED, StatusChanger.PROFILE, null, null)
-    }
+    } // TO BE DISCUSSED
 
-    // MADE BY THE MANAGER
     @PutMapping("/tickets/{ticketId}/inprogress")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("MANAGER")
     @Transactional
-    fun progressTicket(@PathVariable ticketId:Long, @RequestBody body: TicketInProgressBodyDTO?){
+    fun inProgressTicket(@PathVariable ticketId:Long, @RequestBody body: TicketInProgressBodyDTO?){
         if (body === null) {
             throw NoBodyProvidedException("Wrong body")
         }

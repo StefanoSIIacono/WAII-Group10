@@ -51,7 +51,7 @@ class ExpertController(private val expertService: ExpertService, private val exp
                 ?: throw ExpertiseNotFoundException("Expertise not found")
         val expert = expertService.getExpertById(expertId)
                 ?: throw ExpertNotFoundException("Expert not found")
-        //val expertiseId = expertise.
+
         expertService.addExpertiseToExpert(expert, exp)
     }
 }

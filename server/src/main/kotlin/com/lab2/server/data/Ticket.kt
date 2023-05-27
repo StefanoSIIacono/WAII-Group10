@@ -6,19 +6,20 @@ import jakarta.persistence.*
 @Table (name = "tickets")
 class Ticket (
 
+
     val obj: String,
+    // @ManyToOne WITH THE EXPERTISE
     val arg: String,
+
     @Enumerated(value = EnumType.STRING)
     var priority: Priority,
 
     @ManyToOne
-    // AL POSTO DI EMAIL, PERCHE' DOBBIAMO MAPPARE L'ENTITA'
     var profile: Profile,
 
     @ManyToOne
     var expert: Expert? = null,
 
-    // DA VERIFICARE SE VOGLIAMO MANTENERE IL PRODOTTO NEL TICKET
     @ManyToOne
     var product: Product
 

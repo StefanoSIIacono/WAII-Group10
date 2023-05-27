@@ -2,7 +2,6 @@ package com.lab2.server.serviceImpl
 
 
 import com.lab2.server.data.Expertise
-import com.lab2.server.data.toExpertise
 import com.lab2.server.dto.ExpertDTO
 import com.lab2.server.dto.ExpertiseDTO
 import com.lab2.server.dto.toDTO

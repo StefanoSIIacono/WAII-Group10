@@ -17,7 +17,7 @@ class ExpertiseController(private val expertiseService: ExpertiseService) {
     @Secured("MANAGER", "EXPERT", "PROFILE")
     fun getAll(): List<ExpertiseDTO>{
         return expertiseService.getAll()
-    }
+    } // THE PROFILE CAN TAKE A LOOK ON THE EXPERTISES FOR TICKET ARGUMENT
 
     @GetMapping("/expertises/{field}")
     @ResponseStatus(HttpStatus.OK)
@@ -25,7 +25,7 @@ class ExpertiseController(private val expertiseService: ExpertiseService) {
     fun getExpertise(@PathVariable field: String): ExpertiseDTO{
         return expertiseService.getExpertise(field)
             ?: throw ExpertiseNotFoundException("Expertise not found")
-    }
+    } // USELESS: CAN BE DELETED
 
     @GetMapping("/expertises/{field}/experts/")
     @ResponseStatus(HttpStatus.OK)

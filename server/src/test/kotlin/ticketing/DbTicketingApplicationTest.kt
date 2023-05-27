@@ -1725,4 +1725,27 @@ class DbTicketingApplicationTest {
         assertNotNull(response)
         assertEquals(HttpStatus.FORBIDDEN, response.statusCode)
     }
+
+    @Test
+    fun testProva(){
+
+        val headers = HttpHeaders()
+        headers.set(
+                "Authorization",
+                getBearerToken("manager", "password")
+        )
+        headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
+        headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
+
+        val getEntity: HttpEntity<ExpertiseDTO> = HttpEntity(null, headers)
+        val resp = restTemplate.exchange(
+                "/prova",
+                HttpMethod.GET,
+                getEntity,
+                String::class.java )
+
+        assertNotNull(resp)
+        assertEquals(HttpStatus.OK, resp.statusCode)
+        assertEquals("manager", resp.body)
+    }
 }

@@ -8,11 +8,13 @@ import com.lab2.server.security.JwtAuthConverterProperties
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 @RestController
 class SecurityController(private val env: Environment, private val properties: JwtAuthConverterProperties) {
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/login/")
     fun login(@RequestBody body: LoginDTO?): TokenDTO {
@@ -20,7 +22,8 @@ class SecurityController(private val env: Environment, private val properties: J
             throw NoBodyProvidedException("You have to add a body")
         }
         try {
-            val client: WebClient = WebClient.create(env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri")!!)
+            val client: WebClient = WebClient
+                    .create(env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri")!!)
 
             val response = client.post().uri("/protocol/openid-connect/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -38,5 +41,12 @@ class SecurityController(private val env: Environment, private val properties: J
         } catch (e: Exception) {
             throw WrongCredentialsException("Wrong username or password")
         }
+    }
+
+    @GetMapping("/prova")
+    @ResponseStatus(HttpStatus.OK)
+    fun getMe(principal: JwtAuthenticationToken): String {
+
+        return principal.tokenAttributes["preferred_username"].toString()
     }
 }

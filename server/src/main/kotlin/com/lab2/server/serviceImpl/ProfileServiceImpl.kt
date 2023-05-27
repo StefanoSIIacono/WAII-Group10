@@ -30,7 +30,7 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
             throw DuplicateProfileException("Profile exists!")
 
         val newProfile = Profile(profile.email, profile.name, profile.surname, null)
-        val newAddress = Address(
+        val newAddress = Address( // CHECK WHETHER THE FIELDS ARE NOT NULL
                 profile.address!!.city,
                 profile.address!!.country,
                 profile.address!!.zipCode,
