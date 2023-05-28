@@ -169,10 +169,11 @@ class ExpertServiceTest {
             "h",
             profile
         )
+        val expertise= Expertise( "COMPUTER")
         profile.addAddress(address)
         val ticket = Ticket(
             "Ticket",
-            "ticket problem",
+            expertise,
             Priority.TOASSIGN,
             profile,
             null,

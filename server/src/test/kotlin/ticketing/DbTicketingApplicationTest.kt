@@ -124,7 +124,7 @@ class DbTicketingApplicationTest {
 
         val ticket = Ticket(
                 "obj",
-                "arg",
+                expertise,
                 priority,
                 profile,
                 expert,
@@ -1001,10 +1001,11 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testGetTicketById(){
+        val expertise= expertiseRepository.findByField("expertise")
 
         val ticket = Ticket(
             "o",
-            "a",
+            expertise!!,
             Priority.TOASSIGN,
             profileRepository.findByIdOrNull("test1@test.com")!!,
             null,
@@ -1064,8 +1065,9 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testCreateTicket(){
+        val expertise= expertiseRepository.findByField("expertise")
 
-        val ticket = TicketCreateBodyDTO("o", "a", "test1@test.com", "1234567890123456")
+        val ticket = TicketCreateBodyDTO("o", expertise!!.field, "test1@test.com", "1234567890123456")
 
         val headers = HttpHeaders()
         headers.set(
@@ -1162,10 +1164,10 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testOpenTicket() {
-
+        val expertise= expertiseRepository.findByField("expertise")
         val ticket = Ticket(
                 "o",
-                "a",
+                expertise!!,
                 Priority.TOASSIGN,
                 profileRepository.findByIdOrNull("test1@test.com")!!,
                 null,
@@ -1217,10 +1219,10 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testCloseTicket() {
-
+        val expertise= expertiseRepository.findByField("expertise")
         val ticket = Ticket(
             "o",
-            "a",
+            expertise!!,
             Priority.TOASSIGN,
             profileRepository.findByIdOrNull("test1@test.com")!!,
             null,
@@ -1271,10 +1273,10 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testReOpenTicket() {
-
+        val expertise= expertiseRepository.findByField("expertise")
         val ticket = Ticket(
                 "o",
-                "a",
+                expertise!!,
                 Priority.TOASSIGN,
                 profileRepository.findByIdOrNull("test1@test.com")!!,
                 null,
@@ -1327,10 +1329,10 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testResolveTicket() {
-
+        val expertise= expertiseRepository.findByField("expertise")
         val ticket = Ticket(
             "o",
-            "a",
+            expertise!!,
             Priority.TOASSIGN,
             profileRepository.findByIdOrNull("test1@test.com")!!,
             null,
@@ -1383,10 +1385,10 @@ class DbTicketingApplicationTest {
     fun testInProgressTicket() {
 
         val expert = expertRepository.save(Expert("e1@e1.com","e", "e"))
-
+        val expertise= expertiseRepository.findByField("expertise")
         val ticket = Ticket(
             "o",
-            "a",
+            expertise!!,
             Priority.TOASSIGN,
             profileRepository.findByIdOrNull("test1@test.com")!!,
             null,
@@ -1419,10 +1421,10 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testInProgressTicket_NoBodyFailure() {
-
+        val expertise= expertiseRepository.findByField("expertise")
         val ticket = Ticket(
             "o",
-            "a",
+            expertise!!,
             Priority.TOASSIGN,
             profileRepository.findByIdOrNull("test1@test.com")!!,
             null,
@@ -1478,9 +1480,10 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testInProgressTicket_ExpertNotFoundFailure() {
+        val expertise= expertiseRepository.findByField("expertise")
         val ticket = Ticket(
             "o",
-            "a",
+            expertise!!,
             Priority.TOASSIGN,
             profileRepository.findByIdOrNull("test1@test.com")!!,
             null,
@@ -1515,10 +1518,10 @@ class DbTicketingApplicationTest {
     fun testSetTicketStatus_IllegalStatusChangeFailure(){
 
         val expert = expertRepository.save(Expert("e1@e1.com","e", "e"))
-
+        val expertise= expertiseRepository.findByField("expertise")
         val ticket = Ticket(
             "o",
-            "a",
+            expertise!!,
             Priority.TOASSIGN,
             profileRepository.findByIdOrNull("test1@test.com")!!,
             null,
@@ -1553,10 +1556,10 @@ class DbTicketingApplicationTest {
     fun testSetTicketStatus_IllegalPriorityFailure(){
 
         val expert = expertRepository.save(Expert("e1@e1.com","e", "e"))
-
+        val expertise= expertiseRepository.findByField("expertise")
         val ticket = Ticket(
             "o",
-            "a",
+            expertise!!,
             Priority.TOASSIGN,
             profileRepository.findByIdOrNull("test1@test.com")!!,
             null,
@@ -1589,10 +1592,10 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testSetTicketPriority(){
-
+        val expertise= expertiseRepository.findByField("expertise")
         val ticket = Ticket(
             "o",
-            "a",
+            expertise!!,
             Priority.TOASSIGN,
             profileRepository.findByIdOrNull("test1@test.com")!!,
             null,
@@ -1642,9 +1645,10 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testSetTicketPriority_IllegalPriorityFailure(){
+        val expertise= expertiseRepository.findByField("expertise")
         val ticket = Ticket(
             "o",
-            "a",
+            expertise!!,
             Priority.TOASSIGN,
             profileRepository.findByIdOrNull("test1@test.com")!!,
             null,
@@ -1693,10 +1697,10 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testSetTicketPriority_Unauthorized(){
-
+        val expertise= expertiseRepository.findByField("expertise")
         val ticket = Ticket(
             "o",
-            "a",
+            expertise!!,
             Priority.TOASSIGN,
             profileRepository.findByIdOrNull("test1@test.com")!!,
             null,

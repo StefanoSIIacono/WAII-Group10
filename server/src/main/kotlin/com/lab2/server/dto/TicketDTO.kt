@@ -6,7 +6,7 @@ import com.lab2.server.data.Ticket
 data class TicketDTO(
         val id: Long?,
         val obj: String,
-        val arg: String,
+        val arg: ExpertiseDTO,
         val priority: Priority,
         val profile: String,
         val expert: String?,
@@ -30,7 +30,7 @@ fun Ticket.toDTO(): TicketDTO {
             return TicketDTO(
                     this.id,
                     this.obj,
-                    this.arg,
+                    this.arg.toDTO(),
                     this.priority,
                     this.profile.email,
                     this.expert?.email,

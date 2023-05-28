@@ -6,16 +6,14 @@ import com.lab2.server.dto.TicketDTO
 import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.*
 import com.lab2.server.repositories.TicketingRepository
-import com.lab2.server.services.ExpertService
-import com.lab2.server.services.ProductService
-import com.lab2.server.services.ProfileService
-import com.lab2.server.services.TicketService
+import com.lab2.server.services.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class TicketServiceImpl (private val ticketingRepository: TicketingRepository, private val profileService: ProfileService, private val productService: ProductService, private val expertService: ExpertService):
+class TicketServiceImpl (private val ticketingRepository: TicketingRepository, private val profileService: ProfileService,
+                         private val productService: ProductService, private val expertService: ExpertService, private val expertiseService :ExpertiseService):
     TicketService {
 
     override fun getAll(): List<TicketDTO> {
@@ -31,7 +29,7 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
 
         val product = productService.getProduct(ticket.product) ?: throw ProductNotFoundException("Product not found")
 
-        val newTicket = Ticket(ticket.obj, ticket.arg, Priority.TOASSIGN, profile, null, product.toProduct())
+        val newTicket = Ticket(ticket.obj, expertiseService.getExpertise(ticket.arg)!!.toExpertise(), Priority.TOASSIGN, profile, null, product.toProduct())
         val status = TicketStatus(Status.OPEN, Date(System.currentTimeMillis()), newTicket)
 
         newTicket.addStatus(status)

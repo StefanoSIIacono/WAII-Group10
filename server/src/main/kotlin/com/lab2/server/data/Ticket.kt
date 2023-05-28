@@ -8,8 +8,9 @@ class Ticket (
 
 
     val obj: String,
-    // @ManyToOne WITH THE EXPERTISE
-    val arg: String,
+
+    @ManyToOne
+    var arg: Expertise,
 
     @Enumerated(value = EnumType.STRING)
     var priority: Priority,
