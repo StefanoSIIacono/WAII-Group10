@@ -374,6 +374,7 @@
   "otpPolicyDigits" : 6,
   "otpPolicyLookAheadWindow" : 1,
   "otpPolicyPeriod" : 30,
+  "otpPolicyCodeReusable" : false,
   "otpSupportedApplications" : [ "totpAppMicrosoftAuthenticatorName", "totpAppFreeOTPName", "totpAppGoogleName" ],
   "webAuthnPolicyRpEntityName" : "keycloak",
   "webAuthnPolicySignatureAlgorithms" : [ "ES256" ],
@@ -395,6 +396,232 @@
   "webAuthnPolicyPasswordlessCreateTimeout" : 0,
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister" : false,
   "webAuthnPolicyPasswordlessAcceptableAaguids" : [ ],
+  "users" : [ {
+    "id" : "4e21745f-93ba-498e-b13b-39b748ecb05e",
+    "createdTimestamp" : 1685300905036,
+    "username" : "bigboss@tickets.admin.com",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "9720f823-5ef2-4d40-881d-d8141e9b983f",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1685300918141,
+      "secretData" : "{\"value\":\"WES/n/5yyNFv8eKRZshIq1vG1C0UDvhk0V74RUAOR3c=\",\"salt\":\"yQ5DCNbQn4kpR74DruMCaA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticketing" ],
+    "clientRoles" : {
+      "ticketingclient" : [ "MANAGER" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "7511adc5-5351-401b-a6cc-2ec3a722d378",
+    "createdTimestamp" : 1685300701328,
+    "username" : "gino.cuccagno@tickets.com",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "f4c61809-1a8d-4ddd-bfa3-3c8a72713e91",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1685300712133,
+      "secretData" : "{\"value\":\"u3N77xUn4jULDgXA89KVF9ON7GTlVkUEibjgUMc1bis=\",\"salt\":\"pe9QqGAEQ76XNmk3qs9/pg==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticketing" ],
+    "clientRoles" : {
+      "ticketingclient" : [ "EXPERT" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "63ce233b-74ce-4105-8b26-6f67eb7d38bb",
+    "createdTimestamp" : 1685300664047,
+    "username" : "luigi.verdi@gmail.com",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "54b65ebb-b1d7-4140-beda-32e8cb3ada3f",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1685300676675,
+      "secretData" : "{\"value\":\"IMe+JuQLqIjYjyGF0zO7A+54SYiFYepLvJEFZkxPR4E=\",\"salt\":\"JX2Q9gO9qPzvGoUS94di4Q==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticketing" ],
+    "clientRoles" : {
+      "ticketingclient" : [ "PROFILE" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "3cd306ba-f253-4b3d-8477-486b7968973f",
+    "createdTimestamp" : 1685300342714,
+    "username" : "mario.rossi@gmail.com",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "5ef57d7c-0680-48fe-a915-78fd46ebc3dd",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1685300354467,
+      "secretData" : "{\"value\":\"VAYIv5k9ODoaN9ELAntwxcFfG3H+jPLyk1KiwK2IbGQ=\",\"salt\":\"2KOcFHLdyPsw0IFz1Bm7uw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticketing" ],
+    "clientRoles" : {
+      "ticketingclient" : [ "PROFILE" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "620d26db-e0ed-46f8-a751-2550179ab47a",
+    "createdTimestamp" : 1685300867993,
+    "username" : "mastro.gesualdo@tickets.com",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "f280de7b-4b1c-4cb9-9375-d4eeff046be2",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1685300880660,
+      "secretData" : "{\"value\":\"vCRtMYQpE6Vjr5lPIAhPp5RoPJw6CstTf51hKltkLLo=\",\"salt\":\"2DU0N7rTW03OuYAlHw4IGw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticketing" ],
+    "clientRoles" : {
+      "ticketingclient" : [ "EXPERT" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "8ab3fab9-6642-44f8-9689-0dc5e70254e5",
+    "createdTimestamp" : 1685300736150,
+    "username" : "mohamed.letija@tickets.com",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "7ec45922-59c0-41fd-a0a0-4002c19463a2",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1685300754296,
+      "secretData" : "{\"value\":\"VZqfMfRMxqa/2MRwE3zIcAv49KDxjdh3TcR6yh6ffLg=\",\"salt\":\"CnDy4Z33xVqQMZfaKRXilg==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticketing" ],
+    "clientRoles" : {
+      "ticketingclient" : [ "EXPERT" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "fc6de7d4-4fec-4a4f-8a22-5ed109fa9257",
+    "createdTimestamp" : 1685300776137,
+    "username" : "pickle.rick@tickets.com",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "834b2dad-f3fb-493d-9c93-1401a3d06f37",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1685300789320,
+      "secretData" : "{\"value\":\"i/cJtfnfJG+5ECPugncpNGGBuLeOca8UyN7AsEh0Ksk=\",\"salt\":\"cgmIC9puAFj++81Perdr8A==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticketing" ],
+    "clientRoles" : {
+      "ticketingclient" : [ "EXPERT" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "0c4b3f20-264e-4d5c-9974-5cf4b63152a3",
+    "createdTimestamp" : 1685300814376,
+    "username" : "pino.paolino@tickets.com",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "b2d3c73c-e7e0-48d2-a7ae-c7881bfbaf1b",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1685300826256,
+      "secretData" : "{\"value\":\"WUbPHM7Gz4inOijyCn0BltKHKAKMrN+2w7+Ijpa27As=\",\"salt\":\"6q3v0XTFddc6Ma4m+uJl4A==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticketing" ],
+    "clientRoles" : {
+      "ticketingclient" : [ "EXPERT" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "6a546ffe-0902-4fa4-85fd-70b61227159a",
+    "createdTimestamp" : 1685300623448,
+    "username" : "sergio.bianchi@gmail.com",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "cf42f587-5f10-4645-92ab-81b46ed2ec4f",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1685300640358,
+      "secretData" : "{\"value\":\"ul0Ve3PMoDzyDACMMQUzYocTVhrhC3uIjI0AE/dRJEM=\",\"salt\":\"ERw/6S1ESxZ5LaoqQlCNag==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticketing" ],
+    "clientRoles" : {
+      "ticketingclient" : [ "PROFILE" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ],
   "scopeMappings" : [ {
     "clientScope" : "offline_access",
     "roles" : [ "offline_access" ]
@@ -494,7 +721,9 @@
     "publicClient" : true,
     "frontchannelLogout" : false,
     "protocol" : "openid-connect",
-    "attributes" : { },
+    "attributes" : {
+      "post.logout.redirect.uris" : "+"
+    },
     "authenticationFlowBindingOverrides" : { },
     "fullScopeAllowed" : false,
     "nodeReRegistrationTimeout" : 0,
@@ -520,7 +749,9 @@
     "publicClient" : false,
     "frontchannelLogout" : false,
     "protocol" : "openid-connect",
-    "attributes" : { },
+    "attributes" : {
+      "post.logout.redirect.uris" : "+"
+    },
     "authenticationFlowBindingOverrides" : { },
     "fullScopeAllowed" : false,
     "nodeReRegistrationTimeout" : 0,
@@ -546,7 +777,9 @@
     "publicClient" : false,
     "frontchannelLogout" : false,
     "protocol" : "openid-connect",
-    "attributes" : { },
+    "attributes" : {
+      "post.logout.redirect.uris" : "+"
+    },
     "authenticationFlowBindingOverrides" : { },
     "fullScopeAllowed" : false,
     "nodeReRegistrationTimeout" : 0,
@@ -624,6 +857,7 @@
     "protocol" : "openid-connect",
     "attributes" : {
       "oidc.ciba.grant.enabled" : "false",
+      "post.logout.redirect.uris" : "+",
       "oauth2.device.authorization.grant.enabled" : "false",
       "backchannel.logout.session.required" : "true",
       "backchannel.logout.revoke.offline.tokens" : "false"
@@ -713,7 +947,8 @@
       "consentRequired" : false,
       "config" : {
         "id.token.claim" : "true",
-        "access.token.claim" : "true"
+        "access.token.claim" : "true",
+        "userinfo.token.claim" : "true"
       }
     } ]
   }, {
@@ -1039,6 +1274,7 @@
       "consentRequired" : false,
       "config" : {
         "multivalued" : "true",
+        "userinfo.token.claim" : "true",
         "user.attribute" : "foo",
         "id.token.claim" : "true",
         "access.token.claim" : "true",
@@ -1122,7 +1358,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-address-mapper", "oidc-usermodel-property-mapper", "oidc-full-name-mapper", "saml-user-attribute-mapper", "oidc-usermodel-attribute-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-user-property-mapper", "saml-role-list-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-full-name-mapper", "saml-user-attribute-mapper", "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-usermodel-attribute-mapper", "saml-user-property-mapper", "oidc-address-mapper", "oidc-sha256-pairwise-sub-mapper" ]
       }
     }, {
       "id" : "57196146-651e-40ab-842e-3846e32b437b",
@@ -1148,7 +1384,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-usermodel-attribute-mapper", "saml-user-attribute-mapper", "oidc-full-name-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-role-list-mapper", "saml-user-property-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-role-list-mapper", "saml-user-attribute-mapper", "saml-user-property-mapper", "oidc-usermodel-attribute-mapper", "oidc-full-name-mapper", "oidc-address-mapper", "oidc-usermodel-property-mapper", "oidc-sha256-pairwise-sub-mapper" ]
       }
     }, {
       "id" : "179e9dbe-8248-4c9c-8dd8-c1fe3c9ff563",
@@ -1823,8 +2059,12 @@
     "cibaExpiresIn" : "120",
     "cibaAuthRequestedUserHint" : "login_hint",
     "oauth2DeviceCodeLifespan" : "600",
+    "clientOfflineSessionMaxLifespan" : "0",
     "oauth2DevicePollingInterval" : "5",
+    "clientSessionIdleTimeout" : "0",
     "parRequestUriLifespan" : "60",
+    "clientSessionMaxLifespan" : "0",
+    "clientOfflineSessionIdleTimeout" : "0",
     "cibaInterval" : "5",
     "realmReusableOtpCode" : "false"
   },
@@ -1835,81 +2075,5 @@
   },
   "clientPolicies" : {
     "policies" : [ ]
-  },
-  "users" : [ {
-    "id" : "9ebb6f6f-40a4-49dd-953c-d3e50c54cdf9",
-    "createdTimestamp" : 1684954735397,
-    "username" : "expert",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
-    "firstName" : "",
-    "lastName" : "",
-    "credentials" : [ {
-      "id" : "6deee0a3-c581-455c-abbb-5cbc10842e94",
-      "type" : "password",
-      "userLabel" : "My password",
-      "createdDate" : 1684954744527,
-      "secretData" : "{\"value\":\"FWmkCadZ+qti5Gfb4/NbWQhI96wPiJit6mPkMO9ZDvM=\",\"salt\":\"hgpOuvjTpn7A7GaYFwfZ4g==\",\"additionalParameters\":{}}",
-      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
-    } ],
-    "disableableCredentialTypes" : [ ],
-    "requiredActions" : [ ],
-    "realmRoles" : [ "default-roles-ticketing" ],
-    "clientRoles" : {
-      "ticketingclient" : [ "EXPERT" ]
-    },
-    "notBefore" : 0,
-    "groups" : [ ]
-  }, {
-    "id" : "fc69a985-cc8a-4342-aeda-04e4f9204148",
-    "createdTimestamp" : 1684954713825,
-    "username" : "manager",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
-    "firstName" : "",
-    "lastName" : "",
-    "credentials" : [ {
-      "id" : "9c02ca3b-43c4-44a5-ada0-4c110cdadae1",
-      "type" : "password",
-      "userLabel" : "My password",
-      "createdDate" : 1684954726837,
-      "secretData" : "{\"value\":\"o4cV4pwFjKEpfCx8LpFBLF4B387rVOw+1WY9deI79bc=\",\"salt\":\"cKTddGKepp6vcm9KlNNtrw==\",\"additionalParameters\":{}}",
-      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
-    } ],
-    "disableableCredentialTypes" : [ ],
-    "requiredActions" : [ ],
-    "realmRoles" : [ "default-roles-ticketing" ],
-    "clientRoles" : {
-      "ticketingclient" : [ "MANAGER" ]
-    },
-    "notBefore" : 0,
-    "groups" : [ ]
-  }, {
-    "id" : "ac6de123-ee3a-493e-92d9-dcc72e8e48ab",
-    "createdTimestamp" : 1684954668382,
-    "username" : "profile",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : false,
-    "firstName" : "",
-    "lastName" : "",
-    "credentials" : [ {
-      "id" : "31d68693-8c51-46d8-90f3-9637823f58f8",
-      "type" : "password",
-      "userLabel" : "My password",
-      "createdDate" : 1684954680447,
-      "secretData" : "{\"value\":\"E5u+RBrzz1N9p85M990GGrrYsR5UD8bpS5CHVW974qY=\",\"salt\":\"QKYh8AGMHZ6GivLaT0W7/A==\",\"additionalParameters\":{}}",
-      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
-    } ],
-    "disableableCredentialTypes" : [ ],
-    "requiredActions" : [ ],
-    "realmRoles" : [ "default-roles-ticketing" ],
-    "clientRoles" : {
-      "ticketingclient" : [ "PROFILE" ]
-    },
-    "notBefore" : 0,
-    "groups" : [ ]
-  } ]
+  }
 }

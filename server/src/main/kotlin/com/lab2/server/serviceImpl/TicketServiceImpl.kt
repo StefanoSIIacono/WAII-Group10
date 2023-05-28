@@ -29,7 +29,9 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
 
         val product = productService.getProduct(ticket.product) ?: throw ProductNotFoundException("Product not found")
 
-        val newTicket = Ticket(ticket.obj, expertiseService.getExpertise(ticket.arg)!!.toExpertise(), Priority.TOASSIGN, profile, null, product.toProduct())
+        val expertise = expertiseService.getExpertise(ticket.arg) ?: throw ExpertiseNotFoundException("Expertise not found")
+
+        val newTicket = Ticket(ticket.obj, expertise.toExpertise(), Priority.TOASSIGN, profile, null, product.toProduct())
         val status = TicketStatus(Status.OPEN, Date(System.currentTimeMillis()), newTicket)
 
         newTicket.addStatus(status)
