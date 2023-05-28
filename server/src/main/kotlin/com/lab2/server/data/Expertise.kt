@@ -14,7 +14,6 @@ class Expertise (
     @ManyToMany(mappedBy = "expertises")
     val experts: MutableSet<Expert> = mutableSetOf()
 
-
     fun addExpert(e: Expert) {
         this.experts.add(e)
         e.expertises.add(this)

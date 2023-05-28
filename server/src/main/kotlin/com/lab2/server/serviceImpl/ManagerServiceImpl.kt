@@ -11,12 +11,8 @@ import org.springframework.stereotype.Service
 @Service
 class ManagerServiceImpl (private val managerRepository: ManagerRepository): ManagerService{
 
-    override fun getAll(): List<ManagerDTO> {
-        return managerRepository.findAll().map{ it.toDTO() }
-    }
-
-    override fun getManagerById(managerId: Long): ManagerDTO? {
-        return managerRepository.findByIdOrNull(managerId)?.toDTO() ?: throw ManagerNotFoundException("Manager not found")
+    override fun getManager(managerEmail: String): ManagerDTO? {
+        return managerRepository.findByIdOrNull(managerEmail)?.toDTO() ?: throw ManagerNotFoundException("Manager not found")
     }
 
 }

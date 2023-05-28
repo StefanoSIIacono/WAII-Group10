@@ -3,7 +3,7 @@ package com.lab2.server.dto
 import com.lab2.server.data.Expert
 
 data class ExpertDTO(
-    val id: Long?,
+    val email: String,
     val name: String,
     val surname: String,
     val expertises: MutableSet<ExpertiseDTO> = mutableSetOf(),
@@ -15,6 +15,11 @@ data class ExpertDTO(
     }
 }
 fun Expert.toDTO(): ExpertDTO {
-    return ExpertDTO(this.id, this.name, this.surname, this.expertises.map { it.toDTO()}.toMutableSet())
+    return ExpertDTO(
+        this.email,
+        this.name,
+        this.surname,
+        this.expertises.map { it.toDTO()}.toMutableSet()
+    )
 }
 

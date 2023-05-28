@@ -92,7 +92,7 @@ ALTER TABLE public.attachments_seq OWNER TO postgres;
 --
 
 CREATE TABLE public.expert_expertise (
-                                         expert_id bigint NOT NULL,
+                                         expert_email character varying (255) NOT NULL,
                                          expertise_id bigint NOT NULL
 );
 
@@ -130,7 +130,7 @@ ALTER TABLE public.expertises_seq OWNER TO postgres;
 --
 
 CREATE TABLE public.experts (
-                                id bigint NOT NULL,
+                                email character varying (255) NOT NULL,
                                 name character varying(255),
                                 surname character varying(255)
 );
@@ -142,22 +142,22 @@ ALTER TABLE public.experts OWNER TO postgres;
 -- Name: experts_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.experts_seq
-    START WITH 1
-    INCREMENT BY 50
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+--CREATE SEQUENCE public.experts_seq
+--    START WITH 1
+--    INCREMENT BY 50
+--    NO MINVALUE
+--    NO MAXVALUE
+--    CACHE 1;
 
 
-ALTER TABLE public.experts_seq OWNER TO postgres;
+--ALTER TABLE public.experts_seq OWNER TO postgres;
 
 --
 -- Name: managers; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.managers (
-                                 id bigint NOT NULL,
+                                 email character varying (255) NOT NULL,
                                  name character varying(255),
                                  surname character varying(255)
 );
@@ -169,15 +169,15 @@ ALTER TABLE public.managers OWNER TO postgres;
 -- Name: managers_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.managers_seq
-    START WITH 1
-    INCREMENT BY 50
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+--CREATE SEQUENCE public.managers_seq
+--    START WITH 1
+--    INCREMENT BY 50
+--    NO MINVALUE
+--    NO MAXVALUE
+--    CACHE 1;
 
 
-ALTER TABLE public.managers_seq OWNER TO postgres;
+--ALTER TABLE public.managers_seq OWNER TO postgres;
 
 --
 -- Name: messages; Type: TABLE; Schema: public; Owner: postgres
@@ -187,7 +187,7 @@ CREATE TABLE public.messages (
                                  id bigint NOT NULL,
                                  body character varying(255),
                                  "timestamp" timestamp(6) without time zone,
-                                 expert_id bigint,
+                                 expert_email character varying (255),
                                  ticket_id bigint
 );
 
@@ -257,7 +257,7 @@ CREATE TABLE public.statuses (
                                  status smallint,
                                  status_changer character varying(255),
                                  "timestamp" timestamp(6) without time zone,
-                                 expert_id bigint,
+                                 expert_email character varying (255),
                                  ticket_id bigint
 );
 
@@ -287,7 +287,7 @@ CREATE TABLE public.tickets (
                                 arg character varying(255),
                                 obj character varying(255),
                                 priority character varying(255),
-                                expert_id bigint,
+                                expert_email character varying (255),
                                 product_id character varying(255),
                                 profile_email character varying(255)
 );
@@ -313,9 +313,12 @@ ALTER TABLE public.tickets_seq OWNER TO postgres;
 -- Data for Name: addresses; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.addresses (address_id, city, country, house_number, street, zip_code, profile_email) VALUES ('1', 'turin', 'italy', '12', 'via vigone', '10138', 'mario.rossi@gmail.com');
-INSERT INTO public.addresses (address_id, city, country, house_number, street, zip_code, profile_email) VALUES ('2', 'narnia', 'italy', '2', 'via narnia', '98172', 'luigi.verdi@gmail.com');
-INSERT INTO public.addresses (address_id, city, country, house_number, street, zip_code, profile_email) VALUES ('3', 'scampia', 'italy', '18', 'via mun', '12121', 'sergio.bianchi@gmail.com');
+INSERT INTO public.addresses (address_id, city, country, house_number, street, zip_code, profile_email)
+VALUES ('1', 'turin', 'italy', '12', 'via vigone', '10138', 'mario.rossi@gmail.com');
+INSERT INTO public.addresses (address_id, city, country, house_number, street, zip_code, profile_email)
+VALUES ('2', 'narnia', 'italy', '2', 'via narnia', '98172', 'luigi.verdi@gmail.com');
+INSERT INTO public.addresses (address_id, city, country, house_number, street, zip_code, profile_email)
+VALUES ('3', 'scampia', 'italy', '18', 'via mun', '12121', 'sergio.bianchi@gmail.com');
 
 
 --
@@ -328,40 +331,56 @@ INSERT INTO public.addresses (address_id, city, country, house_number, street, z
 -- Data for Name: expert_expertise; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.expert_expertise (expert_id, expertise_id) VALUES (1, 2);
-INSERT INTO public.expert_expertise (expert_id, expertise_id) VALUES (2, 3);
-INSERT INTO public.expert_expertise (expert_id, expertise_id) VALUES (4, 4);
-INSERT INTO public.expert_expertise (expert_id, expertise_id) VALUES (5, 1);
+INSERT INTO public.expert_expertise (expert_email, expertise_id)
+VALUES ('gino.cuccagno@tickets.com', 2);
+INSERT INTO public.expert_expertise (expert_email, expertise_id)
+VALUES ('mohamed.letija@tickets.com', 3);
+INSERT INTO public.expert_expertise (expert_email, expertise_id)
+VALUES ('mohamed.letija@tickets.com', 4);
+INSERT INTO public.expert_expertise (expert_email, expertise_id)
+VALUES ('pickle.rick@tickets.com', 1);
 
 
 --
 -- Data for Name: expertises; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.expertises (id, field) VALUES (1, 'WRONG-DELIVERY');
-INSERT INTO public.expertises (id, field) VALUES (2, 'DAMAGED-PRODUCT');
-INSERT INTO public.expertises (id, field) VALUES (3, 'COMPUTER');
-INSERT INTO public.expertises (id, field) VALUES (4, 'ELECTRONIC');
-INSERT INTO public.expertises (id, field) VALUES (5, 'MECHANICAL');
-INSERT INTO public.expertises (id, field) VALUES (6, 'ELECTRIC');
+INSERT INTO public.expertises (id, field)
+VALUES (1, 'WRONG-DELIVERY');
+INSERT INTO public.expertises (id, field)
+VALUES (2, 'DAMAGED-PRODUCT');
+INSERT INTO public.expertises (id, field)
+VALUES (3, 'COMPUTER');
+INSERT INTO public.expertises (id, field)
+VALUES (4, 'ELECTRONIC');
+INSERT INTO public.expertises (id, field)
+VALUES (5, 'MECHANICAL');
+INSERT INTO public.expertises (id, field)
+VALUES (6, 'ELECTRIC');
 
 
 --
 -- Data for Name: experts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.experts (id, name, surname) VALUES (1, 'Gino', 'Cuccagno');
-INSERT INTO public.experts (id, name, surname) VALUES (2, 'Mohamed', 'Letija');
-INSERT INTO public.experts (id, name, surname) VALUES (3, 'Pickle', 'Rick');
-INSERT INTO public.experts (id, name, surname) VALUES (4, 'Pino', 'Paolino');
-INSERT INTO public.experts (id, name, surname) VALUES (5, 'Mastro', 'Gesualdo');
+INSERT INTO public.experts (email, name, surname)
+VALUES ('gino.cuccagno@tickets.com', 'Gino', 'Cuccagno');
+INSERT INTO public.experts (email, name, surname)
+VALUES ('mohamed.letija@tickets.com', 'Mohamed', 'Letija');
+INSERT INTO public.experts (email, name, surname)
+VALUES ('pickle.rick@tickets.com', 'Pickle', 'Rick');
+INSERT INTO public.experts (email, name, surname)
+VALUES ('pino.paolino@tickets.com', 'Pino', 'Paolino');
+INSERT INTO public.experts (email, name, surname)
+VALUES ('mastro.gesualdo@tickets.com', 'Mastro', 'Gesualdo');
 
 
 --
 -- Data for Name: managers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.managers (id, name, surname) VALUES (1, 'BIG', 'BOSS');
+INSERT INTO public.managers (email, name, surname)
+VALUES ('bigboss@tickets.admin.com', 'BIG', 'BOSS');
 
 
 --
@@ -374,45 +393,66 @@ INSERT INTO public.managers (id, name, surname) VALUES (1, 'BIG', 'BOSS');
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.products (id, brand, name) VALUES ('9780702305511', 'Scholastic', 'Welsh Fairy Tales, Myths and Legends by Claire Fayers (Paperback, 2021)');
-INSERT INTO public.products (id, brand, name) VALUES ('9781292204482', 'Pearson Education The Limited', 'Accounting and Finance: An Introduction 9th edition by Peter Atrill, Eddie McLaney (Paperback, 2018)');
-INSERT INTO public.products (id, brand, name) VALUES ('9781788307017', 'Olympia Publishers', 'Vegans Deserve Better than a Fruit Salad by Danielle Maupertuis (Paperback, 2020)');
-INSERT INTO public.products (id, brand, name) VALUES ('9781942275732', 'Zenescope Entertainment', 'The Black Sable by Joe Brusha (Paperback, 2018)');
-INSERT INTO public.products (id, brand, name) VALUES ('9781941610428', 'Fons Vitae,US', 'The Prophetic Ethics and the Courtesies of Living by Al-Ghazali (Paperback, 2019)');
-INSERT INTO public.products (id, brand, name) VALUES ('9781617137082', 'Hal Leonard Corporation', 'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)');
-INSERT INTO public.products (id, brand, name) VALUES ('9781617137080', 'Hal Leonard Corporation', 'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)');
-INSERT INTO public.products (id, brand, name) VALUES ('9781617137083', 'Hal Leonard Corporation', 'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)');
-INSERT INTO public.products (id, brand, name) VALUES ('9781617137084', 'Hal Leonard Corporation', 'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)');
-INSERT INTO public.products (id, brand, name) VALUES ('5707286436169', 'Nissens', 'Nissens 95601 Dryer Air Conditioning OE Replacement Top Quality');
-INSERT INTO public.products (id, brand, name) VALUES ('9786420945091', 'Mercedes-Benz', 'MERCEDES CLS 320 CDI C219 2007 RHD Air Intake Hose Pipe Tube A6420945097');
-INSERT INTO public.products (id, brand, name) VALUES ('5030917124013', 'Sony', 'PlayStation 3 Ps3 Destiny Vanguard Edition UK IMPORT a VideoGames');
+INSERT INTO public.products (id, brand, name)
+VALUES ('9780702305511', 'Scholastic', 'Welsh Fairy Tales, Myths and Legends by Claire Fayers (Paperback, 2021)');
+INSERT INTO public.products (id, brand, name)
+VALUES ('9781292204482', 'Pearson Education The Limited', 'Accounting and Finance: An Introduction 9th edition by Peter Atrill, Eddie McLaney (Paperback, 2018)');
+INSERT INTO public.products (id, brand, name)
+VALUES ('9781788307017', 'Olympia Publishers', 'Vegans Deserve Better than a Fruit Salad by Danielle Maupertuis (Paperback, 2020)');
+INSERT INTO public.products (id, brand, name)
+VALUES ('9781942275732', 'Zenescope Entertainment', 'The Black Sable by Joe Brusha (Paperback, 2018)');
+INSERT INTO public.products (id, brand, name)
+VALUES ('9781941610428', 'Fons Vitae,US', 'The Prophetic Ethics and the Courtesies of Living by Al-Ghazali (Paperback, 2019)');
+INSERT INTO public.products (id, brand, name)
+VALUES ('9781617137082', 'Hal Leonard Corporation', 'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)');
+INSERT INTO public.products (id, brand, name)
+VALUES ('9781617137080', 'Hal Leonard Corporation', 'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)');
+INSERT INTO public.products (id, brand, name)
+VALUES ('9781617137083', 'Hal Leonard Corporation', 'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)');
+INSERT INTO public.products (id, brand, name)
+VALUES ('9781617137084', 'Hal Leonard Corporation', 'My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)');
+INSERT INTO public.products (id, brand, name)
+VALUES ('5707286436169', 'Nissens', 'Nissens 95601 Dryer Air Conditioning OE Replacement Top Quality');
+INSERT INTO public.products (id, brand, name)
+VALUES ('9786420945091', 'Mercedes-Benz', 'MERCEDES CLS 320 CDI C219 2007 RHD Air Intake Hose Pipe Tube A6420945097');
+INSERT INTO public.products (id, brand, name)
+VALUES ('5030917124013', 'Sony', 'PlayStation 3 Ps3 Destiny Vanguard Edition UK IMPORT a VideoGames');
 
 
 --
 -- Data for Name: profiles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.profiles (email, name, surname) VALUES ('mario.rossi@gmail.com', 'mario', 'rossi');
-INSERT INTO public.profiles (email, name, surname) VALUES ('luigi.verdi@gmail.com', 'luigi', 'verdi');
-INSERT INTO public.profiles (email, name, surname) VALUES ('sergio.bianchi@gmail.com', 'sergio', 'bianchi');
+INSERT INTO public.profiles (email, name, surname)
+VALUES ('mario.rossi@gmail.com', 'mario', 'rossi');
+INSERT INTO public.profiles (email, name, surname)
+VALUES ('luigi.verdi@gmail.com', 'luigi', 'verdi');
+INSERT INTO public.profiles (email, name, surname)
+VALUES ('sergio.bianchi@gmail.com', 'sergio', 'bianchi');
 
 
 --
 -- Data for Name: statuses; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.statuses (id, status, status_changer, "timestamp", expert_id, ticket_id) VALUES (1, 1, 'MANAGER', '1999-01-08 01:05:06', 1, 1);
-INSERT INTO public.statuses (id, status, status_changer, "timestamp", expert_id, ticket_id) VALUES (2, 2, 'EXPERT', '2000-02-18 05:25:46', 2, 2);
-INSERT INTO public.statuses (id, status, status_changer, "timestamp", expert_id, ticket_id) VALUES (3, 3, 'PROFILE', '2006-06-13 22:21:46', 4, 3);
+INSERT INTO public.statuses (id, status, status_changer, "timestamp", expert_email, ticket_id)
+VALUES (1, 1, 'MANAGER', '1999-01-08 01:05:06', 'pickle.rick@tickets.com', 1);
+INSERT INTO public.statuses (id, status, status_changer, "timestamp", expert_email, ticket_id)
+VALUES (2, 2, 'EXPERT', '2000-02-18 05:25:46', 'pino.paolino@tickets.com', 2);
+INSERT INTO public.statuses (id, status, status_changer, "timestamp", expert_email, ticket_id)
+VALUES (3, 3, 'PROFILE', '2006-06-13 22:21:46', 'mastro.gesualdo@tickets.com', 3);
 
 
 --
 -- Data for Name: tickets; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.tickets (id, arg, obj, priority, expert_id, product_id, profile_email) VALUES (1, 'argument', 'obj', 'LOW', 1, '9781292204482', 'mario.rossi@gmail.com');
-INSERT INTO public.tickets (id, arg, obj, priority, expert_id, product_id, profile_email) VALUES (2, 'please help', 'i need help', 'HIGH', 2, '9786420945091', 'mario.rossi@gmail.com');
-INSERT INTO public.tickets (id, arg, obj, priority, expert_id, product_id, profile_email) VALUES (3, 'broken gift', 'you ruined my birthday', 'MEDIUM', 3, '9781617137080', 'luigi.verdi@gmail.com');
+INSERT INTO public.tickets (id, arg, obj, priority, expert_email, product_id, profile_email)
+VALUES (1, 'argument', 'obj', 'LOW', 'pickle.rick@tickets.com', '9781292204482', 'mario.rossi@gmail.com');
+INSERT INTO public.tickets (id, arg, obj, priority, expert_email, product_id, profile_email)
+VALUES (2, 'please help', 'i need help', 'HIGH', 'pino.paolino@tickets.com', '9786420945091', 'mario.rossi@gmail.com');
+INSERT INTO public.tickets (id, arg, obj, priority, expert_email, product_id, profile_email)
+VALUES (3, 'broken gift', 'you ruined my birthday', 'MEDIUM', 'mastro.gesualdo@tickets.com', '9781617137080', 'luigi.verdi@gmail.com');
 
 
 --
@@ -433,14 +473,14 @@ SELECT pg_catalog.setval('public.expertises_seq', 1, false);
 -- Name: experts_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.experts_seq', 1, false);
+--SELECT pg_catalog.setval('public.experts_seq', 1, false);
 
 
 --
 -- Name: managers_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.managers_seq', 1, false);
+--SELECT pg_catalog.setval('public.managers_seq', 1, false);
 
 
 --
@@ -492,7 +532,7 @@ ALTER TABLE ONLY public.attachments
 --
 
 ALTER TABLE ONLY public.expert_expertise
-    ADD CONSTRAINT expert_expertise_pkey PRIMARY KEY (expert_id, expertise_id);
+    ADD CONSTRAINT expert_expertise_pkey PRIMARY KEY (expert_email, expertise_id);
 
 
 --
@@ -508,7 +548,7 @@ ALTER TABLE ONLY public.expertises
 --
 
 ALTER TABLE ONLY public.experts
-    ADD CONSTRAINT experts_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT experts_pkey PRIMARY KEY (email);
 
 
 --
@@ -516,7 +556,7 @@ ALTER TABLE ONLY public.experts
 --
 
 ALTER TABLE ONLY public.managers
-    ADD CONSTRAINT managers_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT managers_pkey PRIMARY KEY (email);
 
 
 --
@@ -612,7 +652,7 @@ ALTER TABLE ONLY public.attachments
 --
 
 ALTER TABLE ONLY public.tickets
-    ADD CONSTRAINT fkdqocj5l89sf10g9jguw7l5df9 FOREIGN KEY (expert_id) REFERENCES public.experts(id);
+    ADD CONSTRAINT fkdqocj5l89sf10g9jguw7l5df9 FOREIGN KEY (expert_email) REFERENCES public.experts(email);
 
 
 --
@@ -628,7 +668,7 @@ ALTER TABLE ONLY public.addresses
 --
 
 ALTER TABLE ONLY public.statuses
-    ADD CONSTRAINT fkl189tlqhbm8uxlqoqvcpkqpgc FOREIGN KEY (expert_id) REFERENCES public.experts(id);
+    ADD CONSTRAINT fkl189tlqhbm8uxlqoqvcpkqpgc FOREIGN KEY (expert_email) REFERENCES public.experts(email);
 
 
 --
@@ -636,7 +676,7 @@ ALTER TABLE ONLY public.statuses
 --
 
 ALTER TABLE ONLY public.messages
-    ADD CONSTRAINT fkrcrtpt8k87r75i3gg0qd1jvf2 FOREIGN KEY (expert_id) REFERENCES public.experts(id);
+    ADD CONSTRAINT fkrcrtpt8k87r75i3gg0qd1jvf2 FOREIGN KEY (expert_email) REFERENCES public.experts(email);
 
 
 --
@@ -652,7 +692,7 @@ ALTER TABLE ONLY public.expert_expertise
 --
 
 ALTER TABLE ONLY public.expert_expertise
-    ADD CONSTRAINT fks3jht9oh34rvcum2pcx52t5yd FOREIGN KEY (expert_id) REFERENCES public.experts(id);
+    ADD CONSTRAINT fks3jht9oh34rvcum2pcx52t5yd FOREIGN KEY (expert_email) REFERENCES public.experts(email);
 
 
 --

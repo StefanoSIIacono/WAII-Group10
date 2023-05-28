@@ -19,23 +19,23 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository): ExpertS
     override fun getAll(): MutableSet<ExpertDTO> {
         return expertRepository.findAll().map { it.toDTO() }.toMutableSet()
     }
-    override fun getExpertById(expertId: Long): ExpertDTO? {
-        return expertRepository.findByIdOrNull(expertId)?.toDTO() ?: throw ExpertNotFoundException("Expert not found")
+    override fun getExpertByEmail(email: String): ExpertDTO? {
+        return expertRepository.findByIdOrNull(email)?.toDTO() ?: throw ExpertNotFoundException("Expert not found")
     }
 
-    override fun getExpertisesByExpert(expertId: Long): MutableSet<ExpertiseDTO> {
-        return expertRepository.findByIdOrNull(expertId)?.toDTO()?.expertises ?: throw ExpertNotFoundException("Expert not found")
+    override fun getExpertisesByExpert(email: String): MutableSet<ExpertiseDTO> {
+        return expertRepository.findByIdOrNull(email)?.toDTO()?.expertises ?: throw ExpertNotFoundException("Expert not found")
     }
 
-    override fun insertExpert(name: String, surname: String) {
-        expertRepository.save(Expert(name, surname))
+    override fun insertExpert(email: String, name: String, surname: String) {
+        expertRepository.save(Expert(email, name, surname))
     }
 
     override fun addExpertiseToExpert(expert: ExpertDTO, expertise: ExpertiseDTO) {
-        if(expertRepository.findByIdOrNull(expert.id)?.toDTO() == null) {
+        if(expertRepository.findByIdOrNull(expert.email)?.toDTO() == null) {
             throw ExpertNotFoundException("Expert not found")
         }
-        expert.addExpertiseDTO(expertise)
+        //expert.addExpertiseDTO(expertise)
         val exp = expert.toExpert()
         exp.addExpertise(expertise.toExpertise())
         expertRepository.save(exp)

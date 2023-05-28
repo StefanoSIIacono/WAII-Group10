@@ -10,6 +10,6 @@ interface TicketService {
     fun getAll(): List<TicketDTO>
     fun getTicketByID(ticketId: Long): TicketDTO?
     fun insertTicket(ticket: TicketCreateBodyDTO)
-    fun setTicketStatus(ticketId: Long, inputStatus: Status, statusChanger: StatusChanger, expertId: Long?, priority: Priority?)
+    fun setTicketStatus(ticketId: Long, inputStatus: Status, statusChanger: StatusChanger, expertEmail: String?, priority: Priority?)
     fun setTicketPriority(ticketId: Long, priority: String)
 }

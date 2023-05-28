@@ -51,7 +51,13 @@ class TicketingController(private val ticketService: TicketService) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("PROFILE")
     fun openTicket(@PathVariable ticketId:Long){
-        ticketService.setTicketStatus(ticketId, Status.OPEN, StatusChanger.PROFILE, null, null)
+        ticketService.setTicketStatus(
+            ticketId,
+            Status.OPEN,
+            StatusChanger.PROFILE,
+            null,
+            null
+        )
     } // MANAGER ONLY -> SERVICE IMPLEMENTATION TO BE CHECKED
 
     @PutMapping("/tickets/{ticketId}/close")
@@ -61,11 +67,17 @@ class TicketingController(private val ticketService: TicketService) {
     fun closeTicket(principal: Principal, @PathVariable ticketId:Long){
         val token = principal as JwtAuthenticationToken
 
-        val statusChanger = StatusChanger.values().firstOrNull { sc -> token.authorities.map { it.authority }.contains(sc.name) }
+        val statusChanger = StatusChanger.values()
+            .firstOrNull { sc -> token.authorities.map { it.authority }.contains(sc.name) }
         if (statusChanger === null) {
             throw IllegalStatusChangeException("")
         }
-        ticketService.setTicketStatus(ticketId, Status.CLOSED, statusChanger, null, null)
+        ticketService.setTicketStatus(
+            ticketId,
+            Status.CLOSED,
+            statusChanger,
+            null,
+            null)
     }// TO BE DISCUSSED
 
     @PutMapping("/tickets/{ticketId}/reopen")
@@ -73,7 +85,13 @@ class TicketingController(private val ticketService: TicketService) {
     @Secured("PROFILE")
     @Transactional
     fun reOpenTicket(@PathVariable ticketId:Long){
-        ticketService.setTicketStatus(ticketId, Status.REOPENED, StatusChanger.PROFILE, null, null)
+        ticketService.setTicketStatus(
+            ticketId,
+            Status.REOPENED,
+            StatusChanger.PROFILE,
+            null,
+            null
+        )
     }
 
     @PutMapping("/tickets/{ticketId}/resolved")
@@ -81,7 +99,13 @@ class TicketingController(private val ticketService: TicketService) {
     @Secured("PROFILE")
     @Transactional
     fun resolveTicket(@PathVariable ticketId:Long){
-        ticketService.setTicketStatus(ticketId, Status.RESOLVED, StatusChanger.PROFILE, null, null)
+        ticketService.setTicketStatus(
+            ticketId,
+            Status.RESOLVED,
+            StatusChanger.PROFILE,
+            null,
+            null
+        )
     } // TO BE DISCUSSED
 
     @PutMapping("/tickets/{ticketId}/inprogress")
@@ -92,7 +116,13 @@ class TicketingController(private val ticketService: TicketService) {
         if (body === null) {
             throw NoBodyProvidedException("Wrong body")
         }
-        ticketService.setTicketStatus(ticketId, Status.IN_PROGRESS, StatusChanger.MANAGER, body.expert, body.priority)
+        ticketService.setTicketStatus(
+            ticketId,
+            Status.IN_PROGRESS,
+            StatusChanger.MANAGER,
+            body.expert,
+            body.priority
+        )
     }
 
     @PutMapping("/tickets/{ticketId}/set_priority/{priority}")

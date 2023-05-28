@@ -7,14 +7,16 @@ import jakarta.persistence.*
 @Entity
 @Table (name = "experts")
 class Expert(
+        @Id
+        @Column(updatable = false, nullable = false)
+        val email: String,
         var name: String,
         var surname: String,
-
-        ): EntityBase<Long>()
+)
 {
     @ManyToMany
     @JoinTable(name = "expert_expertise",
-            joinColumns = [JoinColumn(name="expert_id")],
+            joinColumns = [JoinColumn(name="expert_email")],
             inverseJoinColumns = [JoinColumn(name = "expertise_id")]
     )
     val expertises: MutableSet<Expertise> = mutableSetOf()
@@ -47,7 +49,5 @@ class Expert(
 }
 
 fun ExpertDTO.toExpert(): Expert {
-    val expert = Expert(this.name, this.surname)
-    expert.id = this.id
-    return expert
+    return Expert(this.email, this.name, this.surname)
 }

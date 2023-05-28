@@ -109,8 +109,9 @@ class DbTicketingApplicationTest {
         profile = profileRepository.save(profile)
 
         var expert = Expert(
-                "expert",
-                "expert"
+            "expert@mail.com",
+            "expert",
+            "expert"
         )
         val expertise = Expertise("expertise")
 
@@ -162,8 +163,6 @@ class DbTicketingApplicationTest {
         expertRepository.deleteAll()
         expertiseRepository.deleteAll()
     }
-
-    // for authentication -> headers.setBasicAuth()
 
     @Test
     fun `containers are up and running`(){
@@ -576,9 +575,9 @@ class DbTicketingApplicationTest {
     }
 
     @Test
-    fun testGetExpertById(){
+    fun testGetExpertByEmail(){
 
-        val expert = expertRepository.save(Expert("n", "s")).toDTO()
+        val expert = expertRepository.save(Expert("e1@e1.com","n", "s")).toDTO()
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
@@ -586,7 +585,7 @@ class DbTicketingApplicationTest {
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<ExpertDTO> = restTemplate.exchange(
-                "/experts/" + expert.id,
+                "/experts/" + expert.email,
                 HttpMethod.GET,
                 getEntity,
                 ExpertDTO::class.java
@@ -602,7 +601,7 @@ class DbTicketingApplicationTest {
     }
 
     @Test
-    fun testGetExpertById_ExpertNotFound(){
+    fun testGetExpertByEmail_ExpertNotFound(){
 
         val headers = HttpHeaders()
         headers.set(
@@ -611,7 +610,7 @@ class DbTicketingApplicationTest {
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<String> = restTemplate.exchange(
-                "/products/productnotfound",
+                "/products/product@notfound",
                 HttpMethod.GET,
                 getEntity,
                 String::class.java
@@ -629,7 +628,7 @@ class DbTicketingApplicationTest {
     fun testCreateExpert(){
 
         val exSet: MutableSet<ExpertiseDTO> = mutableSetOf(ExpertiseDTO(1, "e1"))
-        val expert = ExpertDTO(null, "e1", "e2", exSet)
+        val expert = ExpertDTO("create@expert.com", "e1", "e2", exSet)
 
         val headers = HttpHeaders()
         headers.set(
@@ -677,7 +676,7 @@ class DbTicketingApplicationTest {
     @Test
     fun testAddExpertiseToExpert(){
 
-        val expert = expertRepository.save(Expert("e", "e"))
+        val expert = expertRepository.save(Expert("e1@e1.com","e", "e"))
         val expertise = expertiseRepository.save(Expertise("e1"))
 
         val headers = HttpHeaders()
@@ -688,7 +687,7 @@ class DbTicketingApplicationTest {
 
         val putEntity = HttpEntity<ExpertiseDTO> (expertise.toDTO(), headers)
         val response = restTemplate.exchange(
-                "/experts/" + expert.id + "/addExpertise",
+                "/experts/" + expert.email + "/addExpertise",
                 HttpMethod.PUT,
                 putEntity,
                 ExpertiseDTO::class.java
@@ -1383,7 +1382,7 @@ class DbTicketingApplicationTest {
     @Test
     fun testInProgressTicket() {
 
-        val expert = expertRepository.save(Expert("e", "e"))
+        val expert = expertRepository.save(Expert("e1@e1.com","e", "e"))
 
         val ticket = Ticket(
             "o",
@@ -1404,7 +1403,7 @@ class DbTicketingApplicationTest {
             getBearerToken("manager", "password")
         )
 
-        val ticketInProgress = TicketInProgressBodyDTO(expert.id!!, Priority.HIGH)
+        val ticketInProgress = TicketInProgressBodyDTO(expert.email, Priority.HIGH)
 
         val putEntity = HttpEntity<TicketInProgressBodyDTO>(ticketInProgress, headers)
         val response = restTemplate.exchange(
@@ -1455,7 +1454,7 @@ class DbTicketingApplicationTest {
     @Test
     fun testInProgressTicket_TicketNotFoundFailure() {
 
-        val expert = expertRepository.save(Expert("e", "e"))
+        val expert = expertRepository.save(Expert("e1@e1.com","e", "e"))
 
         val headers = HttpHeaders()
         headers.set(
@@ -1463,7 +1462,7 @@ class DbTicketingApplicationTest {
             getBearerToken("manager", "password")
         )
 
-        val ticketInProgress = TicketInProgressBodyDTO(expert.id!!, Priority.HIGH)
+        val ticketInProgress = TicketInProgressBodyDTO(expert.email, Priority.HIGH)
 
         val putEntity = HttpEntity<TicketInProgressBodyDTO>(ticketInProgress, headers)
         val response = restTemplate.exchange(
@@ -1498,7 +1497,7 @@ class DbTicketingApplicationTest {
             getBearerToken("manager", "password")
         )
 
-        val ticketInProgress = TicketInProgressBodyDTO(10000, Priority.HIGH)
+        val ticketInProgress = TicketInProgressBodyDTO("notfound@failure.com", Priority.HIGH)
 
         val putEntity = HttpEntity<TicketInProgressBodyDTO>(ticketInProgress, headers)
         val response = restTemplate.exchange(
@@ -1515,7 +1514,7 @@ class DbTicketingApplicationTest {
     @Test
     fun testSetTicketStatus_IllegalStatusChangeFailure(){
 
-        val expert = expertRepository.save(Expert("e", "e"))
+        val expert = expertRepository.save(Expert("e1@e1.com","e", "e"))
 
         val ticket = Ticket(
             "o",
@@ -1536,7 +1535,7 @@ class DbTicketingApplicationTest {
             getBearerToken("manager", "password")
         )
 
-        val ticketInProgress = TicketInProgressBodyDTO(expert.id!!, Priority.HIGH)
+        val ticketInProgress = TicketInProgressBodyDTO(expert.email, Priority.HIGH)
 
         val putEntity = HttpEntity<TicketInProgressBodyDTO>(ticketInProgress, headers)
         val response = restTemplate.exchange(
@@ -1553,7 +1552,7 @@ class DbTicketingApplicationTest {
     @Test
     fun testSetTicketStatus_IllegalPriorityFailure(){
 
-        val expert = expertRepository.save(Expert("e", "e"))
+        val expert = expertRepository.save(Expert("e1@e1.com","e", "e"))
 
         val ticket = Ticket(
             "o",
@@ -1574,7 +1573,7 @@ class DbTicketingApplicationTest {
             getBearerToken("manager", "password")
         )
 
-        val ticketInProgress = TicketInProgressBodyDTO(expert.id!!, Priority.TOASSIGN)
+        val ticketInProgress = TicketInProgressBodyDTO(expert.email, Priority.TOASSIGN)
 
         val putEntity = HttpEntity<TicketInProgressBodyDTO>(ticketInProgress, headers)
         val response = restTemplate.exchange(

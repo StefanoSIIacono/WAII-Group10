@@ -8,9 +8,9 @@ import com.lab2.server.dto.ExpertiseDTO
 interface ExpertService {
 
     fun getAll(): MutableSet<ExpertDTO>
-    fun getExpertById(expertId: Long): ExpertDTO?
-    fun getExpertisesByExpert(expertId: Long): MutableSet<ExpertiseDTO>
-    fun insertExpert(name: String, surname: String)
+    fun getExpertByEmail(email: String): ExpertDTO?
+    fun getExpertisesByExpert(email: String): MutableSet<ExpertiseDTO>
+    fun insertExpert(email: String, name: String, surname: String)
     fun addExpertiseToExpert(expert: ExpertDTO, expertise: ExpertiseDTO)
 
     fun addTicketToExpert(expert: Expert, ticket: Ticket)
