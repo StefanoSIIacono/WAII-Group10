@@ -23,10 +23,29 @@ jwt:
       principal-attribute: preferred_username
 
 logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
   level:
     org.springframework.security: DEBUG
+    FULL: DEBUG
 
 server:
   port: '8080'
   servlet:
     context-path: /
+    
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+

@@ -1,6 +1,7 @@
 version: '2'
 
 services:
+
   server:
     image: 'ticketing:latest'
     build:
@@ -18,6 +19,7 @@ services:
       - JWT_AUTH_CONVERTER_RESOURCE-ID=ticketingclient
     ports:
       - "8080:8080"
+
   db:
     image: 'postgres:latest'
     container_name: db
@@ -26,6 +28,7 @@ services:
       - POSTGRES_PASSWORD=mysecretpassword
     volumes:
       - ../resources/pg_dump.sql:/docker-entrypoint-initdb.d/pg_dump.sql
+
   keycloak:
     image: 'quay.io/keycloak/keycloak:21.1.1'
     container_name: keycloak
@@ -37,3 +40,54 @@ services:
       - "8081:8080"
     volumes:
       - ../resources/keycloak_settings:/opt/keycloak/data/import
+
+  tempo:
+    image: grafana/tempo
+    extra_hosts: ['host.docker.internal:host-gateway']
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    ##doesn't work the config.file command
+    volumes:
+      - ./tempo/tempo-local.yaml:/etc/tempo/yaml:ro
+      - ./tempo/tempo-data:/tmp/tempo
+    ports:
+      - "14269" #jeager ingest
+      - "9411:9411" # zipkin
+
+  loki:
+    image: grafana/loki
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+    ports:
+      - "3100:3100"
+    environment:
+      - JAEGER_AGENT_HOST=tempo
+      - JAEGER_ENDPOINT=http://tempo:14268/api/traces
+      - JAEGER_SAMPLER_TYPE=const
+      - JAEGER_SAMPLER_PARAM=1
+
+  prometheus:
+    image: prom/prometheus
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    command:
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/prometheus.yaml
+      ##doesn't work the config.file command
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM:true
+    ports:
+      - "3000:3000"
+# Prometheus: http:localhost:9090/
+# Grafana: http:localhost:3000/
