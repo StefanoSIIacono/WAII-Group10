@@ -43,7 +43,7 @@ dependencies {
 	implementation("io.micrometer:micrometer-registry-prometheus")
 	implementation("io.micrometer:micrometer-tracing-bridge-brave")
 	implementation("io.zipkin.reporter2:zipkin-reporter-brave")
-	implementation("com.github.loki4j:loki-logback-appender:1.4.0-rc2")
+	implementation("com.github.loki4j:loki-logback-appender:1.4.1-rc2")
 	runtimeOnly("org.postgresql:postgresql")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
