@@ -25,7 +25,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=mysecretpassword
     volumes:
-      - ../resources/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      - ../resources/pg_dump.sql:/docker-entrypoint-initdb.d/pg_dump.sql
   keycloak:
     image: 'quay.io/keycloak/keycloak:21.1.1'
     container_name: keycloak
