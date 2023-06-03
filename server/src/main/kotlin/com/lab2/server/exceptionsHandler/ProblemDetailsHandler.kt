@@ -74,4 +74,8 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler (ExpertIsNullException::class)
     fun handleExpertIsNull (e: ExpertIsNullException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
+
+    @ExceptionHandler (CannotCreateUserException::class)
+    fun handleCannotCreateUser (e: CannotCreateUserException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.message!!)
 }
