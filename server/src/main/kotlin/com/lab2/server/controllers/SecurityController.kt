@@ -37,12 +37,13 @@ class SecurityController(private val profileService: ProfileService, private val
         user.isEnabled = true
         user.username = body.email
 
-        val realmResource = keycloak.realm(env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri")!!)
+        val realmResource = keycloak.realm(env.getProperty("spring.security.oauth2.resourceserver.jwt.realm")!!)
         val usersResource = realmResource.users()
 
         val response = usersResource.create(user)
 
         if (response.status != 200) {
+            println(response.status)
             throw CannotCreateUserException("generic error")
         }
         val userid = CreatedResponseUtil.getCreatedId(response)

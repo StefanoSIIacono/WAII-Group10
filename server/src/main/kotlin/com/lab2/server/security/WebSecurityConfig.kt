@@ -38,8 +38,8 @@ class WebSecurityConfig (private val properties: JwtAuthConverterProperties, pri
             .serverUrl(env.getProperty("spring.security.oauth2.resourceserver.jwt.url")!!)
             .realm(env.getProperty("spring.security.oauth2.resourceserver.jwt.realm")!!)
             .clientId(properties.resourceId)
-            .username("admin")
-            .password("admin")
+            .username("profile")
+            .password("password")
             .build()
     }
 
