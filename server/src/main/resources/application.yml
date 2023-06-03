@@ -5,7 +5,9 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8081/realms/ticketing
+          url: http://localhost:8081
+          realm: ticketing
+          issuer-uri: ${spring.security.oauth2.resourceserver.jwt.url}/realms/${spring.security.oauth2.resourceserver.jwt.realm}
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
   datasource:
     url: jdbc:postgresql://localhost:5432/ticket_service
