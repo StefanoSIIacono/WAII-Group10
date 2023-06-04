@@ -49,8 +49,8 @@ class DbTicketingApplicationTest {
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
             registry.add("spring.jpa.hibernate,ddl-auto") {"create-drop"}
-            registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri")
-            { keycloak.authServerUrl + "realms/ticketing" }
+            registry.add("spring.security.oauth2.resourceserver.jwt.url") { keycloak.authServerUrl }
+            registry.add("spring.security.oauth2.resourceserver.jwt.realm") { "ticketing" }
             registry.add("jwt.auth.converter.resource-id"){"ticketingclient"}
             registry.add("jwt.auth.converter.principal-attribute"){ "preferred_username"}
             registry.add("keycloack.enabled"){true}

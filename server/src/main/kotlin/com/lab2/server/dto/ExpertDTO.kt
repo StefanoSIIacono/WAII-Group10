@@ -14,6 +14,15 @@ data class ExpertDTO(
         this.expertises.add(e)
     }
 }
+
+data class CreateExpertDTO(
+    val email: String,
+    val password: String,
+    val name: String,
+    val surname: String,
+    val expertises: MutableSet<String> = mutableSetOf(),
+)
+
 fun Expert.toDTO(): ExpertDTO {
     return ExpertDTO(
         this.email,

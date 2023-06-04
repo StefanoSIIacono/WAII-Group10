@@ -7,6 +7,7 @@ import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.ExpertNotFoundException
 import com.lab2.server.repositories.ExpertRepository
 import com.lab2.server.serviceImpl.ExpertServiceImpl
+import com.lab2.server.services.ExpertiseService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -17,6 +18,7 @@ import org.springframework.data.repository.findByIdOrNull
 
 class ExpertServiceTest {
     private val repository = mockk<ExpertRepository>()
+    private val expertiseService = mockk<ExpertiseService>()
 
     @Test
     fun getAllTest() {
@@ -26,7 +28,7 @@ class ExpertServiceTest {
         )
         every { repository.findAll() } returns expertList
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when
         val result = service.getAll()
 
@@ -41,7 +43,7 @@ class ExpertServiceTest {
         val expert = Expert("e1@e1.com", "John", "Doe")
         every { repository.findByIdOrNull(expert.email) } returns expert
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when
         val result = service.getExpertByEmail(expert.email)
 
@@ -56,7 +58,7 @@ class ExpertServiceTest {
         val expertEmail = "e1@e1.com"
         every { repository.findByIdOrNull(expertEmail) } returns null
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when/then
         try {
             service.getExpertByEmail(expertEmail)
@@ -79,7 +81,7 @@ class ExpertServiceTest {
         expert.expertises.addAll(expertiseList)
         every { repository.findByIdOrNull(expert.email) } returns expert
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when
         val result = service.getExpertisesByExpert(expert.email)
 
@@ -94,7 +96,7 @@ class ExpertServiceTest {
         val expertEmail = "e1@e1.com"
         every { repository.findByIdOrNull(expertEmail) } returns null
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when/then
         try {
             service.getExpertisesByExpert(expertEmail)
@@ -112,13 +114,14 @@ class ExpertServiceTest {
         val expertEmail = "e1@e1.com"
         val expertName = "John"
         val expertSurname = "Doe"
+        val expertises = mutableSetOf("COMPUTER")
         val expert = Expert(expertEmail, expertName, expertSurname)
         every { repository.findByIdOrNull(expertEmail) } returns null
         every { repository.save(any()) } returns expert
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when
-        service.insertExpert(expertEmail, expertName, expertSurname)
+        service.insertExpert(ExpertDTO(expertEmail, expertName, expertSurname), expertises)
 
         // then
         verify(exactly = 1) { repository.save(any()) }
@@ -134,9 +137,9 @@ class ExpertServiceTest {
         every { repository.findByIdOrNull(expert.email) } returns expert.toExpert()
         every { repository.save(any()) } returns expert.toExpert()
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when
-        service.addExpertiseToExpert(expert, expertise)
+        service.addExpertiseToExpert(expert.email, expertise.field)
         // then
         verify(exactly = 1) { repository.findByIdOrNull(expert.email) }
         //verify(exactly = 1) { repository.save(expert.toExpert()) }
@@ -182,7 +185,7 @@ class ExpertServiceTest {
 
         every { repository.save(any()) } returns expert
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when
         service.addTicketToExpert(expert, ticket)
 
