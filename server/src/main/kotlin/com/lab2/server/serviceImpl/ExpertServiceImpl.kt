@@ -30,7 +30,7 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository, private 
 
     override fun insertExpert(expert: ExpertDTO, expertises: MutableSet<String>?) {
         expertRepository.save(Expert(expert.email, expert.name, expert.surname))
-        expertises?.forEach { println(it); this.addExpertiseToExpert(expert.email, it) }
+        expertises?.forEach { this.addExpertiseToExpert(expert.email, it) }
     }
 
     override fun addExpertiseToExpert(expertEmail: String, expertise: String) {

@@ -49,7 +49,7 @@ class DbTicketingApplicationTest {
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
             registry.add("spring.jpa.hibernate,ddl-auto") {"create-drop"}
-            registry.add("spring.security.oauth2.resourceserver.jwt.url") { keycloak.authServerUrl }
+            registry.add("spring.security.oauth2.resourceserver.jwt.url") { keycloak.authServerUrl.replace(Regex("/$"), "") }
             registry.add("spring.security.oauth2.resourceserver.jwt.realm") { "ticketing" }
             registry.add("jwt.auth.converter.resource-id"){"ticketingclient"}
             registry.add("jwt.auth.converter.principal-attribute"){ "preferred_username"}
@@ -177,7 +177,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<List<ProfileDTO>> = restTemplate.exchange(
@@ -199,7 +199,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<ProfileDTO> = restTemplate.exchange(
@@ -225,7 +225,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<String> = restTemplate.exchange(
@@ -250,7 +250,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
 
         val getEntity: HttpEntity<MutableList<TicketDTO>> = HttpEntity(null, headers)
@@ -275,7 +275,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
 
         val getEntity: HttpEntity<MutableList<TicketDTO>> = HttpEntity<MutableList<TicketDTO>>(headers)
@@ -307,7 +307,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
@@ -330,7 +330,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
@@ -367,7 +367,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
 
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
@@ -391,7 +391,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         val putEntity = HttpEntity<ChangeProfileInfoDTO>(profile, headers)
         val response = restTemplate.exchange(
@@ -411,7 +411,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
 
         headers.contentType = MediaType.APPLICATION_PROBLEM_JSON
@@ -442,7 +442,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
 
         val putEntity = HttpEntity<GetAddressDTO> (address, headers)
@@ -463,7 +463,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
 
         val putEntity = HttpEntity<GetAddressDTO> (null, headers)
@@ -485,7 +485,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<List<ProductDTO>> = restTemplate.exchange(
@@ -507,7 +507,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<ProductDTO> = restTemplate.exchange(
@@ -533,7 +533,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<String> = restTemplate.exchange(
@@ -559,7 +559,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<MutableSet<ExpertDTO>> = restTemplate.exchange(
@@ -581,7 +581,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<ExpertDTO> = restTemplate.exchange(
@@ -606,7 +606,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<String> = restTemplate.exchange(
@@ -626,22 +626,21 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testCreateExpert(){
-
-        val exSet: MutableSet<ExpertiseDTO> = mutableSetOf(ExpertiseDTO(1, "e1"))
-        val expert = ExpertDTO("create@expert.com", "e1", "e2", exSet)
+        val exSet: MutableSet<String> = mutableSetOf("expertise")
+        val expert = CreateExpertDTO("create@expert.com", "password", "name", "surname", exSet)
 
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
 
 
-        val postEntity: HttpEntity<ExpertDTO> = HttpEntity(expert, headers)
+        val postEntity: HttpEntity<CreateExpertDTO> = HttpEntity(expert, headers)
         val resp = restTemplate.exchange(
-                "/experts/",
+                "/createExpert",
                 HttpMethod.POST,
                 postEntity,
                 String::class.java )
@@ -656,7 +655,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
 
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
@@ -664,7 +663,7 @@ class DbTicketingApplicationTest {
 
         val postEntity: HttpEntity<ExpertDTO> = HttpEntity(null, headers)
         val resp = restTemplate.exchange(
-                "/experts/",
+                "/createExpert",
                 HttpMethod.POST,
                 postEntity,
                 String::class.java )
@@ -682,10 +681,10 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
 
-        val putEntity = HttpEntity<ExpertiseDTO> (expertise.toDTO(), headers)
+        val putEntity = HttpEntity<String> (expertise.field, headers)
         val response = restTemplate.exchange(
                 "/experts/" + expert.email + "/addExpertise",
                 HttpMethod.PUT,
@@ -703,7 +702,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
 
         val putEntity = HttpEntity<ExpertiseDTO> (null, headers)
@@ -726,7 +725,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
 
         val putEntity = HttpEntity<ExpertiseDTO> (expertise.toDTO(), headers)
@@ -749,7 +748,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
 
         val putEntity = HttpEntity<ExpertiseDTO> (expertise, headers)
@@ -772,7 +771,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<List<ExpertiseDTO>> = restTemplate.exchange(
@@ -795,7 +794,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         val getEntity: HttpEntity<ExpertiseDTO> = HttpEntity(null, headers)
         val resp: ResponseEntity<ExpertiseDTO> = restTemplate.exchange(
@@ -821,7 +820,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<String> = restTemplate.exchange(
@@ -845,7 +844,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         val expertise = expertiseRepository.findByField("expertise")
 
@@ -868,7 +867,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<String> = restTemplate.exchange(
@@ -889,7 +888,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
@@ -912,7 +911,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
@@ -936,7 +935,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
@@ -959,7 +958,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
@@ -982,7 +981,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         val resp: ResponseEntity<List<TicketDTO>> = restTemplate.exchange(
@@ -1019,7 +1018,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         val getEntity: HttpEntity<TicketDTO> = HttpEntity(null, headers)
         val resp: ResponseEntity<TicketDTO> = restTemplate.exchange(
@@ -1044,7 +1043,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         val getEntity: HttpEntity<TicketDTO> = HttpEntity(null, headers)
         val resp: ResponseEntity<String> = restTemplate.exchange(
@@ -1072,7 +1071,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
@@ -1094,7 +1093,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
@@ -1120,7 +1119,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
@@ -1146,7 +1145,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
@@ -1181,7 +1180,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
 
         val putEntity = HttpEntity<String>(null, headers)
@@ -1202,7 +1201,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
 
         val putEntity = HttpEntity<String>(null, headers)
@@ -1236,7 +1235,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
@@ -1256,7 +1255,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
 
         val putEntity = HttpEntity<String>(null, headers)
@@ -1291,7 +1290,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
 
         val putEntity = HttpEntity<String>(null, headers)
@@ -1312,7 +1311,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
 
         val putEntity = HttpEntity<String>(null, headers)
@@ -1346,7 +1345,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
@@ -1366,7 +1365,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("profile", "password")
+            getBearerToken("luigi.verdi@gmail.com", "password")
         )
 
         val putEntity = HttpEntity<String>(null, headers)
@@ -1402,7 +1401,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
 
         val ticketInProgress = TicketInProgressBodyDTO(expert.email, Priority.HIGH)
@@ -1438,7 +1437,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
 
         val putEntity = HttpEntity<TicketInProgressBodyDTO>(null, headers)
@@ -1461,7 +1460,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
 
         val ticketInProgress = TicketInProgressBodyDTO(expert.email, Priority.HIGH)
@@ -1497,7 +1496,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
 
         val ticketInProgress = TicketInProgressBodyDTO("notfound@failure.com", Priority.HIGH)
@@ -1535,7 +1534,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
 
         val ticketInProgress = TicketInProgressBodyDTO(expert.email, Priority.HIGH)
@@ -1573,7 +1572,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
 
         val ticketInProgress = TicketInProgressBodyDTO(expert.email, Priority.TOASSIGN)
@@ -1609,7 +1608,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
@@ -1629,7 +1628,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
@@ -1662,7 +1661,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("manager", "password")
+            getBearerToken("bigboss@tickets.admin.com", "password")
         )
         val putEntity = HttpEntity<String>(null, headers)
         val response = restTemplate.exchange(
@@ -1678,7 +1677,7 @@ class DbTicketingApplicationTest {
     @Test
     fun testLogin(){
 
-        val logindto = LoginDTO("expert", "password")
+        val logindto = LoginDTO("gino.cuccagno@tickets.com", "password")
 
         val headers = HttpHeaders()
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
@@ -1692,7 +1691,7 @@ class DbTicketingApplicationTest {
             TokenDTO::class.java )
 
         assertNotNull(resp)
-        assertEquals(HttpStatus.CREATED, resp.statusCode)
+        assertEquals(HttpStatus.OK, resp.statusCode)
     }
 
     @Test
@@ -1714,7 +1713,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
-            getBearerToken("expert", "password")
+            getBearerToken("gino.cuccagno@tickets.com", "password")
         )
 
         val putEntity = HttpEntity<String>(null, headers)
@@ -1735,7 +1734,7 @@ class DbTicketingApplicationTest {
         val headers = HttpHeaders()
         headers.set(
                 "Authorization",
-                getBearerToken("manager", "password")
+                getBearerToken("bigboss@tickets.admin.com", "password")
         )
         headers.contentType = MediaType(MediaType.APPLICATION_PROBLEM_JSON)
         headers.accept = Collections.singletonList(MediaType.APPLICATION_PROBLEM_JSON)
@@ -1749,6 +1748,6 @@ class DbTicketingApplicationTest {
 
         assertNotNull(resp)
         assertEquals(HttpStatus.OK, resp.statusCode)
-        assertEquals("manager", resp.body)
+        assertEquals("bigboss@tickets.admin.com", resp.body)
     }
 }

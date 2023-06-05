@@ -128,7 +128,6 @@ class SecurityController(private val profileService: ProfileService, private val
                 .retrieve()
                 .bodyToMono(TokenDTO::class.java)
                 .block()
-            println(response)
             return response ?: throw WrongCredentialsException("Wrong username or password")
         } catch (e: Exception) {
             throw WrongCredentialsException("Wrong username or password")

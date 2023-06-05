@@ -114,17 +114,22 @@ class ExpertServiceTest {
         val expertEmail = "e1@e1.com"
         val expertName = "John"
         val expertSurname = "Doe"
-        val expertises = mutableSetOf("COMPUTER")
+        val expertise = "COMPUTER"
+        val expertiseDTO = ExpertiseDTO(1, expertise)
         val expert = Expert(expertEmail, expertName, expertSurname)
-        every { repository.findByIdOrNull(expertEmail) } returns null
+        val expertDTO = ExpertDTO(expertEmail, expertName, expertSurname)
         every { repository.save(any()) } returns expert
+        every { repository.findByIdOrNull(expertDTO.email) } returns expert
+        every { expertiseService.getExpertise(expertise) } returns expertiseDTO
 
         val service = ExpertServiceImpl(repository, expertiseService)
         // when
-        service.insertExpert(ExpertDTO(expertEmail, expertName, expertSurname), expertises)
+        service.insertExpert(expertDTO, mutableSetOf(expertise))
 
         // then
-        verify(exactly = 1) { repository.save(any()) }
+        verify(exactly = 2) { repository.save(any()) }
+        verify(exactly = 1) { repository.findByIdOrNull(expertDTO.email)}
+        verify(exactly = 1) { expertiseService.getExpertise(expertise) }
     }
 
 
@@ -136,13 +141,15 @@ class ExpertServiceTest {
 
         every { repository.findByIdOrNull(expert.email) } returns expert.toExpert()
         every { repository.save(any()) } returns expert.toExpert()
+        every { expertiseService.getExpertise(expertise.field) } returns expertise
 
         val service = ExpertServiceImpl(repository, expertiseService)
         // when
         service.addExpertiseToExpert(expert.email, expertise.field)
         // then
         verify(exactly = 1) { repository.findByIdOrNull(expert.email) }
-        //verify(exactly = 1) { repository.save(expert.toExpert()) }
+        verify(exactly = 1) { expertiseService.getExpertise(expertise.field) }
+        verify(exactly = 1) { repository.save(any()) }
     }
 
     @Test
