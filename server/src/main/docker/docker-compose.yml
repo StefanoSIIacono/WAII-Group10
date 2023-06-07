@@ -6,10 +6,15 @@ services:
     image: 'ticketing:latest'
     build:
       context: .
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
     container_name: server
     depends_on:
       - db
       - keycloak
+      - tempo
+      - loki
+      - prometheus
+      - grafana
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
@@ -17,6 +22,7 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
       - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI=http://keycloak:8080/realms/ticketing
       - JWT_AUTH_CONVERTER_RESOURCE-ID=ticketingclient
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411/api/v2/spans
     ports:
       - "8080:8080"
 
