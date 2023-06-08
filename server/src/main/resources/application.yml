@@ -40,11 +40,16 @@ management:
   tracing:
     sampling:
       probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://tempo:9411/api/v2/spans
   endpoints:
     web:
       exposure:
         include: prometheus
   metrics:
+    tags:
+      application: ${spring.application.name}
     distribution:
       percentiles-histogram:
         http:
