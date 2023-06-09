@@ -1,12 +1,14 @@
 package com.lab2.server.controllers
 
+
 import com.lab2.server.dto.*
-import com.lab2.server.exceptionsHandler.exceptions.CannotCreateUserException
-import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
-import com.lab2.server.exceptionsHandler.exceptions.WrongCredentialsException
+import com.lab2.server.exceptionsHandler.exceptions.*
 import com.lab2.server.security.JwtAuthConverterProperties
 import com.lab2.server.services.ExpertService
 import com.lab2.server.services.ProfileService
+import io.micrometer.observation.annotation.Observed
+import lombok.extern.slf4j.Slf4j
+import org.hibernate.query.sqm.tree.SqmNode.log
 import org.keycloak.admin.client.CreatedResponseUtil
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.representations.idm.ClientRepresentation
@@ -24,14 +26,19 @@ import java.util.*
 
 
 @RestController
+@Slf4j
+@Observed
 class SecurityController(private val profileService: ProfileService, private val expertService: ExpertService, private val keycloak: Keycloak, private val env: Environment, private val properties: JwtAuthConverterProperties) {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
     fun signup(@RequestBody body: CreateProfileDTO?) {
         if (body === null) {
+            log.error("Invalid signup body")
             throw NoBodyProvidedException("You have to add a body")
         }
+        log.info("Creating profile user linked to ${body.email}")
+
         val user = UserRepresentation()
         user.isEnabled = true
         user.username = body.email
@@ -42,6 +49,9 @@ class SecurityController(private val profileService: ProfileService, private val
         val response = usersResource.create(user)
 
         if (response.status != 201) {
+            if (response.status == 409) {
+                throw DuplicateProfileException("Profile already exist")
+            }
             throw CannotCreateUserException("generic error")
         }
         val userid = CreatedResponseUtil.getCreatedId(response)
@@ -64,6 +74,7 @@ class SecurityController(private val profileService: ProfileService, private val
             .clientLevel(client.id).add(listOf(userClientRole))
 
         profileService.insertProfile(ProfileDTO(body.email, body.name, body.surname, body.address))
+        log.info("${user.username} signed in")
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -73,6 +84,7 @@ class SecurityController(private val profileService: ProfileService, private val
         if (body === null) {
             throw NoBodyProvidedException("You have to add a body")
         }
+        log.info("Creating expert user ${body.email}")
         val user = UserRepresentation()
         user.isEnabled = true
         user.username = body.email
@@ -83,6 +95,9 @@ class SecurityController(private val profileService: ProfileService, private val
         val response = usersResource.create(user)
 
         if (response.status != 201) {
+            if (response.status == 409) {
+                throw DuplicateExpertException("Expert already exist")
+            }
             throw CannotCreateUserException("generic error")
         }
         val userid = CreatedResponseUtil.getCreatedId(response)
@@ -103,7 +118,7 @@ class SecurityController(private val profileService: ProfileService, private val
 
         userResource.roles()
             .clientLevel(client.id).add(listOf(userClientRole))
-
+            
         expertService.insertExpert(ExpertDTO(body.email, body.name, body.surname), body.expertises)
     }
 
@@ -111,9 +126,11 @@ class SecurityController(private val profileService: ProfileService, private val
     @PostMapping("/login/")
     fun login(@RequestBody body: LoginDTO?): TokenDTO {
         if (body === null) {
+            log.error("Invalid login body")
             throw NoBodyProvidedException("You have to add a body")
         }
         try {
+            log.info("Logging in ${body.username}")
             val client: WebClient = WebClient
                     .create(env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri")!!)
 
@@ -137,7 +154,7 @@ class SecurityController(private val profileService: ProfileService, private val
     @GetMapping("/prova")
     @ResponseStatus(HttpStatus.OK)
     fun getMe(principal: JwtAuthenticationToken): String {
-
+        log.info("PRINCIPAL: ${principal.details}")
         return principal.tokenAttributes["preferred_username"].toString()
     }
 }

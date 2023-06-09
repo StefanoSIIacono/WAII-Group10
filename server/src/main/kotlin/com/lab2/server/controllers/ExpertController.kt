@@ -7,18 +7,24 @@ import com.lab2.server.exceptionsHandler.exceptions.ExpertiseNotFoundException
 import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
 import com.lab2.server.services.ExpertService
 import com.lab2.server.services.ExpertiseService
+import io.micrometer.observation.annotation.Observed
 import jakarta.transaction.Transactional
+import lombok.extern.slf4j.Slf4j
+import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@Slf4j
+@Observed
 class ExpertController(private val expertService: ExpertService, private val expertiseService: ExpertiseService) {
 
     @GetMapping("/experts/")
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER")
     fun getAll(): MutableSet<ExpertDTO> {
+        log.info("Retrieving all experts")
         return expertService.getAll()
     }
 
@@ -26,6 +32,7 @@ class ExpertController(private val expertService: ExpertService, private val exp
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER")
     fun getById(@PathVariable expertEmail: String): ExpertDTO? {
+        log.info("Retrieving expert linked to $expertEmail")
         return expertService.getExpertByEmail(expertEmail) ?: throw ExpertNotFoundException("Expert not found")
     }
 
@@ -35,6 +42,7 @@ class ExpertController(private val expertService: ExpertService, private val exp
     @Transactional
     fun addExpertise(@PathVariable expertEmail: String, @RequestBody expertise: String?) {
         if (expertise === null) {
+            log.error("Invalid body adding expertise to expert")
             throw NoBodyProvidedException("No body")
         }
 
