@@ -6,11 +6,11 @@ import com.lab2.server.exceptionsHandler.exceptions.CannotCreateUserException
 import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
 import com.lab2.server.exceptionsHandler.exceptions.WrongCredentialsException
 import com.lab2.server.security.JwtAuthConverterProperties
+import com.lab2.server.services.ExpertService
 import com.lab2.server.services.ProfileService
 import io.micrometer.observation.annotation.Observed
 import lombok.extern.slf4j.Slf4j
 import org.hibernate.query.sqm.tree.SqmNode.log
-import com.lab2.server.services.ExpertService
 import org.keycloak.admin.client.CreatedResponseUtil
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.representations.idm.ClientRepresentation
@@ -83,7 +83,7 @@ class SecurityController(private val profileService: ProfileService, private val
         if (body === null) {
             throw NoBodyProvidedException("You have to add a body")
         }
-        log.info("Creating expert user ${body.username}")
+        log.info("Creating expert user ${body.email}")
         val user = UserRepresentation()
         user.isEnabled = true
         user.username = body.email
