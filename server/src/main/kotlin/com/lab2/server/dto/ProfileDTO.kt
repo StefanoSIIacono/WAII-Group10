@@ -15,6 +15,14 @@ data class ChangeProfileInfoDTO(
     val surname:String
 )
 
+data class CreateProfileDTO(
+    val email:String,
+    val password: String,
+    val name:String,
+    val surname:String,
+    var address: GetAddressDTO?
+)
+
 fun Profile.toDTO(): ProfileDTO {
     return ProfileDTO(   this.email,
                             this.name,

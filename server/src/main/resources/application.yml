@@ -1,11 +1,13 @@
 spring:
   application:
-    name: springboot-keycloak
+    name: ticketing-app
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8081/realms/ticketing
+          url: http://localhost:8081
+          realm: ticketing
+          issuer-uri: ${spring.security.oauth2.resourceserver.jwt.url}/realms/${spring.security.oauth2.resourceserver.jwt.realm}
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
   datasource:
     url: jdbc:postgresql://localhost:5432/ticket_service
@@ -23,10 +25,34 @@ jwt:
       principal-attribute: preferred_username
 
 logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
   level:
     org.springframework.security: DEBUG
+    FULL: DEBUG
 
 server:
   port: '8080'
   servlet:
     context-path: /
+    
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://tempo:9411/api/v2/spans
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+

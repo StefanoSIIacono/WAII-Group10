@@ -1,23 +1,32 @@
 version: '2'
 
 services:
+
   server:
     image: 'ticketing:latest'
     build:
       context: .
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
     container_name: server
     depends_on:
       - db
       - keycloak
+      - tempo
+      - loki
+      - prometheus
+      - grafana
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=mysecretpassword
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI=http://keycloak:8080/realms/ticketing
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_REALM=ticketing
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_URL=http://keycloak:8080
       - JWT_AUTH_CONVERTER_RESOURCE-ID=ticketingclient
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411/api/v2/spans
     ports:
       - "8080:8080"
+
   db:
     image: 'postgres:latest'
     container_name: db
@@ -25,7 +34,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=mysecretpassword
     volumes:
-      - ../resources/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      - ../resources/pg_dump.sql:/docker-entrypoint-initdb.d/pg_dump.sql
+
   keycloak:
     image: 'quay.io/keycloak/keycloak:21.1.1'
     container_name: keycloak
@@ -37,3 +47,54 @@ services:
       - "8081:8080"
     volumes:
       - ../resources/keycloak_settings:/opt/keycloak/data/import
+
+  tempo:
+    image: grafana/tempo
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./tempo/tempo-local.yaml:/etc/tempo.yaml:ro # ro means readonly
+      - ./tempo/tempo-data:/tmp/tempo
+    ports:
+      - "14268"  # jaeger ingest
+      - "9411:9411" # zipkin
+      - "3200:3200"
+
+  loki:
+    image: grafana/loki
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+    ports:
+      - "3100:3100"                                   # loki needs to be exposed so it receives logs
+    environment:
+      - JAEGER_AGENT_HOST=tempo
+      - JAEGER_ENDPOINT=http://tempo:14268/api/traces # send traces to Tempo
+      - JAEGER_SAMPLER_TYPE=const
+      - JAEGER_SAMPLER_PARAM=1
+
+  prometheus:
+    image: prom/prometheus
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    command:
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana
+    depends_on:
+      - loki
+      - prometheus
+      - tempo
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - "3000:3000"

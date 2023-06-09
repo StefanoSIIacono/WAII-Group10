@@ -7,17 +7,25 @@ import jakarta.persistence.*
 @Table(name = "expertises")
 class Expertise (
     @Column(unique = true)
-    // OneToMany WITH THE TICKET
     val field: String
+
+
 ): EntityBase<Long>()
 {
+    @OneToMany(mappedBy = "arg")
+    val tickets: MutableSet<Ticket> = mutableSetOf()
+
     @ManyToMany(mappedBy = "expertises")
     val experts: MutableSet<Expert> = mutableSetOf()
-
 
     fun addExpert(e: Expert) {
         this.experts.add(e)
         e.expertises.add(this)
+    }
+
+    fun addTicket(t:Ticket){
+        this.tickets.add(t)
+        t.arg=this
     }
 }
 

@@ -25,33 +25,33 @@ values(1,'WRONG-DELIVERY'),
       (5,'MECHANICAL'),
       (6,'ELECTRIC');
 
-insert into experts(id,name,surname)
-values(1,'Gino','Cuccagno'),
-      (2,'Mohamed','Letija'),
-      (3,'Pickle','Rick'),
-      (4,'Pino','Paolino'),
-      (5,'Mastro','Gesualdo');
+insert into experts(email,name,surname)
+values('gino.cuccagno@tickets.com','Gino','Cuccagno'),
+      ('mohamed.letija@tickets.com','Mohamed','Letija'),
+      ('pickle.rick@tickets.com','Pickle','Rick'),
+      ('pino.paolino@tickets.com','Pino','Paolino'),
+      ('mastro.gesualdo@tickets.com','Mastro','Gesualdo');
 
-insert into expert_expertise(expert_id, expertise_id)
-values(1,2),
-      (2,3),
-      (4,4),
-      (5,1);
+insert into expert_expertise(expert_email, expertise_id)
+values('gino.cuccagno@tickets.com',2),
+      ('mohamed.letija@tickets.com',3),
+      ('pino.paolino@tickets.com',4),
+      ('mastro.gesualdo@tickets.com',1);
 
-insert into managers(id,name,surname)
-values(1,'BIG','BOSS');
+insert into managers(email,name,surname)
+values('bigboss@tickets.admin.com','BIG','BOSS');
 
 insert into addresses(address_id, city, country, house_number, street, zip_code, profile_email)
 values(1, 'turin', 'italy', 12, 'via vigone', 10138, 'mario.rossi@gmail.com'),
       (2, 'narnia', 'italy', 2, 'via narnia', 98172, 'luigi.verdi@gmail.com'),
       (3, 'scampia', 'italy', 18, 'via mun', 12121, 'sergio.bianchi@gmail.com');
 
-INSERT INTO tickets (id, arg, obj, priority, expert_id, product_id, profile_email)
-values (1, 'argument', 'obj', 'LOW', 1, 9781292204482, 'mario.rossi@gmail.com'),
-       (2, 'please help', 'i need help', 'HIGH', 2, 9786420945091, 'mario.rossi@gmail.com'),
-       (3, 'broken gift', 'you ruined my birthday', 'MEDIUM', 3, 9781617137080, 'luigi.verdi@gmail.com');
+INSERT INTO tickets (id, arg_id, obj, priority, expert_email, product_id, profile_email)
+values (1, 1, 'obj', 'LOW', 'mastro.gesualdo@tickets.com', 9781292204482, 'mario.rossi@gmail.com'),
+       (2, 3, 'i need help', 'HIGH', 'mohamed.letija@tickets.com', 9786420945091, 'mario.rossi@gmail.com'),
+       (3, 4, 'you ruined my birthday', 'MEDIUM', 'pino.paolino@tickets.com', 9781617137080, 'luigi.verdi@gmail.com');
 
-INSERT INTO statuses (id, status, status_changer, timestamp, expert_id, ticket_id)
-values  (1, 1, 'MANAGER', '1999-01-08 01:05:06', 1, 1),
-        (2, 2, 'EXPERT', '2000-02-18 05:25:46', 2, 2),
-        (3, 3, 'PROFILE', '2006-06-13 22:21:46', 4, 3)
+INSERT INTO statuses (id, status, status_changer, timestamp, expert_email, ticket_id)
+values  (1, 1, 'MANAGER', '1999-01-08 01:05:06', 'mastro.gesualdo@tickets.com', 1),
+        (2, 2, 'EXPERT', '2000-02-18 05:25:46', 'mohamed.letija@tickets.com', 2),
+        (3, 3, 'PROFILE', '2006-06-13 22:21:46', 'pino.paolino@tickets.com', 3)

@@ -6,10 +6,10 @@ import com.lab2.server.data.Ticket
 data class TicketDTO(
         val id: Long?,
         val obj: String,
-        val arg: String,
+        val arg: ExpertiseDTO,
         val priority: Priority,
         val profile: String,
-        val expert: Long?,
+        val expert: String?,
         val product: String,
         val status: TicketStatusDTO,
 )
@@ -22,10 +22,19 @@ data class TicketCreateBodyDTO(
 )
 
 data class TicketInProgressBodyDTO(
-        val expert: Long,
+        val expert: String,
         val priority: Priority,
 )
 
 fun Ticket.toDTO(): TicketDTO {
-            return TicketDTO(id, obj, arg, priority, profile.email, expert?.id, product.id, statusHistory.maxBy { it.timestamp }.toDTO())
+            return TicketDTO(
+                    this.id,
+                    this.obj,
+                    this.arg.toDTO(),
+                    this.priority,
+                    this.profile.email,
+                    this.expert?.email,
+                    this.product.id,
+                    this.statusHistory.maxBy { it.timestamp }.toDTO()
+            )
 }

@@ -38,6 +38,13 @@ dependencies {
 	implementation("org.keycloak:keycloak-spring-boot-starter:11.0.3")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation ("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.springframework.boot:spring-boot-starter-aop")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("io.micrometer:micrometer-registry-prometheus")
+	implementation("io.micrometer:micrometer-tracing-bridge-brave")
+	implementation("io.zipkin.reporter2:zipkin-reporter-brave")
+	implementation("com.github.loki4j:loki-logback-appender:1.4.1")
+	implementation("org.keycloak:keycloak-admin-client:21.1.1")
 	runtimeOnly("org.postgresql:postgresql")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
@@ -47,7 +54,7 @@ dependencies {
 	testImplementation("org.testcontainers:junit-jupiter:1.16.3")
 	testImplementation("org.testcontainers:postgresql:1.16.3")
 	testImplementation("org.springframework.security:spring-security-test")
-	testImplementation("com.github.dasniko:testcontainers-keycloak:2.1.2")
+	testImplementation("com.github.dasniko:testcontainers-keycloak:2.5.0")
 }
 
 dependencyManagement {

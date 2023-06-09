@@ -7,6 +7,7 @@ import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.ExpertNotFoundException
 import com.lab2.server.repositories.ExpertRepository
 import com.lab2.server.serviceImpl.ExpertServiceImpl
+import com.lab2.server.services.ExpertiseService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -17,16 +18,17 @@ import org.springframework.data.repository.findByIdOrNull
 
 class ExpertServiceTest {
     private val repository = mockk<ExpertRepository>()
+    private val expertiseService = mockk<ExpertiseService>()
 
     @Test
     fun getAllTest() {
         val expertList = mutableListOf(
-            Expert("John", "Doe"),
-            Expert("Jane", "Smith")
+            Expert("e1@e1.com","John", "Doe"),
+            Expert("e2@e2.com", "Jane", "Smith")
         )
         every { repository.findAll() } returns expertList
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when
         val result = service.getAll()
 
@@ -36,130 +38,161 @@ class ExpertServiceTest {
     }
 
     @Test
-    fun getExpertByIdTest() {
+    fun getExpertByEmailTest() {
         // given
-        val expertId = 1L
-        val expert = Expert("John", "Doe")
-        every { repository.findByIdOrNull(expertId) } returns expert
+        val expert = Expert("e1@e1.com", "John", "Doe")
+        every { repository.findByIdOrNull(expert.email) } returns expert
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when
-        val result = service.getExpertById(expertId)
+        val result = service.getExpertByEmail(expert.email)
 
         // then
-        verify(exactly = 1) { repository.findByIdOrNull(expertId) }
+        verify(exactly = 1) { repository.findByIdOrNull(expert.email) }
         assertEquals(expert.toDTO(), result)
     }
 
     @Test
-    fun getExpertByIdNotFoundTest() {
+    fun getExpertByEmailNotFoundTest() {
         // given
-        val expertId = 1L
-        every { repository.findByIdOrNull(expertId) } returns null
+        val expertEmail = "e1@e1.com"
+        every { repository.findByIdOrNull(expertEmail) } returns null
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when/then
         try {
-            service.getExpertById(expertId)
+            service.getExpertByEmail(expertEmail)
         } catch (e: ExpertNotFoundException) {
             assertEquals("Expert not found", e.message)
         }
 
         // then
-        verify(exactly = 1) { repository.findByIdOrNull(expertId) }
+        verify(exactly = 1) { repository.findByIdOrNull(expertEmail) }
     }
 
     @Test
     fun getExpertisesByExpertTest() {
         // given
-        val expertId = 1L
-        val expert = Expert("John", "Doe")
+        val expert = Expert("e1@e1.com", "John", "Doe")
         val expertiseList = mutableListOf(
             Expertise("Backend"),
             Expertise("Frontend")
         )
         expert.expertises.addAll(expertiseList)
-        every { repository.findByIdOrNull(expertId) } returns expert
+        every { repository.findByIdOrNull(expert.email) } returns expert
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when
-        val result = service.getExpertisesByExpert(expertId)
+        val result = service.getExpertisesByExpert(expert.email)
 
         // then
-        verify(exactly = 1) { repository.findByIdOrNull(expertId) }
+        verify(exactly = 1) { repository.findByIdOrNull(expert.email) }
         assertEquals(expertiseList.map { it.toDTO() }.toMutableSet(), result)
     }
 
     @Test
     fun getExpertisesByExpertNotFoundTest() {
         // given
-        val expertId = 1L
-        every { repository.findByIdOrNull(expertId) } returns null
+        val expertEmail = "e1@e1.com"
+        every { repository.findByIdOrNull(expertEmail) } returns null
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when/then
         try {
-            service.getExpertisesByExpert(expertId)
+            service.getExpertisesByExpert(expertEmail)
         } catch (e: ExpertNotFoundException) {
             assertEquals("Expert not found", e.message)
         }
 
         // then
-        verify(exactly = 1) { repository.findByIdOrNull(expertId) }
+        verify(exactly = 1) { repository.findByIdOrNull(expertEmail) }
     }
 
     @Test
     fun insertExpertTest() {
         // given
+        val expertEmail = "e1@e1.com"
         val expertName = "John"
         val expertSurname = "Doe"
-        val expert = Expert(expertName, expertSurname)
-        every { repository.findByIdOrNull(1L) } returns null
+        val expertise = "COMPUTER"
+        val expertiseDTO = ExpertiseDTO(1, expertise)
+        val expert = Expert(expertEmail, expertName, expertSurname)
+        val expertDTO = ExpertDTO(expertEmail, expertName, expertSurname)
         every { repository.save(any()) } returns expert
+        every { repository.findByIdOrNull(expertDTO.email) } returns expert
+        every { expertiseService.getExpertise(expertise) } returns expertiseDTO
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when
-        service.insertExpert(expertName, expertSurname)
+        service.insertExpert(expertDTO, mutableSetOf(expertise))
 
         // then
-        verify(exactly = 1) { repository.save(any()) }
+        verify(exactly = 2) { repository.save(any()) }
+        verify(exactly = 1) { repository.findByIdOrNull(expertDTO.email)}
+        verify(exactly = 1) { expertiseService.getExpertise(expertise) }
     }
 
 
     @Test
     fun addExpertiseToExpertTest() {
         // given
-        val expertD = ExpertDTO(1L, "John", "Doe")
+        val expert = ExpertDTO("e1@e1.com", "John", "Doe")
         val expertise = ExpertiseDTO(1L, "Backend")
-        val expert = expertD.toExpert()
-        //val expertiseEntity = expertise.toExpertise()
 
-        every { repository.findByIdOrNull(expertD.id!!) } returns expert
-        every { repository.save(any()) } returns expert
+        every { repository.findByIdOrNull(expert.email) } returns expert.toExpert()
+        every { repository.save(any()) } returns expert.toExpert()
+        every { expertiseService.getExpertise(expertise.field) } returns expertise
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when
-        service.addExpertiseToExpert(expertD, expertise)
-
+        service.addExpertiseToExpert(expert.email, expertise.field)
         // then
-        verify(exactly = 1) { repository.findByIdOrNull(expertD.id!!) }
-        verify(exactly = 1) { repository.save(expert) }
+        verify(exactly = 1) { repository.findByIdOrNull(expert.email) }
+        verify(exactly = 1) { expertiseService.getExpertise(expertise.field) }
+        verify(exactly = 1) { repository.save(any()) }
     }
 
     @Test
     fun addTicketToExpertTest() {
         // given
-        val expert = Expert("John", "Doe")
-        val product = Product("1", "Shirt", "Tommy Hilfiger")
-        val profile = Profile("test@test1.com", "testName", "testSurname",
-                null)
-        val address = Address("c", "c", "z", "s", "h", profile)
+        val expert = Expert(
+            "e1@e1.com",
+            "John",
+            "Doe"
+        )
+        val product = Product(
+            "1",
+            "Shirt",
+            "Tommy Hilfiger"
+        )
+        val profile = Profile(
+            "test@test1.com",
+            "testName",
+            "testSurname",
+            null
+        )
+        val address = Address(
+            "c",
+            "c",
+            "z",
+            "s",
+            "h",
+            profile
+        )
+        val expertise= Expertise( "COMPUTER")
         profile.addAddress(address)
-        val ticket = Ticket("Ticket", "ticket problem", Priority.TOASSIGN, profile, null, product)
+        val ticket = Ticket(
+            "Ticket",
+            expertise,
+            Priority.TOASSIGN,
+            profile,
+            null,
+            product
+        )
 
         every { repository.save(any()) } returns expert
 
-        val service = ExpertServiceImpl(repository)
+        val service = ExpertServiceImpl(repository, expertiseService)
         // when
         service.addTicketToExpert(expert, ticket)
 

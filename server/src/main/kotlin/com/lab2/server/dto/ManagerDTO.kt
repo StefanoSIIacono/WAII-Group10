@@ -3,11 +3,15 @@ package com.lab2.server.dto
 import com.lab2.server.data.Manager
 
 class ManagerDTO (
-    val id: Long?,
+    val email: String,
     var name: String,
     var surname: String
 )
 
 fun Manager.toDTO(): ManagerDTO {
-    return ManagerDTO(id, name, surname)
+    return ManagerDTO(
+        this.email,
+        this.name,
+        this.surname
+    )
 }

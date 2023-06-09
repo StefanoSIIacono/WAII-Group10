@@ -30,6 +30,10 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     fun handleDuplicateProfile (e: DuplicateProfileException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.CONFLICT, e.message!!)
 
+    @ExceptionHandler(DuplicateExpertException::class)
+    fun handleDuplicateExpert (e: DuplicateExpertException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.CONFLICT, e.message!!)
+
     @ExceptionHandler(ProfileEmailChangeNotAllowedException::class)
     fun handleProfileEmailChange (e: ProfileEmailChangeNotAllowedException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
@@ -74,4 +78,8 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler (ExpertIsNullException::class)
     fun handleExpertIsNull (e: ExpertIsNullException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
+
+    @ExceptionHandler (CannotCreateUserException::class)
+    fun handleCannotCreateUser (e: CannotCreateUserException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.message!!)
 }
