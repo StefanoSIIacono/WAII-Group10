@@ -20,7 +20,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=mysecretpassword
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI=http://keycloak:8080/realms/ticketing
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_REALM=ticketing
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_URL=http://keycloak:8080
       - JWT_AUTH_CONVERTER_RESOURCE-ID=ticketingclient
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411/api/v2/spans
     ports:

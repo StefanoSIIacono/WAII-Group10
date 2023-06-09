@@ -2,19 +2,20 @@ package com.lab2.server.serviceImpl
 
 import com.lab2.server.data.Expert
 import com.lab2.server.data.Ticket
-import com.lab2.server.data.toExpert
 import com.lab2.server.data.toExpertise
 import com.lab2.server.dto.ExpertDTO
 import com.lab2.server.dto.ExpertiseDTO
 import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.ExpertNotFoundException
+import com.lab2.server.exceptionsHandler.exceptions.ExpertiseNotFoundException
 import com.lab2.server.repositories.ExpertRepository
 import com.lab2.server.services.ExpertService
+import com.lab2.server.services.ExpertiseService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class ExpertServiceImpl(private val expertRepository: ExpertRepository): ExpertService {
+class ExpertServiceImpl(private val expertRepository: ExpertRepository, private val expertiseService: ExpertiseService): ExpertService {
 
     override fun getAll(): MutableSet<ExpertDTO> {
         return expertRepository.findAll().map { it.toDTO() }.toMutableSet()
@@ -27,18 +28,18 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository): ExpertS
         return expertRepository.findByIdOrNull(email)?.toDTO()?.expertises ?: throw ExpertNotFoundException("Expert not found")
     }
 
-    override fun insertExpert(email: String, name: String, surname: String) {
-        expertRepository.save(Expert(email, name, surname))
+    override fun insertExpert(expert: ExpertDTO, expertises: MutableSet<String>?) {
+        expertRepository.save(Expert(expert.email, expert.name, expert.surname))
+        expertises?.forEach { this.addExpertiseToExpert(expert.email, it) }
     }
 
-    override fun addExpertiseToExpert(expert: ExpertDTO, expertise: ExpertiseDTO) {
-        if(expertRepository.findByIdOrNull(expert.email)?.toDTO() == null) {
-            throw ExpertNotFoundException("Expert not found")
-        }
+    override fun addExpertiseToExpert(expertEmail: String, expertise: String) {
+        val expertiseObject = expertiseService.getExpertise(expertise)
+            ?: throw ExpertiseNotFoundException("Expertise not found")
+        val expert = expertRepository.findByIdOrNull(expertEmail) ?: throw ExpertNotFoundException("Expert not found")
         //expert.addExpertiseDTO(expertise)
-        val exp = expert.toExpert()
-        exp.addExpertise(expertise.toExpertise())
-        expertRepository.save(exp)
+        expert.addExpertise(expertiseObject.toExpertise())
+        expertRepository.save(expert)
     }
 
     override fun addTicketToExpert(expert: Expert, ticket: Ticket) {

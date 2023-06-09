@@ -54,7 +54,7 @@ dependencies {
 	testImplementation("org.testcontainers:junit-jupiter:1.16.3")
 	testImplementation("org.testcontainers:postgresql:1.16.3")
 	testImplementation("org.springframework.security:spring-security-test")
-	testImplementation("com.github.dasniko:testcontainers-keycloak:2.1.2")
+	testImplementation("com.github.dasniko:testcontainers-keycloak:2.5.0")
 }
 
 dependencyManagement {

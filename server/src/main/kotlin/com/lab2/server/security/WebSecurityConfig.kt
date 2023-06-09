@@ -36,8 +36,8 @@ class WebSecurityConfig (private val properties: JwtAuthConverterProperties, pri
     fun keycloak(): Keycloak {
         return KeycloakBuilder.builder()
             .serverUrl(env.getProperty("spring.security.oauth2.resourceserver.jwt.url")!!)
-            .realm(env.getProperty("spring.security.oauth2.resourceserver.jwt.realm")!!)
-            .clientId(properties.resourceId)
+            .realm("master")
+            .clientId("admin-cli")
             .username("admin")
             .password("admin")
             .build()

@@ -30,7 +30,9 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
             throw DuplicateProfileException("Profile exists!")
 
         val newProfile = Profile(profile.email, profile.name, profile.surname, null)
-        val newAddress = Address( // CHECK WHETHER THE FIELDS ARE NOT NULL
+
+        if (profile.address != null) {
+            val newAddress = Address( // CHECK WHETHER THE FIELDS ARE NOT NULL
                 profile.address!!.city,
                 profile.address!!.country,
                 profile.address!!.zipCode,
@@ -39,7 +41,9 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository): Prof
                 newProfile,
                 newProfile.email)
 
-        newProfile.addAddress(newAddress)
+            newProfile.addAddress(newAddress)
+        }
+
 
         // The save is in cascade for the address
         profileRepository.save(newProfile)

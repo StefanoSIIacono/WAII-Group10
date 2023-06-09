@@ -36,33 +36,16 @@ class ExpertController(private val expertService: ExpertService, private val exp
         return expertService.getExpertByEmail(expertEmail) ?: throw ExpertNotFoundException("Expert not found")
     }
 
-    @PostMapping("/experts/")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Secured("MANAGER")
-    fun createExpert(@RequestBody expert: ExpertDTO?){
-        if (expert == null) {
-            log.error("Invalid body creating expert")
-            throw NoBodyProvidedException("You have to add a body")
-        }
-        log.info("Creating expert ${expert.email}")
-        expertService.insertExpert(expert.email, expert.name, expert.surname)
-    }
-
     @PutMapping("/experts/{expertEmail}/addExpertise")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("MANAGER")
     @Transactional
-    fun addExpertise(@PathVariable expertEmail: String, @RequestBody expertise: ExpertiseDTO?) {
+    fun addExpertise(@PathVariable expertEmail: String, @RequestBody expertise: String?) {
         if (expertise === null) {
             log.error("Invalid body adding expertise to expert")
             throw NoBodyProvidedException("No body")
         }
-        log.info("Adding expertise ${expertise.field} to expert linked to $expertEmail")
-        val exp = expertiseService.getExpertise(expertise.field)
-                ?: throw ExpertiseNotFoundException("Expertise not found")
-        val expert = expertService.getExpertByEmail(expertEmail)
-                ?: throw ExpertNotFoundException("Expert not found")
 
-        expertService.addExpertiseToExpert(expert, exp)
+        expertService.addExpertiseToExpert(expertEmail, expertise)
     }
 }

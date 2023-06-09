@@ -1,9 +1,7 @@
 package com.lab2.server.controllers
 
-import com.lab2.server.dto.CreateProfileDTO
-import com.lab2.server.dto.LoginDTO
-import com.lab2.server.dto.ProfileDTO
-import com.lab2.server.dto.TokenDTO
+
+import com.lab2.server.dto.*
 import com.lab2.server.exceptionsHandler.exceptions.CannotCreateUserException
 import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
 import com.lab2.server.exceptionsHandler.exceptions.WrongCredentialsException
@@ -12,6 +10,7 @@ import com.lab2.server.services.ProfileService
 import io.micrometer.observation.annotation.Observed
 import lombok.extern.slf4j.Slf4j
 import org.hibernate.query.sqm.tree.SqmNode.log
+import com.lab2.server.services.ExpertService
 import org.keycloak.admin.client.CreatedResponseUtil
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.representations.idm.ClientRepresentation
@@ -20,6 +19,7 @@ import org.keycloak.representations.idm.UserRepresentation
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.access.annotation.Secured
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.reactive.function.BodyInserters
@@ -30,7 +30,7 @@ import java.util.*
 @RestController
 @Slf4j
 @Observed
-class SecurityController(private val profileService: ProfileService, private val keycloak: Keycloak, private val env: Environment, private val properties: JwtAuthConverterProperties) {
+class SecurityController(private val profileService: ProfileService, private val expertService: ExpertService, private val keycloak: Keycloak, private val env: Environment, private val properties: JwtAuthConverterProperties) {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
@@ -40,17 +40,17 @@ class SecurityController(private val profileService: ProfileService, private val
             throw NoBodyProvidedException("You have to add a body")
         }
         log.info("Creating profile user linked to ${body.email}")
+
         val user = UserRepresentation()
         user.isEnabled = true
         user.username = body.email
 
-
-        val realmResource = keycloak.realm(env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri")!!)
+        val realmResource = keycloak.realm(env.getProperty("spring.security.oauth2.resourceserver.jwt.realm")!!)
         val usersResource = realmResource.users()
 
         val response = usersResource.create(user)
 
-        if (response.status != 200) {
+        if (response.status != 201) {
             throw CannotCreateUserException("generic error")
         }
         val userid = CreatedResponseUtil.getCreatedId(response)
@@ -78,22 +78,22 @@ class SecurityController(private val profileService: ProfileService, private val
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/createExpert")
-    fun createExpert(@RequestBody body: LoginDTO?) {
+    @Secured("MANAGER")
+    fun createExpert(@RequestBody body: CreateExpertDTO?) {
         if (body === null) {
-            log.error("Invalid login body")
             throw NoBodyProvidedException("You have to add a body")
         }
         log.info("Creating expert user ${body.username}")
         val user = UserRepresentation()
         user.isEnabled = true
-        user.username = body.username
+        user.username = body.email
 
-        val realmResource = keycloak.realm(env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri")!!)
+        val realmResource = keycloak.realm(env.getProperty("spring.security.oauth2.resourceserver.jwt.realm")!!)
         val usersResource = realmResource.users()
 
         val response = usersResource.create(user)
 
-        if (response.status != 200) {
+        if (response.status != 201) {
             throw CannotCreateUserException("generic error")
         }
         val userid = CreatedResponseUtil.getCreatedId(response)
@@ -110,12 +110,12 @@ class SecurityController(private val profileService: ProfileService, private val
             .findByClientId(properties.resourceId)[0]
 
         val userClientRole = realmResource.clients()[client.id]
-            .roles()["PROFILE"].toRepresentation()
+            .roles()["EXPERT"].toRepresentation()
 
         userResource.roles()
             .clientLevel(client.id).add(listOf(userClientRole))
-
-        // TODO: add to db
+            
+        expertService.insertExpert(ExpertDTO(body.email, body.name, body.surname), body.expertises)
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -141,7 +141,6 @@ class SecurityController(private val profileService: ProfileService, private val
                 .retrieve()
                 .bodyToMono(TokenDTO::class.java)
                 .block()
-            println(response)
             return response ?: throw WrongCredentialsException("Wrong username or password")
         } catch (e: Exception) {
             throw WrongCredentialsException("Wrong username or password")
