@@ -9,16 +9,16 @@ import com.lab2.server.exceptionsHandler.exceptions.IllegalStatusChangeException
 import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
 import com.lab2.server.exceptionsHandler.exceptions.TicketNotFoundException
 import com.lab2.server.services.TicketService
+import io.micrometer.observation.annotation.Observed
 import jakarta.transaction.Transactional
+import lombok.extern.slf4j.Slf4j
+import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
 import java.util.*
-import io.micrometer.observation.annotation.Observed
-import lombok.extern.slf4j.Slf4j
-import org.hibernate.query.sqm.tree.SqmNode.log
 
 @RestController
 @Slf4j
@@ -28,6 +28,7 @@ class TicketingController(private val ticketService: TicketService) {
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER", "EXPERT", "PROFILE")
     fun getAll(): List<TicketDTO>{
+        log.info("Retrieving all tickets")
         return ticketService.getAll()
     } // MANAGER ONLY -> CHECK USEFULNESS
 
@@ -35,6 +36,7 @@ class TicketingController(private val ticketService: TicketService) {
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER", "EXPERT", "PROFILE")
     fun getTicketByID(@PathVariable ticketId:Long) : TicketDTO {
+        log.info("Retrieving ticket $ticketId")
         return ticketService.getTicketByID(ticketId)
             ?: throw TicketNotFoundException("Ticket not found")
     } // MANAGER ONLY -> CHECK USEFULNESS
@@ -46,8 +48,10 @@ class TicketingController(private val ticketService: TicketService) {
     @Secured("PROFILE")
     fun createTicket(@RequestBody ticket: TicketCreateBodyDTO?){
         if (ticket === null) {
+            log.error("Invalid body in ticket creation")
             throw NoBodyProvidedException("You have to add a body")
         }
+        log.info("Creating new ticket")
         ticketService.insertTicket(ticket)
         // ADD SERVICE IMPLEMENTATION FOR THE FIRST MESSAGE TO BE LINKED
     }
@@ -56,6 +60,7 @@ class TicketingController(private val ticketService: TicketService) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("PROFILE")
     fun openTicket(@PathVariable ticketId:Long){
+        log.info("Opening ticket  $ticketId")
         ticketService.setTicketStatus(
             ticketId,
             Status.OPEN,
@@ -75,8 +80,10 @@ class TicketingController(private val ticketService: TicketService) {
         val statusChanger = StatusChanger.values()
             .firstOrNull { sc -> token.authorities.map { it.authority }.contains(sc.name) }
         if (statusChanger === null) {
+            log.error("Not permitted status change provided for ticket $ticketId")
             throw IllegalStatusChangeException("")
         }
+        log.info("Changing status for ticket $ticketId")
         ticketService.setTicketStatus(
             ticketId,
             Status.CLOSED,
@@ -90,6 +97,7 @@ class TicketingController(private val ticketService: TicketService) {
     @Secured("PROFILE")
     @Transactional
     fun reOpenTicket(@PathVariable ticketId:Long){
+        log.info("Reopening ticket  $ticketId")
         ticketService.setTicketStatus(
             ticketId,
             Status.REOPENED,
@@ -104,6 +112,7 @@ class TicketingController(private val ticketService: TicketService) {
     @Secured("PROFILE")
     @Transactional
     fun resolveTicket(@PathVariable ticketId:Long){
+        log.info("Resolving ticket  $ticketId")
         ticketService.setTicketStatus(
             ticketId,
             Status.RESOLVED,
@@ -119,8 +128,10 @@ class TicketingController(private val ticketService: TicketService) {
     @Transactional
     fun inProgressTicket(@PathVariable ticketId:Long, @RequestBody body: TicketInProgressBodyDTO?){
         if (body === null) {
+            log.error("Invalid body provided in setting ticket $ticketId in progress")
             throw NoBodyProvidedException("Wrong body")
         }
+        log.info("Setting ticket  $ticketId in progress")
         ticketService.setTicketStatus(
             ticketId,
             Status.IN_PROGRESS,
@@ -134,6 +145,7 @@ class TicketingController(private val ticketService: TicketService) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("MANAGER")
     fun setTicketPriority(@PathVariable ticketId:Long, @PathVariable priority: String){
+        log.info("Setting ticket  $ticketId priority to $priority")
         ticketService.setTicketPriority(ticketId, priority)
     }
 }

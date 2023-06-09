@@ -20,13 +20,14 @@ class ProductController(private val productService: ProductService) {
     @GetMapping("/products/")
     @ResponseStatus(HttpStatus.OK)
     fun getAll(): List<ProductDTO>{
-        log.info("ciao")
+        log.info("Retrieving all products")
         return productService.getAll()
     }
 
     @GetMapping("/products/{productId}")
     @ResponseStatus(HttpStatus.OK)
     fun getProduct(@PathVariable productId:String): ProductDTO {
+        log.info("Retrieving product $productId")
         return productService.getProduct(productId)
             ?: throw ProductNotFoundException("Product not found")
     }

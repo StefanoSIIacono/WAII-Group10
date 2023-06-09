@@ -36,8 +36,10 @@ class SecurityController(private val profileService: ProfileService, private val
     @PostMapping("/signup")
     fun signup(@RequestBody body: CreateProfileDTO?) {
         if (body === null) {
+            log.error("Invalid signup body")
             throw NoBodyProvidedException("You have to add a body")
         }
+        log.info("Creating profile user linked to ${body.email}")
         val user = UserRepresentation()
         user.isEnabled = true
         user.username = body.email
@@ -78,8 +80,10 @@ class SecurityController(private val profileService: ProfileService, private val
     @PostMapping("/createExpert")
     fun createExpert(@RequestBody body: LoginDTO?) {
         if (body === null) {
+            log.error("Invalid login body")
             throw NoBodyProvidedException("You have to add a body")
         }
+        log.info("Creating expert user ${body.username}")
         val user = UserRepresentation()
         user.isEnabled = true
         user.username = body.username
@@ -118,9 +122,11 @@ class SecurityController(private val profileService: ProfileService, private val
     @PostMapping("/login/")
     fun login(@RequestBody body: LoginDTO?): TokenDTO {
         if (body === null) {
+            log.error("Invalid login body")
             throw NoBodyProvidedException("You have to add a body")
         }
         try {
+            log.info("Logging in ${body.username}")
             val client: WebClient = WebClient
                     .create(env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri")!!)
 
