@@ -2,9 +2,7 @@ package com.lab2.server.controllers
 
 
 import com.lab2.server.dto.*
-import com.lab2.server.exceptionsHandler.exceptions.CannotCreateUserException
-import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
-import com.lab2.server.exceptionsHandler.exceptions.WrongCredentialsException
+import com.lab2.server.exceptionsHandler.exceptions.*
 import com.lab2.server.security.JwtAuthConverterProperties
 import com.lab2.server.services.ExpertService
 import com.lab2.server.services.ProfileService
@@ -51,6 +49,9 @@ class SecurityController(private val profileService: ProfileService, private val
         val response = usersResource.create(user)
 
         if (response.status != 201) {
+            if (response.status == 409) {
+                throw DuplicateProfileException("Profile already exist")
+            }
             throw CannotCreateUserException("generic error")
         }
         val userid = CreatedResponseUtil.getCreatedId(response)
@@ -94,6 +95,9 @@ class SecurityController(private val profileService: ProfileService, private val
         val response = usersResource.create(user)
 
         if (response.status != 201) {
+            if (response.status == 409) {
+                throw DuplicateExpertException("Expert already exist")
+            }
             throw CannotCreateUserException("generic error")
         }
         val userid = CreatedResponseUtil.getCreatedId(response)
