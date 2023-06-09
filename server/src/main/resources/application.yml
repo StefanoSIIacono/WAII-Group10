@@ -1,6 +1,6 @@
 spring:
   application:
-    name: springboot-keycloak
+    name: ticketing-app
   security:
     oauth2:
       resourceserver:

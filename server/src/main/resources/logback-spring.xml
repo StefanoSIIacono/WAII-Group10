@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
-    <springProperty scope="context" name="springboot-keycloak" source="spring.application.name"/>
+    <springProperty scope="context" name="ticketing-app" source="spring.application.name"/>
 
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
         <http>
@@ -9,7 +9,7 @@
         </http>
         <format>
             <label>
-                <pattern>app=${springboot-keycloak},host=${HOSTNAME},traceID=%X{traceId:-NONE},level=%level</pattern>
+                <pattern>app=${ticketing-app},host=${HOSTNAME},traceID=%X{traceId:-NONE},level=%level</pattern>
             </label>
             <message>
                 <pattern>${FILE_LOG_PATTERN}</pattern>

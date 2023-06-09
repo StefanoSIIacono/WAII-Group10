@@ -16,8 +16,13 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
 import java.util.*
+import io.micrometer.observation.annotation.Observed
+import lombok.extern.slf4j.Slf4j
+import org.hibernate.query.sqm.tree.SqmNode.log
 
 @RestController
+@Slf4j
+@Observed
 class TicketingController(private val ticketService: TicketService) {
     @GetMapping("/tickets/")
     @ResponseStatus(HttpStatus.OK)

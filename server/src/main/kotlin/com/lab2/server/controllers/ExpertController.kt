@@ -11,8 +11,13 @@ import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
+import io.micrometer.observation.annotation.Observed
+import lombok.extern.slf4j.Slf4j
+import org.hibernate.query.sqm.tree.SqmNode.log
 
 @RestController
+@Slf4j
+@Observed
 class ExpertController(private val expertService: ExpertService, private val expertiseService: ExpertiseService) {
 
     @GetMapping("/experts/")

@@ -9,6 +9,9 @@ import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
 import com.lab2.server.exceptionsHandler.exceptions.WrongCredentialsException
 import com.lab2.server.security.JwtAuthConverterProperties
 import com.lab2.server.services.ProfileService
+import io.micrometer.observation.annotation.Observed
+import lombok.extern.slf4j.Slf4j
+import org.hibernate.query.sqm.tree.SqmNode.log
 import org.keycloak.admin.client.CreatedResponseUtil
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.representations.idm.ClientRepresentation
@@ -25,6 +28,8 @@ import java.util.*
 
 
 @RestController
+@Slf4j
+@Observed
 class SecurityController(private val profileService: ProfileService, private val keycloak: Keycloak, private val env: Environment, private val properties: JwtAuthConverterProperties) {
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -36,6 +41,7 @@ class SecurityController(private val profileService: ProfileService, private val
         val user = UserRepresentation()
         user.isEnabled = true
         user.username = body.email
+
 
         val realmResource = keycloak.realm(env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri")!!)
         val usersResource = realmResource.users()
@@ -65,6 +71,7 @@ class SecurityController(private val profileService: ProfileService, private val
             .clientLevel(client.id).add(listOf(userClientRole))
 
         profileService.insertProfile(ProfileDTO(body.email, body.name, body.surname, body.address))
+        log.info("${user.username} signed in")
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -138,7 +145,7 @@ class SecurityController(private val profileService: ProfileService, private val
     @GetMapping("/prova")
     @ResponseStatus(HttpStatus.OK)
     fun getMe(principal: JwtAuthenticationToken): String {
-
+        log.info("PRINCIPAL: ${principal.details}")
         return principal.tokenAttributes["preferred_username"].toString()
     }
 }
