@@ -958,7 +958,7 @@
             "uid": "Loki"
           },
           "editorMode": "code",
-          "expr": "sum by(type) (rate({compose_service=~\"app-.*\"} | pattern `<date> <time> <_>=<trace_id> <_>=<span_id> <_>=<trace_flags> <type> <_> --- <msg>` | type != \"\" |= \"$log_keyword\" [1m]))",
+          "expr": "sum(count_over_time({app=\"ticketing-app\", level!=\"DEBUG\"} [5m]))",
           "legendFormat": "{{type}}",
           "queryType": "range",
           "refId": "A"
@@ -997,7 +997,7 @@
             "uid": "Loki"
           },
           "editorMode": "code",
-          "expr": "{compose_service=~\"app-.*\"} | pattern `<date> <time> <_>=<trace_id> <_>=<span_id> <_>=<trace_flags> <type> <_> --- <msg>` | line_format \"{{.compose_service}}\\t{{.type}}\\ttrace_id={{.trace_id}}\\t{{.msg}}\" |= \"$log_keyword\"",
+          "expr": "{app=\"ticketing-app\", level!=\"DEBUG\"}",
           "hide": false,
           "queryType": "range",
           "refId": "A"

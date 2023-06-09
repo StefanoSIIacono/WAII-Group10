@@ -57,6 +57,7 @@ services:
     ports:
       - "14268"  # jaeger ingest
       - "9411:9411" # zipkin
+      - "3200:3200"
 
   loki:
     image: grafana/loki
