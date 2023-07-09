@@ -19,6 +19,7 @@ data class TicketCreateBodyDTO(
         val arg: String,
         val profile: String,
         val product: String,
+        val firstMessage: FirstMessageDTO
 )
 
 data class TicketInProgressBodyDTO(

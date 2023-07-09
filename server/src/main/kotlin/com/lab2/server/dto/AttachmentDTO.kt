@@ -10,6 +10,11 @@ data class AttachmentDTO (
     val contentType: String,
     val message: MessageDTO
 )
+data class AttachmentBodyDTO (
+    val attachment: BlobJavaType,
+    val size: Byte,
+    val contentType: String,
+)
 
 fun Attachment.toDTO(): AttachmentDTO {
     return AttachmentDTO(id, attachment, size, contentType, message.toDTO())

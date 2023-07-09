@@ -32,7 +32,11 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
         val expertise = expertiseService.getExpertise(ticket.arg) ?: throw ExpertiseNotFoundException("Expertise not found")
 
         val newTicket = Ticket(ticket.obj, expertise.toExpertise(), Priority.TOASSIGN, profile, null, product.toProduct())
-        val status = TicketStatus(Status.OPEN, Date(System.currentTimeMillis()), newTicket)
+        val currentTime= Date(System.currentTimeMillis())
+        val status = TicketStatus(Status.OPEN, currentTime, newTicket)
+        val message= Message(currentTime, ticket.firstMessage.body, null, newTicket)
+        ticket.firstMessage.attachments.map { Attachment(it.attachment,  it.size, it.contentType, message) }
+            .forEach { message.addAttachment(it) }
 
         newTicket.addStatus(status)
         ticketingRepository.save(newTicket)
