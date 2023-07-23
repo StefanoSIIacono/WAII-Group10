@@ -29,8 +29,13 @@ const MyNavbar = () => {
                     </Navbar.Brand>
                     </NavLink>
                     <NavLink to='/profiles' className='navItem' >
-                    <Navbar.Brand>
+                    <Navbar.Brand style={{marginRight: '10vh'}}>
                         Profiles
+                    </Navbar.Brand>
+                    </NavLink>
+                    <NavLink to='/tickets' className='navItem' >
+                    <Navbar.Brand>
+                        Tickets
                     </Navbar.Brand>
                     </NavLink>
                 </Navbar.Collapse>

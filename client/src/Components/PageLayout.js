@@ -1,9 +1,9 @@
 import { Col, Container, Row, Alert } from "react-bootstrap";
-import { SidebarProd, SidebarProf } from "./Sidebar";
-import { ProductsTable, ProfileTable, ProductTable } from "./Tables";
+import { SidebarProd, SidebarProf, SidebarTic} from "./Sidebar";
+import { ProductsTable, ProfileTable, ProductTable, TicketsTable } from "./Tables";
 import { MyNavbar } from "./Navbar";
 import { Outlet } from "react-router-dom";
-import { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm } from "./Forms";
+import { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm, AddTicketForm} from "./Forms";
 
 
 function HomePage() {
@@ -30,6 +30,7 @@ function ProductsPage(props) {
     </div>
   );
 }
+
 function GetProductPage(props) {
   return (
     <div><Row>
@@ -99,6 +100,39 @@ function EditProfilePage(props) {
   );
 }
 
+function TicketsPage(props) {
+  return (
+    <div><Row>
+      <Col xs={3} className="Menu">
+        <SidebarTic />
+      </Col>
+      <Col className="ProTitle" xs={8}>
+        <h1>Tickets:</h1>
+        <div className="TableContainer">
+          <TicketsTable className="ProTable" tickets={props.tickets} />
+        </div>
+      </Col>
+    </Row>
+    </div>
+  );
+}
+
+function CreateTicketPage(props) {
+  return (
+    <Row>
+      <Col>
+        <div>
+          <h1 className="ProTitle">Add ticket</h1>
+          <AddTicketForm
+            addTicket={props.addTicket}
+          />
+        </div>
+      </Col>
+    </Row>
+  );
+}
+
+
 function AppLayout(props) {
   return (
     <div>
@@ -121,4 +155,4 @@ function AppLayout(props) {
     </div>
   )
 }
-export { AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage, GetProductPage }
+export { AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage, GetProductPage, TicketsPage, CreateTicketPage }

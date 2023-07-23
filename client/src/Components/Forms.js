@@ -119,4 +119,45 @@ function AddProfileForm(props) {
 
 }
 
-export { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm};
+function AddTicketForm(props) {
+    let navigate = useNavigate();
+    const [object, setObject] = useState('');
+    const [argument, setArgument] = useState('');
+    const [productEan, setProductEan] = useState('');
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        props.addTicket()//new Ticket(email, name, surname));
+
+        setObject('');
+        setArgument('');
+        setProductEan('');
+        navigate('/tickets');
+
+    }
+
+    return <>
+        <div style={{ padding: 10 }} class="FontText">
+            <Form onSubmit={handleSubmit}>
+                <Form.Group className='mb-3'>
+                    <Form.Label>object</Form.Label>
+                    <Form.Control type='text' value={object} required={true} placeholder="Object" onChange={(event) => { setObject(event.target.value) }} />
+                </Form.Group>
+                <Form.Group className='mb-3'>
+                    <Form.Label>Argument</Form.Label>
+                    <Form.Control type='text' value={argument} required={true} placeholder="Argument" onChange={(event) => { setArgument(event.target.value) }} />
+                </Form.Group>
+                <Form.Group className='mb-3'>
+                    <Form.Label>ProductEan</Form.Label>
+                    <Form.Control type='text' value={productEan} required={true} placeholder="ProductEan" onChange={(event) => { setProductEan(event.target.value) }} />
+                </Form.Group>
+                <div align='right'>
+                    <NavLink to='/tickets'><Button variant='secondary'>Cancel</Button></NavLink> &nbsp;
+                    <Button type='submit' variant='dark'>Add</Button>
+                </div>
+            </Form></div>
+    </>
+
+}
+
+export { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm, AddTicketForm};

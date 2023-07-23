@@ -1,11 +1,12 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import {AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage, GetProductPage} from "./Components/PageLayout";
+import {AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage, GetProductPage, TicketsPage, CreateTicketPage} from "./Components/PageLayout";
 import API from "./API"
 
 function App() {
 
     const [products, setProducts] = useState([]);
+    const [tickets, setTickets] = useState([]);
     const [product, setProduct] = useState([]);
     const [profile, setProfile] = useState([]);
     const [edit, setEdit] = useState(false);
@@ -71,6 +72,17 @@ function App() {
         }
       }
 
+      const addTicket = async (ticket) => {
+        try {
+          setLoading(true);
+          await API.addTicket(ticket);
+          setMessage({ msg: `Ticket correctly added`, type: 'success' });
+          setLoading(false);
+        } catch (e) {
+          setMessage({ msg: JSON.parse(e.message).detail, type: 'danger' });
+        }
+      }
+
     useEffect(() => {
         loadProducts();
     }, []);
@@ -90,6 +102,8 @@ function App() {
                   <Route path='/profiles' element={<ProfilesPage edit={edit} loading={loading} setEdit={setEdit} profile={profile} setProfile={setProfile} readProfileByMail={readProfileByMail}/>} />
                   <Route path='/addProfile' element={<AddProfilePage addProfile={addProfile} />} />
                   <Route path='/editProfile' element={<EditProfilePage edit={edit} loading={loading} setEdit={setEdit} profile={profile} editProfile={editProfile} />} />
+                  <Route path='/tickets' element={<TicketsPage tickets={tickets} />} />
+                  <Route path='/createTicket' element={<CreateTicketPage addTickets={addTicket} />} />
                   <Route path='*' element={<h1>404 Page not found</h1>} />
               </Route>
           </Routes>

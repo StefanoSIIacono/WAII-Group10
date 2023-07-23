@@ -24,4 +24,15 @@ function SidebarProf(props) {
     )
 }
 
-export { SidebarProd, SidebarProf };
+function SidebarTic(props) {
+    return (
+        <ListGroup as="ul" className="Drawer">
+           <ListGroup as="ul" className="Drawer">
+            <NavLink to={'/tickets'}  className="Drawer-li"><ListGroup.Item as="li" variant="dark" > GetAll</ListGroup.Item></NavLink>
+            <NavLink to={'/createTicket'}  className="Drawer-li"><ListGroup.Item as="li">CreateTicket</ListGroup.Item></NavLink>
+        </ListGroup>
+        </ListGroup>
+    )
+}
+
+export { SidebarProd, SidebarProf, SidebarTic};

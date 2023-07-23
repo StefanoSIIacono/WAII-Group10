@@ -1,5 +1,5 @@
 import { Table, Col, Row} from "react-bootstrap";
-import { ProductRow, ProfileRow } from "./Rows";
+import { ProductRow, ProfileRow, TicketRow} from "./Rows";
 
 function ProductsTable(props) {
   return <>
@@ -18,6 +18,7 @@ function ProductsTable(props) {
     </Table>
   </>
 }
+
 function ProductTable(props) {
   return <>
     <Table responsive className="TableStuff">
@@ -52,5 +53,29 @@ function ProfileTable(props) {
   </>
 }
 
+function TicketsTable(props) {
+  return <>
+    <Table responsive hover className="TableStuff" >
+          <h2><Row>
+            <Col>ID</Col>
+            <Col>Object</Col>
+            <Col>Argument</Col>
+            <Col>Object</Col>
+            <Col>Expert</Col>
+            <Col>Product</Col>
+            <Col>Priority</Col>
+            <Col>Status</Col>
+            <Col>Messages</Col>
+          </Row>
+          </h2>
+        <div className="ScrollB">
+          <tbody >
+            {props.tickets.map((p) => (<TicketRow classname="RowStyle" key={props.ticket.ticketI} ticket={props.ticket} />))}
+          </tbody>
+        </div>
+    </Table>
+  </>
+}
 
-export { ProductsTable, ProfileTable, ProductTable };
+
+export { ProductsTable, ProfileTable, ProductTable, TicketsTable};
