@@ -3,7 +3,7 @@ import { SidebarProd, SidebarProf, SidebarTic} from "./Sidebar";
 import { ProductsTable, ProfileTable, ProductTable, TicketsTable } from "./Tables";
 import { MyNavbar } from "./Navbar";
 import { Outlet } from "react-router-dom";
-import { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm, AddTicketForm} from "./Forms";
+import { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm, AddTicketForm, LoginForm} from "./Forms";
 
 
 function HomePage() {
@@ -132,11 +132,20 @@ function CreateTicketPage(props) {
   );
 }
 
+function LoginPage(props) {
+  return (
+    <Container className="Auth-form-container">
+      <Row className="align-items-center Auth-form" class="fill">
+        <Col md={{ span: 6, offset: 3 }}><LoginForm login={props.login} /></Col>
+      </Row>
+    </Container>
+  );
+}
 
 function AppLayout(props) {
   return (
     <div>
-      <MyNavbar />
+      <MyNavbar loggedIn={props.loggedIn} handleLogout={props.handleLogout} text="Login" />
       <div style={{
         backgroundImage: `url("../background.jpg")`,
         backgroundPosition: 'center',
@@ -155,4 +164,4 @@ function AppLayout(props) {
     </div>
   )
 }
-export { AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage, GetProductPage, TicketsPage, CreateTicketPage }
+export { AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage, GetProductPage, TicketsPage, CreateTicketPage, LoginPage }

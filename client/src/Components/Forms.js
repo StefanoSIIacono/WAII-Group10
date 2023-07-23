@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Row, Col } from 'react-bootstrap';
 import { Profile } from "./Profile";
 import { useNavigate, NavLink } from "react-router-dom";
 
@@ -160,4 +160,47 @@ function AddTicketForm(props) {
 
 }
 
-export { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm, AddTicketForm};
+function LoginForm(props) {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+  
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      const credentials = { username, password };
+  
+      props.login(credentials);
+    };
+  
+    return (
+      <Form onSubmit={handleSubmit}>
+        <div className="d-grid gap-4">
+          <h1>Login</h1>
+          <Form.Group controlId='username'>
+            <Form.Label>Username</Form.Label>
+            <Form.Control type='text' value={username} onChange={ev => setUsername(ev.target.value)} required={true} />
+          </Form.Group>
+  
+          <Form.Group controlId='password'>
+            <Form.Label>Password</Form.Label>
+            <Form.Control type='password' value={password} onChange={ev => setPassword(ev.target.value)} required={true} minLength={6} />
+          </Form.Group>
+  
+          <Button type="submit">Login</Button>
+  
+        </div>
+  
+      </Form>
+    )
+  };
+  
+function LogoutButton(props) {
+    return (
+      <Row>
+        <Col>
+        <Button variant="outline-light" onClick={props.logout}>Logout</Button>
+        </Col>
+      </Row>
+    )
+}
+
+export { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm, AddTicketForm, LoginForm, LogoutButton};

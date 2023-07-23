@@ -1,6 +1,46 @@
 import {Product} from "./Components/Product";
 import {Profile} from "./Components/Profile";
 
+const logIn = async (credentials) => {
+    const response = await fetch('/login/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(credentials),
+    });
+    if (response.ok) {
+        const user = await response.json();
+        console.log(user)
+        return user;
+    }
+    else {
+        const errDetails = await response.text();
+        throw errDetails;
+    }
+};
+
+// const getUserInfo = async () => {
+//     const response = await fetch(APIURL + '/sessions/current', {
+//         credentials: 'include',
+//     });
+//     const user = await response.json();
+//     if (response.ok) {
+//         return user;
+//     } else {
+//         throw user;
+//     }
+// };
+
+const logOut = async () => {
+    const response = await fetch('/login/', {
+        method: 'DELETE',
+        credentials: 'include'
+    });
+    if (response.ok)
+        return null;
+}
 
 async function readProducts() {
     let url = '/products/';
@@ -100,5 +140,5 @@ async function addProfile(profile) {
     }
 }
 
-const API ={readProfileFromMail, readProductFromID, readProducts, editProfile, addProfile};
+const API ={readProfileFromMail, readProductFromID, readProducts, editProfile, addProfile, logIn, logOut};
 export default API;

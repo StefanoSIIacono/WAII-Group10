@@ -1,12 +1,13 @@
 import React from 'react';
-import { Container, Navbar} from 'react-bootstrap';
+import { Container, Navbar, Button} from 'react-bootstrap';
 import {TicketDetailed } from 'react-bootstrap-icons';
 import { NavLink } from 'react-router-dom'
+import {LogoutButton} from './Forms'
 
 import 'bootstrap/dist/css/bootstrap.css';
 import '../App.css'
 
-const MyNavbar = () => {
+const MyNavbar = (props) => {
     return (
         <Navbar className="Navbar" collapseOnSelect expand="lg" bg="dark" variant="dark">
             <Container fluid>
@@ -38,6 +39,10 @@ const MyNavbar = () => {
                         Tickets
                     </Navbar.Brand>
                     </NavLink>
+                    <Navbar.Text>
+                        {props.loggedIn ? <LogoutButton logout={props.handleLogout} /> : (<NavLink to="/login"><Button variant="outline-light" size="lg">{props.text}</Button>
+                        </NavLink>)}
+                    </ Navbar.Text>
                 </Navbar.Collapse>
             </Container>
         </Navbar>
