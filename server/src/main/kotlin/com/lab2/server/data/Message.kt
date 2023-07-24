@@ -15,7 +15,7 @@ class Message (
     val expert: Expert? = null,
 
     @ManyToOne
-    var ticket: Ticket
+    var ticket: Ticket? = null
 
 ): EntityBase<Long>() {
 

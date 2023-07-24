@@ -9,16 +9,17 @@ data class MessageDTO (
     @Temporal(TemporalType.TIMESTAMP)
     val timestamp: java.util.Date,
     val body: String,
-    val attachments: MutableList<AttachmentDTO> = mutableListOf(),
+    val attachments: MutableList<AttachmentDTO>,
     val expert: ExpertDTO? = null,
     val ticket: Long
 )
 
-data class FirstMessageDTO (
+data class BodyMessageDTO (
     val body: String,
-    val attachments: MutableList<AttachmentBodyDTO> = mutableListOf(),
+    val attachments: MutableList<AttachmentBodyDTO>,
+    val ticket: Long
 )
 
 fun Message.toDTO(): MessageDTO {
-    return MessageDTO(id, timestamp, body, attachments.map {it.toDTO()}.toMutableList(), expert?.toDTO(), ticket.id!!)
+    return MessageDTO(id, timestamp, body, attachments.map {it.toDTO()}.toMutableList(), expert?.toDTO(), ticket?.id!!)
 }

@@ -17,9 +17,10 @@ data class TicketDTO(
 data class TicketCreateBodyDTO(
         val obj: String,
         val arg: String,
+        val body: String,
+        val attachments: MutableList<AttachmentBodyDTO>,
         val profile: String,
         val product: String,
-        val firstMessage: FirstMessageDTO
 )
 
 data class TicketInProgressBodyDTO(

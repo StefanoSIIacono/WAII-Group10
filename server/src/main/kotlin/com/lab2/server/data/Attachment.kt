@@ -14,7 +14,7 @@ class Attachment(
     val contentType: String,
 
     @ManyToOne
-    var message: Message,
+    var message: Message?=null,
 ): EntityBase<Long>()
 
 /*

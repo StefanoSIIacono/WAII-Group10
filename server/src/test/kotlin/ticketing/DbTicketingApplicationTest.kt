@@ -1066,7 +1066,7 @@ class DbTicketingApplicationTest {
     fun testCreateTicket(){
         val expertise= expertiseRepository.findByField("expertise")
 
-        val ticket = TicketCreateBodyDTO("o", expertise!!.field, "test1@test.com", "1234567890123456")
+        val ticket = TicketCreateBodyDTO(obj="o", arg=expertise!!.field, body="Test", attachments = mutableListOf(), profile="test1@test.com",product= "1234567890123456")
 
         val headers = HttpHeaders()
         headers.set(
@@ -1114,8 +1114,7 @@ class DbTicketingApplicationTest {
     @Test
     fun testCreateTicket_ProfileNotFoundFailure(){
 
-        val ticket = TicketCreateBodyDTO("o", "a", "notfound@failure.com", "1234567890123456")
-
+        val ticket=TicketCreateBodyDTO(obj="o", arg="a", body="Test", attachments = mutableListOf(), profile="notfound@failure.com",product= "1234567890123456")
         val headers = HttpHeaders()
         headers.set(
             "Authorization",
@@ -1140,8 +1139,7 @@ class DbTicketingApplicationTest {
     @Test
     fun testCreateTicket_ProductNotFoundFailure(){
 
-        val ticket = TicketCreateBodyDTO("o", "a", "test1@test.com", "notfoundfailure")
-
+        val ticket=TicketCreateBodyDTO(obj="o", arg="a", body="Test", attachments = mutableListOf(), profile="test1@test.com",product= "notfoundfailure")
         val headers = HttpHeaders()
         headers.set(
             "Authorization",

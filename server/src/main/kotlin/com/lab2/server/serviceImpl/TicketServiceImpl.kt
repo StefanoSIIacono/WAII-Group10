@@ -13,7 +13,9 @@ import java.util.*
 
 @Service
 class TicketServiceImpl (private val ticketingRepository: TicketingRepository, private val profileService: ProfileService,
-                         private val productService: ProductService, private val expertService: ExpertService, private val expertiseService :ExpertiseService):
+                         private val productService: ProductService, private val expertService: ExpertService, private val expertiseService :ExpertiseService,
+    //private val messageService: MessageService, private val attachmentService: AttachmentService
+):
     TicketService {
 
     override fun getAll(): List<TicketDTO> {
@@ -34,8 +36,10 @@ class TicketServiceImpl (private val ticketingRepository: TicketingRepository, p
         val newTicket = Ticket(ticket.obj, expertise.toExpertise(), Priority.TOASSIGN, profile, null, product.toProduct())
         val currentTime= Date(System.currentTimeMillis())
         val status = TicketStatus(Status.OPEN, currentTime, newTicket)
-        val message= Message(currentTime, ticket.firstMessage.body, null, newTicket)
-        ticket.firstMessage.attachments.map { Attachment(it.attachment,  it.size, it.contentType, message) }
+        val message= Message(currentTime, ticket.body, null)
+        newTicket.addMessage(message)
+
+        ticket.attachments.map { Attachment(it.attachment,  it.size, it.contentType) }
             .forEach { message.addAttachment(it) }
 
         newTicket.addStatus(status)
