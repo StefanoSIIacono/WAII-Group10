@@ -6,6 +6,7 @@ const logIn = async (credentials) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            //'Authorization': `Bearer ${jwtToken}`,
         },
         credentials: 'include',
         body: JSON.stringify(credentials),
@@ -20,6 +21,19 @@ const logIn = async (credentials) => {
         throw errDetails;
     }
 };
+/*
+TODO:
+messaggi e ticket non vengono rimossi per avere una history (di solito questi contenuti non vengono eliminati)
+addTicket
+changeTicketStatus ? -> dipende come viene modificato lo status (dopo aver scritto un messaggio, manualmente o entrambi i casi)
+addMessage -> include eventuali attachments
+getUserInfo
+changeUserInfo
+removeProfile ?
+addExpert -> manager only
+assignTicket -> manager only
+removeProduct ? -> manager only
+*/
 
 // const getUserInfo = async () => {
 //     const response = await fetch(APIURL + '/sessions/current', {

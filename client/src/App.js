@@ -1,14 +1,25 @@
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import {AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage, GetProductPage, TicketsPage, CreateTicketPage, LoginPage} from "./Components/PageLayout";
+import {
+    AppLayout,
+    HomePage,
+    ProfilesPage,
+    ProductsPage,
+    AddProfilePage,
+    EditProfilePage,
+    GetProductPage,
+    TicketsPage,
+    CreateTicketPage,
+    LoginPage
+} from "./Components/PageLayout";
 import API from "./API"
 
 function App() {
 
     const [products, setProducts] = useState([]);
     const [tickets, setTickets] = useState([]);
-    const [product, setProduct] = useState([]);
-    const [profile, setProfile] = useState([]);
+    const [product, setProduct] = useState([]); // perchè è un array?
+    const [profile, setProfile] = useState([]); // perchè è un array?
     const [edit, setEdit] = useState(false);
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
@@ -73,6 +84,7 @@ function App() {
       }
     }
 
+    // da passare coi prop, oppure metterla nel form del ticket?
     const addTicket = async (ticket) => {
       try {
         setLoading(true);
@@ -86,6 +98,9 @@ function App() {
     
     const handleLogin = async (credentials) => {
       try {
+          // const [user, token] = await API.logIn(credentials)
+          // localStorage.setItem('jwtToken', token) -> valid after closing the browser
+          // sessionStorage.setItem('jwtToken', token) -> valid for the session only
         const user = await API.logIn(credentials);
         setLoggedIn(true);
         setMessage({ msg: `Welcome, ${user.name}!`, type: 'success' });
@@ -96,6 +111,7 @@ function App() {
 
     const handleLogout = async () => {
       await API.logOut();
+      //localStorage.removeItem('jwtToken');
       setLoggedIn(false);
       setMessage('');
     };
@@ -113,7 +129,9 @@ function App() {
         try {
           await API.getUserInfo();
           setLoggedIn(true);
-        } catch (error) { }
+        } catch (error) {/*
+        We have to handle the error
+        */}
       };
       checkAuth();
     }, []);
@@ -122,7 +140,7 @@ function App() {
       <div>
         <BrowserRouter>
           <Routes>
-            <Route path='/login' element={ loggedIn ? <Navigate replace to='/' /> : <LoginPage login={handleLogin} />} />
+            <Route path='/login' element={ loggedIn ? <Navigate replace to='/' /> : <LoginPage login={handleLogin}/>} />
             <Route element={<AppLayout message={message} setMessage={setMessage} loggedIn={loggedIn} handleLogout={handleLogout} />}>
                 <Route path='/' element={<HomePage />} />
                 <Route path='/products' element={<ProductsPage products={products} />} />
