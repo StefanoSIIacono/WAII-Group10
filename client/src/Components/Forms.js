@@ -160,6 +160,65 @@ function AddTicketForm(props) {
 
 }
 
+// NUOVO
+function AddExpertForm(props) {
+    let navigate = useNavigate();
+    const [name, setName] = useState('');
+    const [surname, setSurname] = useState('');
+    const [selected, setSelected] = useState([]);
+
+    const expertises = ['exp1', 'exp2', 'exp3', 'exp4']
+
+    // Adds expertises or delete according to checkboxes
+    const handleCheckboxChange = (value) => {
+        if (selected.includes(value)) {
+            setSelected(selected.filter((val) => val !== value));
+        } else {
+            setSelected([...selected, value]);
+        }
+    }
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        props.addExpert()
+
+        navigate('/manager');
+    }
+
+    return <>
+        <div style={{ padding: 10 }} class="FontText">
+            <Form onSubmit={handleSubmit}>
+                <Form.Group className='mb-3'>
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control type='text' value={name} required={true} placeholder="Name" onChange={(event) => { setName(event.target.value) }} />
+                </Form.Group>
+                <Form.Group className='mb-3'>
+                    <Form.Label>Surname</Form.Label>
+                    <Form.Control type='text' value={surname} required={true} placeholder="Surname" onChange={(event) => { setSurname(event.target.value) }} />
+                </Form.Group>
+                <Form.Group className='mb-3'>
+                    <Form.Label>Expertises:</Form.Label>
+                    {expertises.map((value) => (
+                        <div key={value}>
+                            <Form.Check
+                                type="checkbox"
+                                label={value}
+                                checked={expertises.includes(value)}
+                                onChange={() => handleCheckboxChange(value)}
+                            />
+                        </div>
+                    ))}
+                </Form.Group>
+                <div align='right'>
+                    <NavLink to='/manager'><Button variant='secondary'>Cancel</Button></NavLink> &nbsp;
+                    <Button type='submit' variant='dark'>Add</Button>
+                </div>
+            </Form>
+        </div>
+    </>
+}
+
+
 function LoginForm(props) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -203,4 +262,12 @@ function LogoutButton(props) {
     )
 }
 
-export { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm, AddTicketForm, LoginForm, LogoutButton};
+export {
+    AddProfileForm,
+    EditProfileForm,
+    GetProfileForm,
+    GetProductForm,
+    AddTicketForm,
+    AddExpertForm,
+    LoginForm,
+    LogoutButton};

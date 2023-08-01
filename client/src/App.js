@@ -10,6 +10,8 @@ import {
     GetProductPage,
     TicketsPage,
     CreateTicketPage,
+    CreateExpertPage,
+    ManagerDashboard,
     LoginPage
 } from "./Components/PageLayout";
 import API from "./API"
@@ -17,7 +19,7 @@ import API from "./API"
 function App() {
 
     const [products, setProducts] = useState([]);
-    const [tickets, setTickets] = useState([]);
+    const [tickets, setTickets] = useState([]); // dovrebbe comprendere tutti i campi del ticket
     const [product, setProduct] = useState([]); // perchè è un array?
     const [profile, setProfile] = useState([]); // perchè è un array?
     const [edit, setEdit] = useState(false);
@@ -95,6 +97,19 @@ function App() {
         setMessage({ msg: JSON.parse(e.message).detail, type: 'danger' });
       }
     }
+
+    //NUOVO
+    const addExpert = async (expert) => {
+      try {
+        setLoading(true);
+        await API.addExpert(expert);
+        setMessage({ msg: `Expert correctly added`, type: 'success' });
+        setLoading(false);
+      } catch (e) {
+        setMessage({ msg: JSON.parse(e.message).detail, type: 'danger' });
+      }
+    }
+
     
     const handleLogin = async (credentials) => {
       try {
@@ -150,6 +165,8 @@ function App() {
                 <Route path='/editProfile' element={<EditProfilePage edit={edit} loading={loading} setEdit={setEdit} profile={profile} editProfile={editProfile} />} />
                 <Route path='/tickets' element={<TicketsPage tickets={tickets} />} />
                 <Route path='/createTicket' element={<CreateTicketPage addTickets={addTicket} />} />
+                <Route path='/manager' element={<ManagerDashboard addTickets={addTicket} />} />
+                <Route path='/manager/addExpert' element={<CreateExpertPage addExpert={addExpert} />} />
                 <Route path='*' element={<h1>404 Page not found</h1>} />
             </Route>
           </Routes>
