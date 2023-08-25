@@ -20,7 +20,7 @@ function App() {
 
     const [products, setProducts] = useState([]);
     const [tickets, setTickets] = useState([]); // dovrebbe comprendere tutti i campi del ticket
-    const [product, setProduct] = useState([]); // perchè è un array?
+    const [product, setProduct] = useState([]); // perchè è un array? 
     const [profile, setProfile] = useState([]); // perchè è un array?
     const [edit, setEdit] = useState(false);
     const [message, setMessage] = useState('');

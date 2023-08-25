@@ -160,10 +160,19 @@ function CreateExpertPage(props) {
 function ManagerDashboard(props){
     return (
         <div>
-            <h1 style={{color: 'white'}}>Dashboard</h1>
+            <h1 style={{color: 'white'}}>Dashboard:</h1>
             <div className="box-container">
-                <Box title="Add new Expert" linkTo="/manager/addExpert" />
                 <Box title="Homepage" linkTo="/" />
+                <Box title="Add new Expert" linkTo="/manager/addExpert"/>
+                <Box title="Manage Tickets" linkTo="/tickets"/>
+                <Box title="Manage Profiles" linkTo="/profiles"/>
+                {/* Aggiungere altri riquadri */}
+            </div>
+            <div className="box-container">
+                <Box title="Homepage" linkTo="/" />
+                <Box title="Add new Expert" linkTo="/manager/addExpert"/>
+                <Box title="Manage Tickets" linkTo="/tickets"/>
+                <Box title="Manage Profiles" linkTo="/profiles"/>
                 {/* Aggiungere altri riquadri */}
             </div>
         </div>

@@ -1,5 +1,6 @@
 import {Product} from "./Components/Product";
 import {Profile} from "./Components/Profile";
+import {Ticket} from "./Components/Ticket";
 
 const logIn = async (credentials) => {
     const response = await fetch('/login/', {
@@ -24,16 +25,20 @@ const logIn = async (credentials) => {
 /*
 TODO:
 messaggi e ticket non vengono rimossi per avere una history (di solito questi contenuti non vengono eliminati)
-addTicket
-changeTicketStatus ? -> dipende come viene modificato lo status (dopo aver scritto un messaggio, manualmente o entrambi i casi)
-addMessage -> include eventuali attachments
+addTicket -> DONE
+getTickets -> mancano i campi da controllare + check sullo user (l'ideale sarebbe farlo backend)
+changeTicketStatus ? -> dipende come viene modificato lo status (dopo aver scritto un messaggio, manualmente o entrambi i casi) DONE, manca il check da fare sullo status
+addMessage -> include eventuali attachments  pt.2 bisogna aspettare il backend
 getUserInfo
 changeUserInfo
-removeProfile ?
-addExpert -> manager only
+removeProfile ? DONE (manca check sullo user) però non so se lo terrei
+remoneExpert ? DONE (manca check sullo user) però non so se lo terrei
+addExpert -> manager only 
 assignTicket -> manager only
-removeProduct ? -> manager only
+changeTicketPriority ->manager only
+removeProduct ? -> manager only  (non so se lo terrei)
 */
+
 
 // const getUserInfo = async () => {
 //     const response = await fetch(APIURL + '/sessions/current', {
@@ -154,5 +159,129 @@ async function addProfile(profile) {
     }
 }
 
-const API ={readProfileFromMail, readProductFromID, readProducts, editProfile, addProfile, logIn, logOut};
+
+/*async function deleteProfile(email) {
+    try {
+        const response = await fetch('/profiles/' + email, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        if (response.ok)
+            return null; 
+        else {
+            const text = await response.text();
+            throw new TypeError(text);
+        }
+    }catch (ex) {
+        throw ex;
+    }
+}
+*/
+
+async function readTickets() {
+    let url = '/tickets/';
+    try {
+        const response = await fetch(url, {
+            credentials: 'include',
+        });
+        if (response.ok) {
+            const list = await response.json();
+            return list.map((p) => new Ticket()); //TODO
+        } else {
+            const text = await response.text();
+            throw new TypeError(text);
+        }
+    } catch (ex) {
+        throw ex;
+    }
+}
+
+
+async function changeTicketStatus(ticketId, status) {
+    const url = '/tickets/' + ticketId + '/' + status;
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            credentials: 'include',
+        });
+        if (response.ok) {
+            return true;
+        } else {
+            const text = await response.text();
+            throw new TypeError(text);
+        }
+    } catch (ex) {
+        throw ex;
+    }
+}
+
+
+async function addTicket(ticket) {
+    const url = '/tickets/';
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify(ticket),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            return true;
+        } else {
+            const text = await response.text();
+            throw new TypeError(text);
+        }
+    } catch (ex) {
+        throw ex;
+    }
+}
+
+/*async function addMessage(message) {
+    const url = '/tickets/' + 'qualcosa;  //bisogna aspettare l'implementazione dei messaggi backend
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify(message),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            return true;
+        } else {
+            const text = await response.text();
+            throw new TypeError(text);
+        }
+    } catch (ex) {
+        throw ex;
+    }
+}
+*/
+
+async function addExpert(expert) {
+    const url = '/experts/';
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify(expert),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            return true;
+        } else {
+            const text = await response.text();
+            throw new TypeError(text);
+        }
+    } catch (ex) {
+        throw ex;
+    }
+}
+
+const API ={readProfileFromMail, readProductFromID, readProducts, readTickets, addTicket, changeTicketStatus, addExpert, editProfile, addProfile, logIn, logOut};
 export default API;
