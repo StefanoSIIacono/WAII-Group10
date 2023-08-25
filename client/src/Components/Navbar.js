@@ -7,6 +7,7 @@ import {LogoutButton} from './Forms'
 import 'bootstrap/dist/css/bootstrap.css';
 import '../App.css'
 
+// TODO: if manager is logged in, the home button redirect to the dashboard
 const MyNavbar = (props) => {
     return (
         <Navbar className="Navbar" collapseOnSelect expand="lg" bg="dark" variant="dark">
@@ -40,8 +41,12 @@ const MyNavbar = (props) => {
                     </Navbar.Brand>
                     </NavLink>
                     <Navbar.Text>
-                        {props.loggedIn ? <LogoutButton logout={props.handleLogout} /> : (<NavLink to="/login"><Button variant="outline-light" size="lg">{props.text}</Button>
-                        </NavLink>)}
+                        {props.loggedIn ? <LogoutButton logout={props.handleLogout} /> : (
+                            <>
+                            <NavLink to="/signup"> <Button variant="outline-light" size="lg">Signup</Button></NavLink>
+                            <NavLink to="/login"><Button variant="outline-light" size="lg">{props.text}</Button></NavLink>
+                        </>
+                        )}
                     </ Navbar.Text>
                 </Navbar.Collapse>
             </Container>

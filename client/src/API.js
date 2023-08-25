@@ -79,6 +79,24 @@ async function readProducts() {
     }
 }
 
+async function readProfiles() {
+    let url = '/profiles/';
+    try {
+        const response = await fetch(url, {
+            credentials: 'include',
+        });
+        if (response.ok) {
+            const list = await response.json();
+            return list.map((p) => new Profile(p.email, p.name, p.surname))
+        } else {
+            const text = await response.text();
+            throw new TypeError(text);
+        }
+    } catch (ex) {
+        throw ex;
+    }
+}
+
 async function readProductFromID(id) {
     const url = '/products/'+ id;
     try {
@@ -137,13 +155,18 @@ async function editProfile(profile) {
     }
 }
 
-async function addProfile(profile) {
+async function signup(profile, password) {
     const url = '/profiles/';
     try {
         const response = await fetch(url, {
             method: 'POST',
             credentials: 'include',
-            body: JSON.stringify(profile),
+            body: {
+                email: profile.email,
+                name: profile.name,
+                surname: profile.surname,
+                password: password // DA VERIFICARE HASH
+            },
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -283,5 +306,18 @@ async function addExpert(expert) {
     }
 }
 
-const API ={readProfileFromMail, readProductFromID, readProducts, readTickets, addTicket, changeTicketStatus, addExpert, editProfile, addProfile, logIn, logOut};
+const API ={
+    readProfileFromMail,
+    readProductFromID,
+    readProducts,
+    readProfiles,
+    readTickets,
+    addTicket,
+    changeTicketStatus,
+    addExpert,
+    editProfile,
+    signup,
+    logIn,
+    logOut
+};
 export default API;

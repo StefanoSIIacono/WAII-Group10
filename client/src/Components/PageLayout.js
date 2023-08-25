@@ -1,10 +1,10 @@
-import { Col, Container, Row, Alert } from "react-bootstrap";
+import {Col, Container, Row, Alert, Button} from "react-bootstrap";
 import { SidebarProd, SidebarProf, SidebarTic} from "./Sidebar";
 import { ProductsTable, ProfileTable, ProductTable, TicketsTable } from "./Tables";
 import { MyNavbar } from "./Navbar";
 import { Outlet } from "react-router-dom";
 import {
-    AddProfileForm,
+    SignupForm,
     EditProfileForm,
     GetProfileForm,
     GetProductForm,
@@ -13,6 +13,7 @@ import {
     AddExpertForm
 } from "./Forms";
 import { Box } from "./ManagerDashboardBox.js"
+import {useState} from "react";
 
 function HomePage() {
   return (<Container className="Home">
@@ -56,31 +57,46 @@ function GetProductPage(props) {
 }
 
 function ProfilesPage(props) {
+
+    const [email, setEmail] = useState('');
+
+    const changeEmail = (email) => {
+        setEmail(email)
+    }
+
+    const handleClean = () => {
+        props.setEdit(false)
+        props.readProfileByMail(null)
+        setEmail('')
+    }
+
   return (
     <div>
       <Row>
-        <Col xs={3} className="Menu">
-          <SidebarProf edit={props.edit} setEdit={props.setEdit} />
-        </Col>
         <Col className="ProTitle" xs={8}>
-          <h1>Profile:</h1>
+          <h1>Profiles:</h1>
           <h2>Insert the profile email:</h2>
-          <GetProfileForm readProfileByMail={props.readProfileByMail} setEdit={props.setEdit} />
-          <ProfileTable profile={props.profile} />
+          <GetProfileForm readProfileByMail={props.readProfileByMail} setEdit={props.setEdit}
+                          setProfile={props.setProfile} email={email} changeEmail={changeEmail}/>
+          <Button align='right' variant='danger' onClick={handleClean}>Clean</Button>
+          <ProfileTable profiles={props.profiles} profile={props.profile}/>
         </Col>
+          <Col xs={3} className="Menu">
+          <SidebarProf edit={props.edit} setEdit={props.setEdit} />
+      </Col>
       </Row>
     </div>
   );
 }
 
-function AddProfilePage(props) {
+function SignupPage(props) {
   return (
     <Row>
       <Col>
         <div>
-          <h1 className="ProTitle">Add profile</h1>
-          <AddProfileForm
-            addProfile={props.addProfile}
+          <h1 className="ProTitle">Sign up</h1>
+          <SignupForm
+            signup={props.signup}
           />
         </div>
       </Col>
@@ -160,17 +176,13 @@ function CreateExpertPage(props) {
 function ManagerDashboard(props){
     return (
         <div>
-            <h1 style={{color: 'white'}}>Dashboard:</h1>
+            <h1 style={{color: 'white'}}>Dashboard</h1>
             <div className="box-container">
-                <Box title="Homepage" linkTo="/" />
+                <Box title="Homepage" linkTo="/manager" />
                 <Box title="Add new Expert" linkTo="/manager/addExpert"/>
-                <Box title="Manage Tickets" linkTo="/tickets"/>
-                <Box title="Manage Profiles" linkTo="/profiles"/>
                 {/* Aggiungere altri riquadri */}
             </div>
             <div className="box-container">
-                <Box title="Homepage" linkTo="/" />
-                <Box title="Add new Expert" linkTo="/manager/addExpert"/>
                 <Box title="Manage Tickets" linkTo="/tickets"/>
                 <Box title="Manage Profiles" linkTo="/profiles"/>
                 {/* Aggiungere altri riquadri */}
@@ -216,7 +228,7 @@ export {
     HomePage,
     ProfilesPage,
     ProductsPage,
-    AddProfilePage,
+    SignupPage,
     EditProfilePage,
     GetProductPage,
     TicketsPage,

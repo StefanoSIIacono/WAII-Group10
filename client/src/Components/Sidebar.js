@@ -19,7 +19,6 @@ function SidebarProf(props) {
         <ListGroup as="ul" className="Drawer">
             <ListGroup.Item as="li" variant="dark">GetFromMail</ListGroup.Item>
             { props.edit && <NavLink to={'/editProfile'}  className="Drawer-li"><ListGroup.Item as="li">Put</ListGroup.Item></NavLink>}
-            <NavLink to={'/addProfile'}  className="Drawer-li"><ListGroup.Item as="li">Post</ListGroup.Item></NavLink>
         </ListGroup>
     )
 }

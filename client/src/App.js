@@ -5,7 +5,7 @@ import {
     HomePage,
     ProfilesPage,
     ProductsPage,
-    AddProfilePage,
+    SignupPage,
     EditProfilePage,
     GetProductPage,
     TicketsPage,
@@ -19,9 +19,10 @@ import API from "./API"
 function App() {
 
     const [products, setProducts] = useState([]);
+    const [profiles, setProfiles] = useState([]);
     const [tickets, setTickets] = useState([]); // dovrebbe comprendere tutti i campi del ticket
-    const [product, setProduct] = useState([]); // perchè è un array? 
-    const [profile, setProfile] = useState([]); // perchè è un array?
+    const [product, setProduct] = useState();
+    const [profile, setProfile] = useState(null);
     const [edit, setEdit] = useState(false);
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
@@ -39,13 +40,28 @@ function App() {
             }
     };
 
+    async function loadProfiles(){
+            try{
+              setLoading(true);
+              let prof= []
+              prof = await API.readProfiles();
+              setProfiles(prof);
+              setLoading(false);
+            }catch(e){
+              setMessage({ msg: JSON.parse(e.message).detail, type: 'danger' });
+            }
+    };
+
     const readProfileByMail = async(email) => {
       try{
         setLoading(true); 
-        let prof = await API.readProfileFromMail(email);
-        setEdit(true);
-        setProfile(prof);
-        setLoading(false);
+        if (email == null) setProfile(null)
+        else {
+            let prof = await API.readProfileFromMail(email);
+            setEdit(true);
+            setProfile(prof);
+            setLoading(false);
+        }
       }catch(e){
         setEdit(false);
         setMessage({ msg: JSON.parse(e.message).detail, type: 'danger' });
@@ -63,10 +79,10 @@ function App() {
       }
     };
 
-    const addProfile = async (profile) => {
+    const signup = async (profile, password) => {
         try {
           setLoading(true);
-          await API.addProfile(profile);
+          await API.signup(profile, password);
           setMessage({ msg: `Profile linked to ${profile.email} correctly added`, type: 'success' });
           setLoading(false);
         } catch (e) {
@@ -110,7 +126,6 @@ function App() {
       }
     }
 
-    
     const handleLogin = async (credentials) => {
       try {
           // const [user, token] = await API.logIn(credentials)
@@ -118,7 +133,9 @@ function App() {
           // sessionStorage.setItem('jwtToken', token) -> valid for the session only
         const user = await API.logIn(credentials);
         setLoggedIn(true);
-        setMessage({ msg: `Welcome, ${user.name}!`, type: 'success' });
+        // if (loggedIn && role == "Manager") TODO: gestire ruolo dopo accesso
+        //  await loadProfiles()
+        setMessage({ msg: `Welcome, ${user.username}!`, type: 'success' });
       } catch (err) {
         setMessage({ msg: 'Incorrect username or password', type: 'danger' });
       }
@@ -133,10 +150,11 @@ function App() {
 
     useEffect(() => {
         loadProducts();
+        loadProfiles(); // SOLO PER TEST: richiede ruolo manager
     }, []);
 
     useEffect(() => {
-        setProduct([])
+        setProduct();
     }, []);
 
     useEffect(() => {
@@ -144,25 +162,30 @@ function App() {
         try {
           await API.getUserInfo();
           setLoggedIn(true);
-        } catch (error) {/*
+        } catch (error){ /*
         We have to handle the error
         */}
       };
       checkAuth();
     }, []);
 
+    // TODO: AGGIUNGERE LOGGED IN ALLE ROUTE
     return (
       <div>
         <BrowserRouter>
           <Routes>
             <Route path='/login' element={ loggedIn ? <Navigate replace to='/' /> : <LoginPage login={handleLogin}/>} />
+
             <Route element={<AppLayout message={message} setMessage={setMessage} loggedIn={loggedIn} handleLogout={handleLogout} />}>
                 <Route path='/' element={<HomePage />} />
                 <Route path='/products' element={<ProductsPage products={products} />} />
-                <Route path='/getProduct' element={<GetProductPage loading={loading} product={product} setProduct={setProduct} readProductByID={readProductByID} />} />
-                <Route path='/profiles' element={<ProfilesPage edit={edit} loading={loading} setEdit={setEdit} profile={profile} setProfile={setProfile} readProfileByMail={readProfileByMail}/>} />
-                <Route path='/addProfile' element={<AddProfilePage addProfile={addProfile} />} />
-                <Route path='/editProfile' element={<EditProfilePage edit={edit} loading={loading} setEdit={setEdit} profile={profile} editProfile={editProfile} />} />
+                <Route path='/getProduct' element={<GetProductPage loading={loading} product={product} setProduct={setProduct}
+                                                                   readProductByID={readProductByID} />} />
+                <Route path='/profiles' element={<ProfilesPage edit={edit} loading={loading} setEdit={setEdit} profiles={profiles}
+                                                               profile={profile} setProfile={setProfile} readProfileByMail={readProfileByMail}/>} />
+                <Route path='/signup' element={ loggedIn ? <Navigate replace to='/' /> : <SignupPage signup={signup}/>} />
+                <Route path='/editProfile' element={<EditProfilePage edit={edit} loading={loading} setEdit={setEdit}
+                                                                     profile={profile} editProfile={editProfile} />} />
                 <Route path='/tickets' element={<TicketsPage tickets={tickets} />} />
                 <Route path='/createTicket' element={<CreateTicketPage addTickets={addTicket} />} />
                 <Route path='/manager' element={<ManagerDashboard addTickets={addTicket} />} />

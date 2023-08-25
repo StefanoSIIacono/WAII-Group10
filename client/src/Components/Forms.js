@@ -4,21 +4,22 @@ import { Profile } from "./Profile";
 import { useNavigate, NavLink } from "react-router-dom";
 
 function GetProfileForm(props) {
-    const [email, setEmail] = useState('');
+
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        props.readProfileByMail(email);
+        props.readProfileByMail(props.email);
         props.setEdit(true);
       }
 
     return <>
         <Form onSubmit={handleSubmit}>
             <Form.Group className='mb-3'>
-                <Form.Control type='email' value={email} required={true} placeholder="Email" onChange={(event) => { setEmail(event.target.value) }} />
+                <Form.Control type='email' value={props.email} placeholder="Email"
+                              onChange={(event) => { props.changeEmail(event.target.value)}} />
             </Form.Group>
-            <div align='right'>
-                <Button type='submit' variant='dark'>Get</Button>
+            <div align='left'>
+                <Button type='submit' variant='dark' >Get</Button>
             </div>
         </Form>
     </>
@@ -78,20 +79,23 @@ function EditProfileForm(props) {
 }
 
 
-function AddProfileForm(props) {
+function SignupForm(props) {
     let navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
+    const [password, setPassword] = useState('');
+    const [address, setAddress] = useState('')
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        props.addProfile(new Profile(email, name, surname));
+        props.signup(new Profile(email, name, surname), password);
 
         setEmail('');
         setName('');
         setSurname('');
-        navigate('/profiles');
+        setPassword('');
+        navigate('/');
 
     }
 
@@ -110,8 +114,16 @@ function AddProfileForm(props) {
                     <Form.Label>Surname</Form.Label>
                     <Form.Control type='text' value={surname} required={true} placeholder="Surname" onChange={(event) => { setSurname(event.target.value) }} />
                 </Form.Group>
+                <Form.Group className='mb-3'>
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control type='text' value={password} required={true} placeholder="Password" onChange={(event) => { setPassword(event.target.value) }} />
+                </Form.Group>
+                <Form.Group className='mb-3'>
+                    <Form.Label>Address</Form.Label>
+                    <Form.Control type='text' value={address} required={true} placeholder="Address" onChange={(event) => { setAddress(event.target.value) }} />
+                </Form.Group>
                 <div align='right'>
-                    <NavLink to='/profiles'><Button variant='secondary'>Cancel</Button></NavLink> &nbsp;
+                    <NavLink to='/'><Button variant='secondary'>Cancel</Button></NavLink> &nbsp;
                     <Button type='submit' variant='dark'>Add</Button>
                 </div>
             </Form></div>
@@ -263,7 +275,7 @@ function LogoutButton(props) {
 }
 
 export {
-    AddProfileForm,
+    SignupForm,
     EditProfileForm,
     GetProfileForm,
     GetProductForm,

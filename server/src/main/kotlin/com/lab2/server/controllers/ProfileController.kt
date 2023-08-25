@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*
 class ProfileController(private val profileService: ProfileService) {
     @GetMapping("/profiles/")
     @ResponseStatus(HttpStatus.OK)
-    @Secured("MANAGER", "EXPERT", "PROFILE")
+    //@Secured("MANAGER", "EXPERT", "PROFILE")
     fun getAll(): List<ProfileDTO>{
         log.info("Retrieving all profiles")
         return profileService.getAll()
@@ -22,7 +22,7 @@ class ProfileController(private val profileService: ProfileService) {
 
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
-    @Secured("MANAGER", "EXPERT", "PROFILE")
+    //@Secured("MANAGER", "EXPERT", "PROFILE")
     fun getProfileByEmail(@PathVariable email:String): ProfileDTO {
         log.info("Retrieving profile linked to $email")
         return profileService.getProfileByEmail(email)

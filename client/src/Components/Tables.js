@@ -2,6 +2,7 @@ import { Table, Col, Row} from "react-bootstrap";
 import { ProductRow, ProfileRow, TicketRow} from "./Rows";
 
 function ProductsTable(props) {
+
   return <>
     <Table responsive hover className="TableStuff" >
           <h2><Row>
@@ -37,6 +38,7 @@ function ProductTable(props) {
 }
 
 function ProfileTable(props) {
+
   return <>
     <Table responsive className="TableStuff">
       <thead>
@@ -47,7 +49,9 @@ function ProfileTable(props) {
         </tr>
       </thead>
       <tbody>
-        <ProfileRow key={props.profile.email} profile={props.profile} />
+      {!props.profile ? props.profiles.map((p) => (<ProfileRow classname="RowStyle" key={p.email} profile={p} />)) :
+          <ProfileRow classname="RowStyle" key={props.profile.email} profile={props.profile} />
+      }
       </tbody>
     </Table>
   </>
