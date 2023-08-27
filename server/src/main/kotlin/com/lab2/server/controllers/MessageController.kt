@@ -26,7 +26,7 @@ class MessageController(private val messageService: MessageService) {
     @PostMapping("/tickets/{ticketId}/messages")
     @ResponseStatus(HttpStatus.CREATED)
     @Secured("EXPERT", "PROFILE")
-    fun createExpertise(@PathVariable ticketId:Long, @RequestBody message: RawMessage?, principal: Principal){
+    fun addMessage(@PathVariable ticketId:Long, @RequestBody message: RawMessage?, principal: Principal){
         if (message === null) {
             SqmNode.log.error("Invalid body creating message")
             throw NoBodyProvidedException("You have to add a body")
