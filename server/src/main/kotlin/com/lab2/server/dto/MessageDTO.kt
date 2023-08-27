@@ -17,9 +17,16 @@ data class MessageDTO (
 data class BodyMessageDTO (
     val body: String,
     val attachments: MutableList<AttachmentBodyDTO>,
-    val ticket: Long
+)
+
+data class RawMessage (
+    val message: String
 )
 
 fun Message.toDTO(): MessageDTO {
     return MessageDTO(id, timestamp, body, attachments.map {it.toDTO()}.toMutableList(), expert?.toDTO(), ticket?.id!!)
+}
+
+fun RawMessage.toBodyMessageDTO(): BodyMessageDTO {
+    return BodyMessageDTO(message, mutableListOf())
 }
