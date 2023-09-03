@@ -23,6 +23,7 @@ data class RawMessage (
     val message: String
 )
 
+
 fun Message.toDTO(): MessageDTO {
     return MessageDTO(id, timestamp, body, attachments.map {it.toDTO()}.toMutableList(), expert?.toDTO(), ticket?.id!!)
 }

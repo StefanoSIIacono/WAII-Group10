@@ -22,7 +22,13 @@ class Ticket (
     var expert: Expert? = null,
 
     @ManyToOne
-    var product: Product
+    var product: Product,
+
+    var indexE: Int=0,
+    var offsetE: Int=0,
+
+    var indexP: Int=0,
+    var offsetP: Int=0,
 
     ): EntityBase<Long>()
 {
