@@ -5,7 +5,6 @@ import { useNavigate, NavLink } from "react-router-dom";
 
 function GetProfileForm(props) {
 
-
     const handleSubmit = (event) => {
         event.preventDefault();
         props.readProfileByMail(props.email);
@@ -172,6 +171,27 @@ function AddTicketForm(props) {
 
 }
 
+function GetExpertForm(props) {
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        props.readExpertByMail(props.email);
+        props.setEdit(true);
+    }
+
+    return <>
+        <Form onSubmit={handleSubmit}>
+            <Form.Group className='mb-3'>
+                <Form.Control type='email' value={props.email} placeholder="Email"
+                              onChange={(event) => { props.changeEmail(event.target.value)}} />
+            </Form.Group>
+            <div align='left'>
+                <Button type='submit' variant='dark' >Get</Button>
+            </div>
+        </Form>
+    </>
+}
+
 // NUOVO
 function AddExpertForm(props) {
     let navigate = useNavigate();
@@ -278,6 +298,7 @@ export {
     SignupForm,
     EditProfileForm,
     GetProfileForm,
+    GetExpertForm,
     GetProductForm,
     AddTicketForm,
     AddExpertForm,

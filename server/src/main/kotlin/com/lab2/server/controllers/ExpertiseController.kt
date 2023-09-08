@@ -19,7 +19,7 @@ class ExpertiseController(private val expertiseService: ExpertiseService) {
 
     @GetMapping("/expertises/")
     @ResponseStatus(HttpStatus.OK)
-    @Secured("MANAGER", "EXPERT", "PROFILE")
+    //@Secured("MANAGER", "EXPERT", "PROFILE")
     fun getAll(): List<ExpertiseDTO>{
         log.info("Retrieving all expertises")
         return expertiseService.getAll()

@@ -14,14 +14,13 @@ function SidebarProd(props) {
     )
 }
 
-function SidebarProf(props) {
+/*function SidebarProf(props) {
     return (
         <ListGroup as="ul" className="Drawer">
             <ListGroup.Item as="li" variant="dark">GetFromMail</ListGroup.Item>
-            { props.edit && <NavLink to={'/editProfile'}  className="Drawer-li"><ListGroup.Item as="li">Put</ListGroup.Item></NavLink>}
-        </ListGroup>
+            </ListGroup>
     )
-}
+}*/
 
 function SidebarTic(props) {
     return (
@@ -34,4 +33,6 @@ function SidebarTic(props) {
     )
 }
 
-export { SidebarProd, SidebarProf, SidebarTic};
+export { SidebarProd,
+    //SidebarProf,
+    SidebarTic};

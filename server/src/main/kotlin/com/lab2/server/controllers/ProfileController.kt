@@ -45,7 +45,7 @@ class ProfileController(private val profileService: ProfileService) {
 
     @Transactional
     @PutMapping("/profiles/{email}/newInfo")
-    @Secured("PROFILE")
+    //@Secured("PROFILE")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun changeProfileInfo(@PathVariable email:String, @RequestBody newProfile: ChangeProfileInfoDTO?){
         log.info("Modifying profile linked to $email")

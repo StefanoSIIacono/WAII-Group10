@@ -1,12 +1,15 @@
 import {Col, Container, Row, Alert, Button} from "react-bootstrap";
-import { SidebarProd, SidebarProf, SidebarTic} from "./Sidebar";
-import { ProductsTable, ProfileTable, ProductTable, TicketsTable } from "./Tables";
+import { SidebarProd,
+    //SidebarProf,
+    SidebarTic} from "./Sidebar";
+import { ProductsTable, ProfileTable, ExpertTable, ProductTable, TicketsTable } from "./Tables";
 import { MyNavbar } from "./Navbar";
 import { Outlet } from "react-router-dom";
 import {
     SignupForm,
     EditProfileForm,
     GetProfileForm,
+    GetExpertForm,
     GetProductForm,
     AddTicketForm,
     LoginForm,
@@ -79,14 +82,43 @@ function ProfilesPage(props) {
           <GetProfileForm readProfileByMail={props.readProfileByMail} setEdit={props.setEdit}
                           setProfile={props.setProfile} email={email} changeEmail={changeEmail}/>
           <Button align='right' variant='danger' onClick={handleClean}>Clean</Button>
-          <ProfileTable profiles={props.profiles} profile={props.profile}/>
+          <ProfileTable profiles={props.profiles} profile={props.profile} setEdit={props.setEdit}/>
         </Col>
-          <Col xs={3} className="Menu">
-          <SidebarProf edit={props.edit} setEdit={props.setEdit} />
-      </Col>
+
       </Row>
     </div>
   );
+}
+
+function ExpertsPage(props) {
+
+    const [email, setEmail] = useState('');
+
+    const changeEmail = (email) => {
+        setEmail(email)
+    }
+
+    const handleClean = () => {
+        props.setEdit(false)
+        props.readExpertByMail(null)
+        setEmail('')
+    }
+
+    return (
+        <div>
+            <Row>
+                <Col className="ExpTitle" xs={8}>
+                    <h1>Experts:</h1>
+                    <h2>Insert the expert email:</h2>
+                    <GetExpertForm readExpertByMail={props.readExpertByMail} setEdit={props.setEdit}
+                                    setExpert={props.setExpert} email={email} changeEmail={changeEmail}/>
+                    <Button align='right' variant='danger' onClick={handleClean}>Clean</Button>
+                    <ExpertTable experts={props.experts} expert={props.expert} setEdit={props.setEdit}/>
+                </Col>
+
+            </Row>
+        </div>
+    );
 }
 
 function SignupPage(props) {
@@ -179,13 +211,11 @@ function ManagerDashboard(props){
             <h1 style={{color: 'white'}}>Dashboard</h1>
             <div className="box-container">
                 <Box title="Homepage" linkTo="/manager" />
-                <Box title="Add new Expert" linkTo="/manager/addExpert"/>
-                {/* Aggiungere altri riquadri */}
+                <Box title="Manage Experts" linkTo="/manager/experts"/>
             </div>
             <div className="box-container">
                 <Box title="Manage Tickets" linkTo="/tickets"/>
                 <Box title="Manage Profiles" linkTo="/profiles"/>
-                {/* Aggiungere altri riquadri */}
             </div>
         </div>
     );
@@ -227,6 +257,7 @@ export {
     AppLayout,
     HomePage,
     ProfilesPage,
+    ExpertsPage,
     ProductsPage,
     SignupPage,
     EditProfilePage,

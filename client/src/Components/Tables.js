@@ -1,5 +1,5 @@
 import { Table, Col, Row} from "react-bootstrap";
-import { ProductRow, ProfileRow, TicketRow} from "./Rows";
+import { ProductRow, ProfileRow, ExpertRow, TicketRow} from "./Rows";
 
 function ProductsTable(props) {
 
@@ -50,7 +50,27 @@ function ProfileTable(props) {
       </thead>
       <tbody>
       {!props.profile ? props.profiles.map((p) => (<ProfileRow classname="RowStyle" key={p.email} profile={p} />)) :
-          <ProfileRow classname="RowStyle" key={props.profile.email} profile={props.profile} />
+          <ProfileRow classname="RowStyle" key={props.profile.email} profile={props.profile} setEdit={props.setEdit} />
+      }
+      </tbody>
+    </Table>
+  </>
+}
+
+function ExpertTable(props) {
+
+  return <>
+    <Table responsive className="TableStuff">
+      <thead>
+      <tr>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Surname</th>
+      </tr>
+      </thead>
+      <tbody>
+      {!props.expert ? props.experts.map((e) => (<ExpertRow classname="RowStyle" key={e.email} expert={e} />)) :
+          <ExpertRow classname="RowStyle" key={props.expert.email} expert={props.expert} setEdit={props.setEdit} />
       }
       </tbody>
     </Table>
@@ -82,4 +102,4 @@ function TicketsTable(props) {
 }
 
 
-export { ProductsTable, ProfileTable, ProductTable, TicketsTable};
+export { ProductsTable, ProfileTable, ExpertTable, ProductTable, TicketsTable};

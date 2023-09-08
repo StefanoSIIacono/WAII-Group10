@@ -22,7 +22,7 @@ class ExpertController(private val expertService: ExpertService, private val exp
 
     @GetMapping("/experts/")
     @ResponseStatus(HttpStatus.OK)
-    @Secured("MANAGER")
+    //@Secured("MANAGER")
     fun getAll(): MutableSet<ExpertDTO> {
         log.info("Retrieving all experts")
         return expertService.getAll()

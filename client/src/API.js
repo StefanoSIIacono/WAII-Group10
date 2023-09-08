@@ -1,5 +1,7 @@
 import {Product} from "./Components/Product";
 import {Profile} from "./Components/Profile";
+import {Expert} from "./Components/Expert";
+import {Expertise} from "./Components/Expertise";
 import {Ticket} from "./Components/Ticket";
 
 const logIn = async (credentials) => {
@@ -133,8 +135,62 @@ async function readProfileFromMail(mail) {
     }
 }
 
+async function readExperts() {
+    let url = '/experts/';
+    try {
+        const response = await fetch(url, {
+            credentials: 'include',
+        });
+        if (response.ok) {
+            const list = await response.json();
+            return list.map((e) => new Expert(e.email, e.name, e.surname, e.expertises, e.changedStatuses))
+        } else {
+            const text = await response.text();
+            throw new TypeError(text);
+        }
+    } catch (ex) {
+        throw ex;
+    }
+}
+
+async function readExpertises() {
+    let url = '/expertises/';
+    try {
+        const response = await fetch(url, {
+            credentials: 'include',
+        });
+        if (response.ok) {
+            const list = await response.json();
+            return list.map((e) => new Expertise(e.id, e.field))
+        } else {
+            const text = await response.text();
+            throw new TypeError(text);
+        }
+    } catch (ex) {
+        throw ex;
+    }
+}
+
+async function readExpertFromMail(mail) {
+    const url = '/experts/'+ mail;
+    try {
+        const response = await fetch(url, {
+            credentials: 'include',
+        });
+        if (!response.ok) {
+            const text = await response.text();
+            throw new TypeError(text);
+        } else {
+            const res = await response.json();
+            return new Expert(res.email, res.name, res.surname, res.expertises, res.changedStatuses)
+        }
+    } catch (ex) {
+        throw ex;
+    }
+}
+
 async function editProfile(profile) {
-    const url = '/profiles/' + profile.email;
+    const url = '/profiles/' + profile.email + '/newInfo';
     try {
         const response = await fetch(url, {
             method: 'PUT',
@@ -311,6 +367,9 @@ const API ={
     readProductFromID,
     readProducts,
     readProfiles,
+    readExperts,
+    readExpertFromMail,
+    readExpertises,
     readTickets,
     addTicket,
     changeTicketStatus,
