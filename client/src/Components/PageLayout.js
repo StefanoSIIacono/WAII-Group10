@@ -197,6 +197,7 @@ function CreateExpertPage(props) {
                     <h1 className="ProTitle">Add expert</h1>
                     <AddExpertForm
                         addExpert={props.addExpert}
+                        expertises={props.expertises}
                     />
                 </div>
             </Col>

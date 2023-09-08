@@ -17,7 +17,6 @@ import org.keycloak.representations.idm.UserRepresentation
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.security.access.annotation.Secured
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.reactive.function.BodyInserters
@@ -79,7 +78,7 @@ class SecurityController(private val profileService: ProfileService, private val
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/createExpert")
-    @Secured("MANAGER")
+    //@Secured("MANAGER")
     fun createExpert(@RequestBody body: CreateExpertDTO?) {
         if (body === null) {
             throw NoBodyProvidedException("You have to add a body")

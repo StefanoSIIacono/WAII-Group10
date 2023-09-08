@@ -218,8 +218,8 @@ function App() {
     useEffect(() => {
         loadProducts();
         loadProfiles(); // SOLO PER TEST: richiede ruolo manager
-        loadExperts()
-        loadExpertises()
+        loadExperts();
+        loadExpertises();
     }, []);
 
     useEffect(() => {
@@ -263,7 +263,7 @@ function App() {
                 <Route path='/manager/experts' element={<ExpertsPage edit={edit} loading={loading} setEdit={setEdit}
                                                                 experts={experts} expert={expert}
                                                                 readExpertByMail={readExpertByMail}/>} />
-                <Route path='/manager/addExpert' element={<CreateExpertPage addExpert={addExpert} />} />
+                <Route path='/manager/addExpert' element={<CreateExpertPage addExpert={addExpert} expertises={expertises} />} />
                 <Route path='*' element={<h1>404 Page not found</h1>} />
             </Route>
           </Routes>

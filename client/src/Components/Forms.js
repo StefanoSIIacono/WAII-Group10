@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import { Profile } from "./Profile";
 import { useNavigate, NavLink } from "react-router-dom";
+import { Expert } from "./Expert";
 
 function GetProfileForm(props) {
 
@@ -195,11 +196,11 @@ function GetExpertForm(props) {
 // NUOVO
 function AddExpertForm(props) {
     let navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
     const [selected, setSelected] = useState([]);
-
-    const expertises = ['exp1', 'exp2', 'exp3', 'exp4']
 
     // Adds expertises or delete according to checkboxes
     const handleCheckboxChange = (value) => {
@@ -212,7 +213,7 @@ function AddExpertForm(props) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        props.addExpert()
+        props.addExpert(new Expert(email, password, name, surname, selected))
 
         navigate('/manager');
     }
@@ -220,6 +221,14 @@ function AddExpertForm(props) {
     return <>
         <div style={{ padding: 10 }} class="FontText">
             <Form onSubmit={handleSubmit}>
+            <Form.Group className='mb-3'>
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control type='email' value={email} required={true} placeholder="Email" onChange={(event) => { setEmail(event.target.value) }} />
+                </Form.Group>
+                <Form.Group className='mb-3'>
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control type='text' value={password} required={true} placeholder="Password" onChange={(event) => { setPassword(event.target.value) }} />
+                </Form.Group>
                 <Form.Group className='mb-3'>
                     <Form.Label>Name</Form.Label>
                     <Form.Control type='text' value={name} required={true} placeholder="Name" onChange={(event) => { setName(event.target.value) }} />
@@ -230,13 +239,13 @@ function AddExpertForm(props) {
                 </Form.Group>
                 <Form.Group className='mb-3'>
                     <Form.Label>Expertises:</Form.Label>
-                    {expertises.map((value) => (
-                        <div key={value}>
+                    {props.expertises.map((e) => (
+                        <div key={e.field}>
                             <Form.Check
                                 type="checkbox"
-                                label={value}
-                                checked={expertises.includes(value)}
-                                onChange={() => handleCheckboxChange(value)}
+                                label={e.field}
+                                checked={props.expertises.includes(e)}
+                                onChange={() => handleCheckboxChange(e)}
                             />
                         </div>
                     ))}

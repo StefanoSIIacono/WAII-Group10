@@ -1,9 +1,9 @@
-function Expert(email, name, surname, expertises, changedStatuses) {
+function Expert(email, password, name, surname, expertises) {
     this.email = email;
+    this.password = password;
     this.name = name;
     this.surname = surname;
     this.expertises = expertises;
-    this.changedStatuses = changedStatuses;
 }
 
 exports.Expert = Expert;

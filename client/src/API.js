@@ -341,7 +341,7 @@ async function addTicket(ticket) {
 */
 
 async function addExpert(expert) {
-    const url = '/experts/';
+    const url = '/createExpert';
     try {
         const response = await fetch(url, {
             method: 'POST',
