@@ -14,16 +14,15 @@ import java.util.*
 @Service
 class TicketServiceImpl (private val ticketingRepository: TicketingRepository, private val profileService: ProfileService,
                          private val productService: ProductService, private val expertService: ExpertService, private val expertiseService :ExpertiseService,
-    //private val messageService: MessageService, private val attachmentService: AttachmentService
 ):
     TicketService {
 
-    override fun getAll(): List<TicketDTO> {
-        return ticketingRepository.findAll().map{ it.toDTO() }
+    override fun getAll(loggedInUser: String): List<TicketDTO> {
+        return ticketingRepository.findAll().map{ it.toDTO(loggedInUser) }
     }
 
-    override fun getTicketByID(ticketId: Long): TicketDTO? {
-        return ticketingRepository.findByIdOrNull(ticketId)?.toDTO() ?: throw TicketNotFoundException("Ticket not found")
+    override fun getTicketByID(ticketId: Long, loggedInUser: String): TicketDTO? {
+        return ticketingRepository.findByIdOrNull(ticketId)?.toDTO(loggedInUser) ?: throw TicketNotFoundException("Ticket not found")
     }
 
     override fun insertTicket(ticket: TicketCreateBodyDTO) {

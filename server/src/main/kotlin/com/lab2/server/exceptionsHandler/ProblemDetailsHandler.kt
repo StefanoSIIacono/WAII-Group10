@@ -82,4 +82,8 @@ class ProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler (CannotCreateUserException::class)
     fun handleCannotCreateUser (e: CannotCreateUserException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.message!!)
+
+    @ExceptionHandler (AckMessageInTheFutureException::class)
+    fun handleAckMessageInTheFuture (e: AckMessageInTheFutureException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
 }

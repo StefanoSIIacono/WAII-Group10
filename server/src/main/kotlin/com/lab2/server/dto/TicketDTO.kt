@@ -12,11 +12,7 @@ data class TicketDTO(
         val expert: String?,
         val product: String,
         val status: TicketStatusDTO,
-        var indexE: Int=0,
-        var offsetE: Int=0,
-
-        var indexP: Int=0,
-        var offsetP: Int=0,
+        val lastReadMessageIndex: Int?,
 )
 
 data class TicketCreateBodyDTO(
@@ -33,12 +29,8 @@ data class TicketInProgressBodyDTO(
         val priority: Priority,
 )
 
-data class TicketPagingDTO(
-        var index: Int,
-        var offset: Int,
-)
 
-fun Ticket.toDTO(): TicketDTO {
+fun Ticket.toDTO(loggedUser: String? = null): TicketDTO {
             return TicketDTO(
                     this.id,
                     this.obj,
@@ -48,9 +40,6 @@ fun Ticket.toDTO(): TicketDTO {
                     this.expert?.email,
                     this.product.id,
                     this.statusHistory.maxBy { it.timestamp }.toDTO(),
-                    this.indexE,
-                    this.offsetE,
-                    this.indexP,
-                    this.offsetP
+                    if (loggedUser == this.profile.email) this.lastReadMessageIndexProfile else (if (loggedUser == this.expert?.email) this.lastReadMessageIndexExpert else null)
             )
 }

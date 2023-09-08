@@ -27,17 +27,17 @@ class TicketingController(private val ticketService: TicketService) {
     @GetMapping("/tickets/")
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER", "EXPERT", "PROFILE")
-    fun getAll(): List<TicketDTO>{
+    fun getAll(principal: Principal): List<TicketDTO>{
         log.info("Retrieving all tickets")
-        return ticketService.getAll()
+        return ticketService.getAll(principal.name)
     } // MANAGER ONLY -> CHECK USEFULNESS
 
     @GetMapping("/tickets/{ticketId}")
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER", "EXPERT", "PROFILE")
-    fun getTicketByID(@PathVariable ticketId:Long) : TicketDTO {
+    fun getTicketByID(@PathVariable ticketId:Long, principal: Principal) : TicketDTO {
         log.info("Retrieving ticket $ticketId")
-        return ticketService.getTicketByID(ticketId)
+        return ticketService.getTicketByID(ticketId, principal.name)
             ?: throw TicketNotFoundException("Ticket not found")
     } // MANAGER ONLY -> CHECK USEFULNESS
       // MANAGER ONLY -> IMPLEMENT GET TICKETS BY ARG
