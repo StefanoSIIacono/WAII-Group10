@@ -1,9 +1,10 @@
 package com.lab2.server.services
 
+import com.lab2.server.dto.PagedDTO
 import com.lab2.server.dto.ProductDTO
 
 
 interface ProductService {
-    fun getAll(): List<ProductDTO>
-    fun getProduct(productId:String): ProductDTO?
+    fun getAllPaged(page: Int, offset: Int): PagedDTO<ProductDTO>
+    fun getProduct(productId: String): ProductDTO
 }

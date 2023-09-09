@@ -1,30 +1,28 @@
 package com.lab2.server.data
 
 import com.lab2.server.dto.AddressDTO
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.OneToOne
+import jakarta.persistence.Table
 
 @Entity
 @Table(name = "addresses")
-class Address (
-    val city: String,
-    val country: String,
+class Address(
+    val address: String,
     val zipCode: String,
-    val street: String,
-    val houseNumber: String,
-
-    @OneToOne (fetch = FetchType.LAZY)
-    var profile: Profile,
-    @Id @Column(name = "address_id") var id: String? = null
-)
+    val city: String,
+    val country: String
+) : EntityBase<Long>() {
+    @OneToOne(fetch = FetchType.LAZY)
+    lateinit var profile: Profile
+}
 
 fun AddressDTO.toAddress(): Address {
     return Address(
-            this.city,
-            this.country,
-            this.zipCode,
-            this.street,
-            this.houseNumber,
-            this.profile!!.toProfile(),
-            this.id)
+        this.address,
+        this.zipCode,
+        this.city,
+        this.country
+    )
 }
-

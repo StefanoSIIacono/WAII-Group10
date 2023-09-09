@@ -1,12 +1,9 @@
 package com.lab2.server.dto
 
 import com.lab2.server.data.Message
-import jakarta.persistence.Temporal
-import jakarta.persistence.TemporalType
 
-data class MessageDTO (
+data class MessageDTO(
     val id: Long?,
-    @Temporal(TemporalType.TIMESTAMP)
     val timestamp: java.util.Date,
     val body: String,
     val attachments: MutableList<AttachmentDTO>,
@@ -14,16 +11,16 @@ data class MessageDTO (
     val ticket: Long
 )
 
-data class BodyMessageDTO (
+data class BodyMessageDTO(
     val body: String,
     val attachments: MutableList<AttachmentBodyDTO>,
 )
 
-data class MessageReadAck (
+data class MessageReadAck(
     val id: Int
 )
 
 
 fun Message.toDTO(): MessageDTO {
-    return MessageDTO(id, timestamp, body, attachments.map {it.toDTO()}.toMutableList(), expert?.toDTO(), ticket?.id!!)
+    return MessageDTO(id, timestamp, body, attachments.map { it.toDTO() }.toMutableList(), expert?.toDTO(), ticket.id!!)
 }

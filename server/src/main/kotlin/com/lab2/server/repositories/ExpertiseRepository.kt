@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ExpertiseRepository: JpaRepository<Expertise, Long> {
+interface ExpertiseRepository : JpaRepository<Expertise, Long> {
 
     fun findByField(field: String): Expertise?
 }

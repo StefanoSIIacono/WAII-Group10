@@ -1,12 +1,15 @@
 package com.lab2.server.controllers
 
 
+import com.lab2.server.data.Roles
 import com.lab2.server.dto.*
 import com.lab2.server.exceptionsHandler.exceptions.*
 import com.lab2.server.security.JwtAuthConverterProperties
 import com.lab2.server.services.ExpertService
+import com.lab2.server.services.ManagerService
 import com.lab2.server.services.ProfileService
 import io.micrometer.observation.annotation.Observed
+import jakarta.transaction.Transactional
 import lombok.extern.slf4j.Slf4j
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.keycloak.admin.client.CreatedResponseUtil
@@ -23,20 +26,25 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import java.util.*
+import javax.ws.rs.NotAuthorizedException
 
 
 @RestController
 @Slf4j
 @Observed
-class SecurityController(private val profileService: ProfileService, private val expertService: ExpertService, private val keycloak: Keycloak, private val env: Environment, private val properties: JwtAuthConverterProperties) {
+class SecurityController(
+    private val profileService: ProfileService,
+    private val expertService: ExpertService,
+    private val managerService: ManagerService,
+    private val keycloak: Keycloak,
+    private val env: Environment,
+    private val properties: JwtAuthConverterProperties
+) {
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
-    fun signup(@RequestBody body: CreateProfileDTO?) {
-        if (body === null) {
-            log.error("Invalid signup body")
-            throw NoBodyProvidedException("You have to add a body")
-        }
+    @ResponseStatus(HttpStatus.CREATED)
+    @Transactional
+    fun signup(@RequestBody(required = true) body: CreateProfileDTO) {
         log.info("Creating profile user linked to ${body.email}")
 
         val user = UserRepresentation()
@@ -77,13 +85,10 @@ class SecurityController(private val profileService: ProfileService, private val
         log.info("${user.username} signed in")
     }
 
+    @PostMapping("/expert")
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/createExpert")
     @Secured("MANAGER")
-    fun createExpert(@RequestBody body: CreateExpertDTO?) {
-        if (body === null) {
-            throw NoBodyProvidedException("You have to add a body")
-        }
+    fun createExpert(@RequestBody(required = true) body: CreateExpertDTO) {
         log.info("Creating expert user ${body.email}")
         val user = UserRepresentation()
         user.isEnabled = true
@@ -118,29 +123,32 @@ class SecurityController(private val profileService: ProfileService, private val
 
         userResource.roles()
             .clientLevel(client.id).add(listOf(userClientRole))
-            
-        expertService.insertExpert(ExpertDTO(body.email, body.name, body.surname), body.expertises)
+
+        expertService.insertExpert(
+            ExpertDTO(
+                body.email,
+                body.name,
+                body.surname,
+                body.expertises.map { ExpertiseDTO(it) }.toMutableSet()
+            )
+        )
     }
 
+    @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/login/")
-    fun login(@RequestBody body: LoginDTO?): TokenDTO {
-        if (body === null) {
-            log.error("Invalid login body")
-            throw NoBodyProvidedException("You have to add a body")
-        }
+    fun login(@RequestBody(required = true) body: LoginDTO): TokenDTO {
         try {
             log.info("Logging in ${body.username}")
             val client: WebClient = WebClient
-                    .create(env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri")!!)
+                .create(env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri")!!)
 
             val response = client.post().uri("/protocol/openid-connect/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(
                     BodyInserters.fromFormData("grant_type", "password")
-                    .with("client_id", properties.resourceId!!)
-                    .with("username", body.username)
-                    .with("password", body.password)
+                        .with("client_id", properties.resourceId!!)
+                        .with("username", body.username)
+                        .with("password", body.password)
                 )
                 .retrieve()
                 .bodyToMono(TokenDTO::class.java)
@@ -151,10 +159,30 @@ class SecurityController(private val profileService: ProfileService, private val
         }
     }
 
-    @GetMapping("/prova")
+    @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
-    fun getMe(principal: JwtAuthenticationToken): String {
-        log.info("PRINCIPAL: ${principal.details}")
-        return principal.tokenAttributes["preferred_username"].toString()
+    fun getMe(principal: JwtAuthenticationToken): MeDTO {
+        val userRole = Roles.values()
+            .firstOrNull { sc -> principal.authorities.map { it.authority }.contains(sc.name) }!!
+        log.info("PRINCIPAL: ${principal.name} (ROLE: $userRole)")
+        if (userRole === Roles.MANAGER) {
+            val manager = managerService.unsafeGetManager(principal.name)!!
+            return MeDTO(principal.name, userRole, manager.name, manager.surname)
+        } else if (userRole === Roles.EXPERT) {
+            val expert = expertService.unsafeGetExpertByEmail(principal.name)!!
+            return MeDTO(
+                principal.name,
+                userRole,
+                expert.name,
+                expert.surname,
+                expert.expertises.map { it.toDTO() }.toMutableSet()
+            )
+        } else if (userRole === Roles.PROFILE) {
+            val profile = profileService.unsafeProfileByEmail(principal.name)!!
+            return MeDTO(principal.name, userRole, profile.name, profile.surname, address = profile.address.toDTO())
+        }
+
+
+        throw NotAuthorizedException("Not authorized")
     }
 }

@@ -1,3 +1,3 @@
 package com.lab2.server.exceptionsHandler.exceptions
 
-class DuplicatedExpertiseException (message: String): RuntimeException(message)
+class DuplicatedExpertiseException(message: String) : RuntimeException(message)

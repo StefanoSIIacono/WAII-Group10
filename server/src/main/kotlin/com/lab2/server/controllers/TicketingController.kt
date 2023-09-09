@@ -1,150 +1,119 @@
 package com.lab2.server.controllers
 
+import com.lab2.server.data.Priority
 import com.lab2.server.data.Status
-import com.lab2.server.data.StatusChanger
+import com.lab2.server.dto.PagedDTO
 import com.lab2.server.dto.TicketCreateBodyDTO
 import com.lab2.server.dto.TicketDTO
 import com.lab2.server.dto.TicketInProgressBodyDTO
-import com.lab2.server.exceptionsHandler.exceptions.IllegalStatusChangeException
-import com.lab2.server.exceptionsHandler.exceptions.NoBodyProvidedException
-import com.lab2.server.exceptionsHandler.exceptions.TicketNotFoundException
 import com.lab2.server.services.TicketService
 import io.micrometer.observation.annotation.Observed
 import jakarta.transaction.Transactional
+import jakarta.validation.constraints.Max
+import jakarta.validation.constraints.Min
 import lombok.extern.slf4j.Slf4j
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
-import java.security.Principal
 import java.util.*
 
 @RestController
 @Slf4j
 @Observed
 class TicketingController(private val ticketService: TicketService) {
-    @GetMapping("/tickets/")
+    @GetMapping("/tickets")
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER", "EXPERT", "PROFILE")
-    fun getAll(principal: Principal): List<TicketDTO>{
+    fun getAllPaged(
+        @RequestParam(required = false, defaultValue = "1") @Min(1) page: Int,
+        @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
+        principal: JwtAuthenticationToken
+    ): PagedDTO<TicketDTO> {
         log.info("Retrieving all tickets")
-        return ticketService.getAll(principal.name)
-    } // MANAGER ONLY -> CHECK USEFULNESS
+        return ticketService.getAllPaginated(page, offset, principal)
+    }
 
     @GetMapping("/tickets/{ticketId}")
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER", "EXPERT", "PROFILE")
-    fun getTicketByID(@PathVariable ticketId:Long, principal: Principal) : TicketDTO {
+    fun getTicketByID(@PathVariable ticketId: Long, principal: JwtAuthenticationToken): TicketDTO {
         log.info("Retrieving ticket $ticketId")
-        return ticketService.getTicketByID(ticketId, principal.name)
-            ?: throw TicketNotFoundException("Ticket not found")
-    } // MANAGER ONLY -> CHECK USEFULNESS
-      // MANAGER ONLY -> IMPLEMENT GET TICKETS BY ARG
+        return ticketService.getTicketByID(ticketId, principal)
+    }
 
-    @PostMapping("/tickets/")
+    @PostMapping("/tickets")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     @Secured("PROFILE")
-    fun createTicket(@RequestBody ticket: TicketCreateBodyDTO?){
-        if (ticket === null) {
-            log.error("Invalid body in ticket creation")
-            throw NoBodyProvidedException("You have to add a body")
-        }
+    fun createTicket(@RequestBody(required = true) ticket: TicketCreateBodyDTO, principal: JwtAuthenticationToken) {
         log.info("Creating new ticket")
-        ticketService.insertTicket(ticket)
-        // ADD SERVICE IMPLEMENTATION FOR THE FIRST MESSAGE TO BE LINKED
+        ticketService.insertTicket(ticket, principal)
     }
 
     @PutMapping("/tickets/{ticketId}/open")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("PROFILE")
-    fun openTicket(@PathVariable ticketId:Long){
-        log.info("Opening ticket  $ticketId")
+    @Transactional
+    fun reOpenTicket(@PathVariable ticketId: Long, principal: JwtAuthenticationToken) {
+        log.info("Reopening ticket  $ticketId")
         ticketService.setTicketStatus(
+            principal,
             ticketId,
-            Status.OPEN,
-            StatusChanger.PROFILE,
-            null,
-            null
+            Status.REOPENED,
         )
-    } // MANAGER ONLY -> SERVICE IMPLEMENTATION TO BE CHECKED
+    }
 
     @PutMapping("/tickets/{ticketId}/close")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("MANAGER", "EXPERT", "PROFILE")
     @Transactional
-    fun closeTicket(principal: Principal, @PathVariable ticketId:Long){
-        val token = principal as JwtAuthenticationToken
-
-        val statusChanger = StatusChanger.values()
-            .firstOrNull { sc -> token.authorities.map { it.authority }.contains(sc.name) }
-        if (statusChanger === null) {
-            log.error("Not permitted status change provided for ticket $ticketId")
-            throw IllegalStatusChangeException("")
-        }
+    fun closeTicket(@PathVariable ticketId: Long, principal: JwtAuthenticationToken) {
         log.info("Changing status for ticket $ticketId")
         ticketService.setTicketStatus(
+            principal,
             ticketId,
-            Status.CLOSED,
-            statusChanger,
-            null,
-            null)
-    }// TO BE DISCUSSED
-
-    @PutMapping("/tickets/{ticketId}/reopen")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("PROFILE")
-    @Transactional
-    fun reOpenTicket(@PathVariable ticketId:Long){
-        log.info("Reopening ticket  $ticketId")
-        ticketService.setTicketStatus(
-            ticketId,
-            Status.REOPENED,
-            StatusChanger.PROFILE,
-            null,
-            null
+            Status.CLOSED
         )
     }
 
     @PutMapping("/tickets/{ticketId}/resolved")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("PROFILE")
+    @Secured("PROFILE", "EXPERT")
     @Transactional
-    fun resolveTicket(@PathVariable ticketId:Long){
+    fun resolveTicket(@PathVariable ticketId: Long, principal: JwtAuthenticationToken) {
         log.info("Resolving ticket  $ticketId")
         ticketService.setTicketStatus(
+            principal,
             ticketId,
             Status.RESOLVED,
-            StatusChanger.PROFILE,
-            null,
-            null
         )
-    } // TO BE DISCUSSED
+    }
 
     @PutMapping("/tickets/{ticketId}/inprogress")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("MANAGER")
     @Transactional
-    fun inProgressTicket(@PathVariable ticketId:Long, @RequestBody body: TicketInProgressBodyDTO?){
-        if (body === null) {
-            log.error("Invalid body provided in setting ticket $ticketId in progress")
-            throw NoBodyProvidedException("Wrong body")
-        }
+    fun inProgressTicket(
+        @PathVariable ticketId: Long,
+        @RequestBody(required = true) body: TicketInProgressBodyDTO,
+        principal: JwtAuthenticationToken
+    ) {
         log.info("Setting ticket  $ticketId in progress")
         ticketService.setTicketStatus(
+            principal,
             ticketId,
             Status.IN_PROGRESS,
-            StatusChanger.MANAGER,
             body.expert,
             body.priority
         )
     }
 
-    @PutMapping("/tickets/{ticketId}/set_priority/{priority}")
+    @PutMapping("/tickets/{ticketId}/priority/{priority}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("MANAGER")
-    fun setTicketPriority(@PathVariable ticketId:Long, @PathVariable priority: String){
+    fun setTicketPriority(@PathVariable ticketId: Long, @PathVariable priority: Priority) {
         log.info("Setting ticket  $ticketId priority to $priority")
         ticketService.setTicketPriority(ticketId, priority)
     }

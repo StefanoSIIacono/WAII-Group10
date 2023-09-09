@@ -10,17 +10,17 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
-class TicketServiceApplicationConfig: WebMvcConfigurer {
+class TicketServiceApplicationConfig : WebMvcConfigurer {
 
-    override fun addViewControllers(registry: ViewControllerRegistry){
+    override fun addViewControllers(registry: ViewControllerRegistry) {
 
         registry.addViewController("/notFound").setViewName("forward:/index.html")
     }
 
     @Bean
     fun containerCustomizer(): WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
-            return WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
-                factory -> factory?.addErrorPages(ErrorPage(HttpStatus.NOT_FOUND, "/notFound"))
-            }
+        return WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> { factory ->
+            factory?.addErrorPages(ErrorPage(HttpStatus.NOT_FOUND, "/notFound"))
+        }
     }
 }

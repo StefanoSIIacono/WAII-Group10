@@ -1,9 +1,18 @@
-package com.lab2.server.services;
+package com.lab2.server.services
 
-import com.lab2.server.dto.*
+import com.lab2.server.dto.BodyMessageDTO
+import com.lab2.server.dto.MessageDTO
+import com.lab2.server.dto.MessageReadAck
+import com.lab2.server.dto.PagedDTO
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 
 interface MessageService {
-    fun handleNewMessage(sender: String, ticketId: Long, messageDTO: BodyMessageDTO)
-    fun acknowledgeMessage(ticketID: Long, user: String, ack: MessageReadAck)
-    fun getTicketPagedMessages(ticketID: Long, user: String, page: Int, offset: Int): PagedDTO<MessageDTO>
+    fun handleNewMessage(sender: JwtAuthenticationToken, ticketId: Long, messageDTO: BodyMessageDTO)
+    fun acknowledgeMessage(ticketID: Long, user: JwtAuthenticationToken, ack: MessageReadAck)
+    fun getTicketPagedMessages(
+        ticketID: Long,
+        user: JwtAuthenticationToken,
+        page: Int,
+        offset: Int
+    ): PagedDTO<MessageDTO>
 }

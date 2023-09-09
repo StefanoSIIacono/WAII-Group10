@@ -2,29 +2,34 @@ package com.lab2.server.serviceImpl
 
 
 import com.lab2.server.data.Expertise
-import com.lab2.server.dto.ExpertDTO
-import com.lab2.server.dto.ExpertiseDTO
-import com.lab2.server.dto.toDTO
+import com.lab2.server.dto.*
 import com.lab2.server.exceptionsHandler.exceptions.DuplicatedExpertiseException
 import com.lab2.server.exceptionsHandler.exceptions.ExpertiseNotFoundException
 import com.lab2.server.repositories.ExpertiseRepository
 import com.lab2.server.services.ExpertiseService
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
-class ExpertiseServiceImpl (private val expertiseRepository: ExpertiseRepository): ExpertiseService {
+class ExpertiseServiceImpl(private val expertiseRepository: ExpertiseRepository) : ExpertiseService {
 
-    override fun getExpertsByExpertise(field: String): List<ExpertDTO>{
-        val exp = expertiseRepository.findByField(field) ?:throw ExpertiseNotFoundException("Expertise doesn't exists!")
+    override fun getExpertsByExpertise(field: String): List<ExpertDTO> {
+        val exp =
+            expertiseRepository.findByField(field) ?: throw ExpertiseNotFoundException("Expertise doesn't exists!")
         return exp.experts.map { it.toDTO() }
     }
 
-    override fun getAll(): List<ExpertiseDTO>{
-        return expertiseRepository.findAll().map { it.toDTO() }
+    override fun getAllPaginated(page: Int, offset: Int): PagedDTO<ExpertiseDTO> {
+        val pageResult = expertiseRepository.findAll(PageRequest.of(page, offset, Sort.by("field")))
+        val meta = PagedMetadata(pageResult.number, pageResult.totalPages, pageResult.numberOfElements)
+
+        return PagedDTO(meta, pageResult.toList().map { it.toDTO() })
     }
 
-    override fun getExpertise(field: String): ExpertiseDTO? {
+    override fun getExpertise(field: String): ExpertiseDTO {
         return expertiseRepository.findByField(field)?.toDTO()
+            ?: throw ExpertiseNotFoundException("Expertise doesn't exists!")
     }
 
     override fun createExpertise(field: String) {
@@ -33,8 +38,10 @@ class ExpertiseServiceImpl (private val expertiseRepository: ExpertiseRepository
         }
         expertiseRepository.save(Expertise(field))
     }
-    override fun deleteExpertise(expertise: String){
-        val expertiseEntity = expertiseRepository.findByField(expertise) ?: throw ExpertiseNotFoundException("Expertise not found")
+
+    override fun deleteExpertise(expertise: String) {
+        val expertiseEntity =
+            expertiseRepository.findByField(expertise) ?: throw ExpertiseNotFoundException("Expertise not found")
 
         expertiseRepository.delete(expertiseEntity)
     }

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository
 
 
 @Repository
-interface MessageRepository: JpaRepository<Message, Long> {
+interface MessageRepository : JpaRepository<Message, Long> {
     fun findFirstByTicketIdOrderByTimestampDesc(ticket_id: Long): Message?
 }

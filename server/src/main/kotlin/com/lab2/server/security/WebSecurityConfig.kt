@@ -15,16 +15,19 @@ import org.springframework.security.web.SecurityFilterChain
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled=true, securedEnabled = true)
-class WebSecurityConfig (private val properties: JwtAuthConverterProperties, private val jwtAuthConverter: JwtAuthConverter, private val env: Environment,) {
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
+class WebSecurityConfig(
+    private val jwtAuthConverter: JwtAuthConverter,
+    private val env: Environment,
+) {
 
     @Bean
     @Throws(Exception::class)
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf().disable()
         http.authorizeHttpRequests()
-                .anyRequest()
-                .permitAll()
+            .anyRequest()
+            .permitAll()
         http.oauth2ResourceServer()
             .jwt()
             .jwtAuthenticationConverter(jwtAuthConverter)
@@ -41,11 +44,5 @@ class WebSecurityConfig (private val properties: JwtAuthConverterProperties, pri
             .username("admin")
             .password("admin")
             .build()
-    }
-
-    companion object {
-        const val MANAGER = "MANAGER"
-        const val PROFILE = "PROFILE"
-        const val EXPERT = "EXPERT"
     }
 }
