@@ -7,7 +7,7 @@ import com.lab2.server.dto.PagedDTO
 interface ExpertiseService {
 
     fun getAllPaginated(page: Int, offset: Int): PagedDTO<ExpertiseDTO>
-    fun getExpertsByExpertise(field: String): List<ExpertDTO>
+    fun getExpertsByExpertisePaginated(field: String, page: Int, offset: Int): PagedDTO<ExpertDTO>
     fun getExpertise(field: String): ExpertiseDTO
     fun createExpertise(field: String)
     fun deleteExpertise(expertise: String)

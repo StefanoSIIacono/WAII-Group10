@@ -14,10 +14,18 @@ import org.springframework.stereotype.Service
 @Service
 class ExpertiseServiceImpl(private val expertiseRepository: ExpertiseRepository) : ExpertiseService {
 
-    override fun getExpertsByExpertise(field: String): List<ExpertDTO> {
+    override fun getExpertsByExpertisePaginated(field: String, page: Int, offset: Int): PagedDTO<ExpertDTO> {
         val exp =
             expertiseRepository.findByField(field) ?: throw ExpertiseNotFoundException("Expertise doesn't exists!")
-        return exp.experts.map { it.toDTO() }
+
+        val totalSize = exp.experts.size
+        var totalPages = totalSize / offset
+        if (totalSize % offset != 0) {
+            totalPages += 1
+        }
+        val meta = PagedMetadata(page, totalPages, totalSize)
+
+        return PagedDTO(meta, exp.experts.toList().subList(page * offset, (page + 1) * offset).map { it.toDTO() })
     }
 
     override fun getAllPaginated(page: Int, offset: Int): PagedDTO<ExpertiseDTO> {

@@ -35,11 +35,6 @@ class Ticket(
         this.priority = p
     }
 
-    fun addExpert(e: Expert) {
-        e.inProgressTickets.add(this)
-        this.expert = e
-    }
-
     fun removeExpert() {
         this.expert?.inProgressTickets?.filter { it.id === this.id }
         this.expert = null

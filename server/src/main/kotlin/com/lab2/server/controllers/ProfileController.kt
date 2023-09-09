@@ -52,9 +52,14 @@ class ProfileController(private val profileService: ProfileService) {
     @GetMapping("/profiles/{email}/tickets")
     @ResponseStatus(HttpStatus.OK)
     @Secured("PROFILE", "MANAGER")
-    fun getTicketsByEmail(@PathVariable email: String, principal: JwtAuthenticationToken): MutableList<TicketDTO> {
+    fun getTicketsByEmailPaginated(
+        @PathVariable email: String,
+        @RequestParam(required = false, defaultValue = "1") @Min(1) page: Int,
+        @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
+        principal: JwtAuthenticationToken
+    ): PagedDTO<TicketDTO> {
         log.info("Retrieving all ticket for profile linked to $email")
-        return profileService.getTicketsByEmail(email, principal)
+        return profileService.getTicketsByEmailPaginated(email, page, offset, principal)
     }
 
 }

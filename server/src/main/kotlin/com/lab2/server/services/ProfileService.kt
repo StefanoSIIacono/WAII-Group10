@@ -10,7 +10,13 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 interface ProfileService {
     fun getAllPaginated(page: Int, offset: Int): PagedDTO<ProfileDTO>
     fun getProfileByEmail(email: String): ProfileDTO
-    fun getTicketsByEmail(email: String, user: JwtAuthenticationToken): MutableList<TicketDTO>
+    fun getTicketsByEmailPaginated(
+        email: String,
+        page: Int,
+        offset: Int,
+        user: JwtAuthenticationToken
+    ): PagedDTO<TicketDTO>
+
     fun insertProfile(profile: ProfileDTO)
     fun editProfileInfo(user: JwtAuthenticationToken, newProfile: ChangeProfileInfoDTO)
 

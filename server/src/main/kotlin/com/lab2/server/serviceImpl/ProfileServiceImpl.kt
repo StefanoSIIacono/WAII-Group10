@@ -29,7 +29,12 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository) :
         return profileRepository.findByIdOrNull(email)?.toDTO() ?: throw ProfileNotFoundException("Profile not found")
     }
 
-    override fun getTicketsByEmail(email: String, user: JwtAuthenticationToken): MutableList<TicketDTO> {
+    override fun getTicketsByEmailPaginated(
+        email: String,
+        page: Int,
+        offset: Int,
+        user: JwtAuthenticationToken
+    ): PagedDTO<TicketDTO> {
         val profile = profileRepository.findByIdOrNull(email)
 
         if (profile === null) {
@@ -42,7 +47,14 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository) :
             throw NotAuthorizedException("Not allowed")
         }
 
-        return profile.tickets.map { it.toDTO() }.toMutableList()
+        val totalSize = profile.tickets.size
+        var totalPages = totalSize / offset
+        if (totalSize % offset != 0) {
+            totalPages += 1
+        }
+        val meta = PagedMetadata(page, totalPages, totalSize)
+
+        return PagedDTO(meta, profile.tickets.toList().subList(page * offset, (page + 1) * offset).map { it.toDTO() })
     }
 
     override fun insertProfile(profile: ProfileDTO) {

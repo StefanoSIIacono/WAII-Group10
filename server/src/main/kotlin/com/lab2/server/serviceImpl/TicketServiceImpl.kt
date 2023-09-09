@@ -128,7 +128,6 @@ class TicketServiceImpl(
         ticket.addStatus(status, userRole, if (inputStatus === Status.IN_PROGRESS) expert else null)
         if (inputStatus === Status.IN_PROGRESS) {
             ticket.changePriority(priority!!)
-            ticket.addExpert(expert!!)
         } else if (ticket.expert != null) {
             ticket.removeExpert()
         }

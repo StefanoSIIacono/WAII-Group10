@@ -12,7 +12,7 @@ class Expert(
     val email: String,
     var name: String,
     var surname: String,
-    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST])
+    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     @JoinTable(
         name = "expert_expertise",
         joinColumns = [JoinColumn(name = "expert_email")],

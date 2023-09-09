@@ -32,9 +32,13 @@ class ExpertiseController(private val expertiseService: ExpertiseService) {
     @GetMapping("/expertises/{field}/experts")
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER")
-    fun getExpertsByExpertise(@PathVariable field: String): List<ExpertDTO> {
+    fun getExpertsByExpertise(
+        @PathVariable field: String,
+        @RequestParam(required = false, defaultValue = "1") @Min(1) page: Int,
+        @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
+    ): PagedDTO<ExpertDTO> {
         log.info("Retrieving all experts with expertise $field")
-        return expertiseService.getExpertsByExpertise(field)
+        return expertiseService.getExpertsByExpertisePaginated(field, page, offset)
     }
 
     @PostMapping("/expertises")
