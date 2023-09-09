@@ -1,5 +1,6 @@
 package com.lab2.server.serviceImpl
 
+import com.lab2.server.data.Attachment
 import com.lab2.server.data.Message
 import com.lab2.server.data.Roles
 import com.lab2.server.dto.*
@@ -35,7 +36,20 @@ class MessageServiceImpl(
             currentTimestamp = Date(lastTimestamp.time.inc())
         }
 
-        val message = Message(currentTimestamp, messageDTO.body)
+        val message = Message(
+            currentTimestamp,
+            messageDTO.body,
+        )
+
+        if (messageDTO.attachments.size > 0) {
+            message.addAttachments(messageDTO.attachments.map {
+                Attachment(
+                    it.attachment.bytes,
+                    it.attachment.size,
+                    it.contentType
+                )
+            })
+        }
 
         if (ticket.expert?.email == sender.name) {
             ticket.addMessageFromExpert(message)

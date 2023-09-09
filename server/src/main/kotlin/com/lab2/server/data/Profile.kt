@@ -1,6 +1,5 @@
 package com.lab2.server.data
 
-import com.lab2.server.dto.ProfileDTO
 import jakarta.persistence.*
 
 @Entity
@@ -21,10 +20,6 @@ class Profile(
         this.address = a
         a.profile = this
     }
-}
-
-fun ProfileDTO.toProfile(): Profile {
-    return Profile(this.email, this.name, this.surname, this.address.toAddress())
 }
 
 

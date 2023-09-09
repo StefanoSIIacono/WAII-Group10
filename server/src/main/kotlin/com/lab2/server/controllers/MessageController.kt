@@ -29,12 +29,12 @@ class MessageController(private val messageService: MessageService) {
         return messageService.getTicketPagedMessages(ticketId, principal, page, offset)
     }
 
-    @PostMapping("/tickets/{ticketId}/messages")
+    @PostMapping("/tickets/{ticketId}/messages", consumes = ["multipart/form-data"])
     @ResponseStatus(HttpStatus.CREATED)
     @Secured("EXPERT", "PROFILE")
     fun addMessage(
         @PathVariable ticketId: Long,
-        @RequestBody(required = true) message: BodyMessageDTO,
+        @RequestPart message: BodyMessageDTO,
         principal: JwtAuthenticationToken
     ) {
         SqmNode.log.info("Adding new message")

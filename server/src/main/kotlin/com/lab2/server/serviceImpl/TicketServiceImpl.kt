@@ -69,11 +69,19 @@ class TicketServiceImpl(
         val currentTime = Date(System.currentTimeMillis())
         val status = TicketStatus(Status.OPEN, currentTime)
         val message = Message(currentTime, ticket.body)
-        newTicket.addStatus(status, Roles.PROFILE)
-        newTicket.addMessageFromProfile(message)
 
-        ticket.attachments.map { Attachment(it.attachment, it.size, it.contentType) }
-            .forEach { message.addAttachment(it) }
+        if (ticket.attachments.size > 0) {
+            message.addAttachments(ticket.attachments.map {
+                Attachment(
+                    it.attachment.bytes,
+                    it.attachment.size,
+                    it.contentType
+                )
+            })
+        }
+
+        newTicket.addMessageFromProfile(message)
+        newTicket.addStatus(status, Roles.PROFILE)
 
         ticketingRepository.save(newTicket)
     }

@@ -22,8 +22,10 @@ class Message(
     @ManyToOne
     lateinit var ticket: Ticket
 
-    fun addAttachment(a: Attachment) {
-        a.message = this
-        this.attachments.add(a)
+    fun addAttachments(a: List<Attachment>) {
+        a.forEach {
+            it.message = this
+            this.attachments.add(it)
+        }
     }
 }
