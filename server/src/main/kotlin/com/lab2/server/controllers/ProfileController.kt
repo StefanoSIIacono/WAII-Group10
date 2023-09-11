@@ -21,7 +21,7 @@ class ProfileController(private val profileService: ProfileService) {
         @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
     ): PagedDTO<ProfileDTO> {
         log.info("Retrieving all profiles")
-        return profileService.getAllPaginated(page, offset)
+        return profileService.getAllPaginated(page - 1, offset)
     }
 
     @GetMapping("/profiles/{email}")
@@ -30,14 +30,6 @@ class ProfileController(private val profileService: ProfileService) {
     fun getProfileByEmail(@PathVariable email: String): ProfileDTO {
         log.info("Retrieving profile linked to $email")
         return profileService.getProfileByEmail(email)
-    }
-
-    @PostMapping("/profiles")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Transactional
-    fun createProfile(@RequestBody(required = true) profile: ProfileDTO) {
-        log.info("Creating profile linked to ${profile.email}")
-        profileService.insertProfile(profile)
     }
 
     @Transactional
@@ -59,7 +51,7 @@ class ProfileController(private val profileService: ProfileService) {
         principal: JwtAuthenticationToken
     ): PagedDTO<TicketDTO> {
         log.info("Retrieving all ticket for profile linked to $email")
-        return profileService.getTicketsByEmailPaginated(email, page, offset, principal)
+        return profileService.getTicketsByEmailPaginated(email, page - 1, offset, principal)
     }
 
 }

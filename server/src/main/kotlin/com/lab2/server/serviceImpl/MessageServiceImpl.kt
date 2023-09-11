@@ -5,15 +5,15 @@ import com.lab2.server.data.Message
 import com.lab2.server.data.Roles
 import com.lab2.server.dto.*
 import com.lab2.server.exceptionsHandler.exceptions.AckMessageInTheFutureException
+import com.lab2.server.exceptionsHandler.exceptions.InvalidBase64Exception
 import com.lab2.server.exceptionsHandler.exceptions.TicketNotFoundException
 import com.lab2.server.repositories.MessageRepository
 import com.lab2.server.services.MessageService
 import com.lab2.server.services.TicketService
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import java.util.*
+import kotlin.math.min
 
 @Service
 class MessageServiceImpl(
@@ -37,15 +37,23 @@ class MessageServiceImpl(
         }
 
         val message = Message(
+            ticket.messages.size,
             currentTimestamp,
             messageDTO.body,
         )
 
         if (messageDTO.attachments.size > 0) {
+            messageDTO.attachments.forEach {
+                try {
+                    Base64.getDecoder().decode(it.attachment)
+                } catch (e: IllegalArgumentException) {
+                    throw InvalidBase64Exception("Invalid base64")
+                }
+            }
             message.addAttachments(messageDTO.attachments.map {
                 Attachment(
-                    it.attachment.bytes,
-                    it.attachment.size,
+                    it.attachment,
+                    it.attachment.length.toLong(),
                     it.contentType
                 )
             })
@@ -60,20 +68,22 @@ class MessageServiceImpl(
         ticketingService.unsafeTicketSave(ticket)
     }
 
-    override fun acknowledgeMessage(ticketID: Long, user: JwtAuthenticationToken, ack: MessageReadAck) {
+    override fun acknowledgeMessage(ticketID: Long, user: JwtAuthenticationToken, ack: Int) {
         val ticket = ticketingService.unsafeGetTicketByID(ticketID)
             ?: throw TicketNotFoundException("Ticket not found")
 
-        if (ticket.messages.size < ack.id) {
+        if (ticket.messages.size < ack) {
             throw AckMessageInTheFutureException("Id doesn't exist")
         }
 
         if (ticket.expert?.email == user.name) {
-            ticket.updateLastReadExpert(ack.id)
+            ticket.updateLastReadExpert(ack)
+            ticketingService.unsafeTicketSave(ticket)
             return
         }
         if (ticket.profile.email == user.name) {
-            ticket.updateLastReadProfile(ack.id)
+            ticket.updateLastReadProfile(ack)
+            ticketingService.unsafeTicketSave(ticket)
             return
         }
 
@@ -88,17 +98,23 @@ class MessageServiceImpl(
     ): PagedDTO<MessageDTO> {
         val ticket = ticketingService.unsafeGetTicketByID(ticketID)
             ?: throw TicketNotFoundException("Ticket not found")
-
         val userRole = Roles.values()
             .firstOrNull { sc -> user.authorities.map { it.authority }.contains(sc.name) }
         if (ticket.expert?.email != user.name && ticket.profile.email != user.name && userRole !== Roles.MANAGER) {
             throw TicketNotFoundException("No ticket found")
         }
 
-        val pageResult =
-            messageRepository.findAll(PageRequest.of(page, offset, Sort.by(Sort.Direction.DESC, "timestamp")))
-        val meta = PagedMetadata(pageResult.number, pageResult.totalPages, pageResult.numberOfElements)
-
-        return PagedDTO(meta, pageResult.toList().map { it.toDTO() })
+        val totalSize = ticket.messages.size
+        println("totalsize $totalSize")
+        var totalPages = totalSize / offset
+        if (totalSize % offset != 0) {
+            totalPages += 1
+        }
+        val meta = PagedMetadata(page + 1, totalPages, totalSize)
+        return PagedDTO(
+            meta,
+            ticket.messages.sortedByDescending { it.timestamp }
+                .subList(min(page * offset, totalSize), min(totalSize, (page + 1) * offset))
+                .map { it.toDTO() })
     }
 }

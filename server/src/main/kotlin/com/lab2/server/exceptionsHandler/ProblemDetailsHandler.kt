@@ -81,4 +81,12 @@ class ProblemDetailsHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(AckMessageInTheFutureException::class)
     fun handleAckMessageInTheFuture(e: AckMessageInTheFutureException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
+
+    @ExceptionHandler(ExpertiseCurrentlyInUseException::class)
+    fun handleExpertiseCurrentlyInUse(e: ExpertiseCurrentlyInUseException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.CONFLICT, e.message!!)
+
+    @ExceptionHandler(InvalidBase64Exception::class)
+    fun handleInvalidBase64(e: InvalidBase64Exception) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
 }

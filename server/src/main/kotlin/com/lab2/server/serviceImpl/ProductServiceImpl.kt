@@ -16,9 +16,9 @@ import org.springframework.stereotype.Service
 class ProductServiceImpl(private val productRepository: ProductRepository) : ProductService {
     override fun getAllPaged(page: Int, offset: Int): PagedDTO<ProductDTO> {
         val pageResult = productRepository.findAll(PageRequest.of(page, offset, Sort.by("name")))
-        val meta = PagedMetadata(pageResult.number, pageResult.totalPages, pageResult.numberOfElements)
+        val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
 
-        return PagedDTO(meta, pageResult.toList().map { it.toDTO() })
+        return PagedDTO(meta, pageResult.content.map { it.toDTO() })
     }
 
     override fun getProduct(productId: String): ProductDTO {

@@ -38,9 +38,10 @@ class TicketServiceImpl(
             throw NotAuthorizedException("Not authorized")
         }
 
-        val meta = PagedMetadata(pageResult.number, pageResult.totalPages, pageResult.numberOfElements)
 
-        return PagedDTO(meta, pageResult.toList().map { it.toDTO(user.name) })
+        val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
+
+        return PagedDTO(meta, pageResult.content.map { it.toDTO(user.name) })
     }
 
     override fun getTicketByID(ticketId: Long, user: JwtAuthenticationToken): TicketDTO {
@@ -68,13 +69,20 @@ class TicketServiceImpl(
             Ticket(ticket.obj, expertise.toExpertise(), Priority.TOASSIGN, profile, null, product.toProduct())
         val currentTime = Date(System.currentTimeMillis())
         val status = TicketStatus(Status.OPEN, currentTime)
-        val message = Message(currentTime, ticket.body)
+        val message = Message(0, currentTime, ticket.body)
 
         if (ticket.attachments.size > 0) {
+            ticket.attachments.forEach {
+                try {
+                    Base64.getDecoder().decode(it.attachment)
+                } catch (e: IllegalArgumentException) {
+                    throw InvalidBase64Exception("Invalid base64")
+                }
+            }
             message.addAttachments(ticket.attachments.map {
                 Attachment(
-                    it.attachment.bytes,
-                    it.attachment.size,
+                    it.attachment,
+                    it.attachment.length.toLong(),
                     it.contentType
                 )
             })
@@ -128,8 +136,6 @@ class TicketServiceImpl(
         ticket.addStatus(status, userRole, if (inputStatus === Status.IN_PROGRESS) expert else null)
         if (inputStatus === Status.IN_PROGRESS) {
             ticket.changePriority(priority!!)
-        } else if (ticket.expert != null) {
-            ticket.removeExpert()
         }
 
         ticketingRepository.save(ticket)

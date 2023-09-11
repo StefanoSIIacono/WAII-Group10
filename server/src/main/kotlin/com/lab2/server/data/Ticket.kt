@@ -11,7 +11,7 @@ class Ticket(
     var arg: Expertise,
 
     @Enumerated(value = EnumType.STRING)
-    var priority: Priority,
+    var priority: Priority?,
 
     @ManyToOne
     var profile: Profile,
@@ -35,15 +35,16 @@ class Ticket(
         this.priority = p
     }
 
-    fun removeExpert() {
-        this.expert?.inProgressTickets?.filter { it.id === this.id }
-        this.expert = null
-    }
-
     fun addStatus(s: TicketStatus, sc: Roles, e: Expert? = null) {
         s.ticket = this
         s.statusChanger = sc
         s.expert = e
+        this.expert = e
+        if (e === null) {
+            this.expert?.inProgressTickets?.filter { it.id === this.id }
+        } else {
+            e.inProgressTickets.add(this)
+        }
         statusHistory.add(s)
     }
 

@@ -26,7 +26,7 @@ class ExpertiseController(private val expertiseService: ExpertiseService) {
         @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
     ): PagedDTO<ExpertiseDTO> {
         log.info("Retrieving all expertises")
-        return expertiseService.getAllPaginated(page, offset)
+        return expertiseService.getAllPaginated(page - 1, offset)
     } // THE PROFILE CAN TAKE A LOOK ON THE EXPERTISES FOR TICKET ARGUMENT
 
     @GetMapping("/expertises/{field}/experts")
@@ -38,7 +38,7 @@ class ExpertiseController(private val expertiseService: ExpertiseService) {
         @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
     ): PagedDTO<ExpertDTO> {
         log.info("Retrieving all experts with expertise $field")
-        return expertiseService.getExpertsByExpertisePaginated(field, page, offset)
+        return expertiseService.getExpertsByExpertisePaginated(field, page - 1, offset)
     }
 
     @PostMapping("/expertises")

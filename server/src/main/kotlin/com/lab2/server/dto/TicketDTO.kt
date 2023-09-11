@@ -7,7 +7,7 @@ data class TicketDTO(
     val id: Long?,
     val obj: String,
     val arg: ExpertiseDTO,
-    val priority: Priority,
+    val priority: Priority?,
     val profile: String,
     val expert: String?,
     val product: String,

@@ -27,7 +27,7 @@ class ExpertController(private val expertService: ExpertService) {
         @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
     ): PagedDTO<ExpertDTO> {
         log.info("Retrieving all experts")
-        return expertService.getAllPaginated(page, offset)
+        return expertService.getAllPaginated(page - 1, offset)
     }
 
     @GetMapping("/experts/{email}")
@@ -51,6 +51,6 @@ class ExpertController(private val expertService: ExpertService) {
     @Secured("MANAGER")
     @Transactional
     fun deleteExpertise(@PathVariable email: String, @RequestBody(required = true) expertise: ExpertiseDTO) {
-        expertService.addExpertiseToExpert(email, expertise.field)
+        expertService.removeExpertiseFromExpert(email, expertise.field)
     }
 }

@@ -14,15 +14,16 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import javax.ws.rs.NotAuthorizedException
+import kotlin.math.min
 
 @Service
 class ProfileServiceImpl(private val profileRepository: ProfileRepository) :
     ProfileService {
     override fun getAllPaginated(page: Int, offset: Int): PagedDTO<ProfileDTO> {
         val pageResult = profileRepository.findAll(PageRequest.of(page, offset, Sort.by("name")))
-        val meta = PagedMetadata(pageResult.number, pageResult.totalPages, pageResult.numberOfElements)
+        val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
 
-        return PagedDTO(meta, pageResult.toList().map { it.toDTO() })
+        return PagedDTO(meta, pageResult.content.map { it.toDTO() })
     }
 
     override fun getProfileByEmail(email: String): ProfileDTO {
@@ -52,9 +53,12 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository) :
         if (totalSize % offset != 0) {
             totalPages += 1
         }
-        val meta = PagedMetadata(page, totalPages, totalSize)
+        val meta = PagedMetadata(page + 1, totalPages, totalSize)
 
-        return PagedDTO(meta, profile.tickets.toList().subList(page * offset, (page + 1) * offset).map { it.toDTO() })
+        return PagedDTO(
+            meta,
+            profile.tickets.toList().subList(min(page * offset, totalSize), min((page + 1) * offset, totalSize))
+                .map { it.toDTO() })
     }
 
     override fun insertProfile(profile: ProfileDTO) {
@@ -63,6 +67,7 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository) :
         }
 
         val profileEntity = Profile(profile.email, profile.name, profile.surname, profile.address.toAddress())
+        profileEntity.address.profile = profileEntity
 
         profileRepository.save(profileEntity)
     }

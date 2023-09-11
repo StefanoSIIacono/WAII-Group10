@@ -1,4 +1,4 @@
-package com.lab2.server.unitTest
+package com.lab2.server.unit
 
 import com.lab2.server.data.Expertise
 import com.lab2.server.dto.toDTO
@@ -25,11 +25,11 @@ class ExpertiseServiceTest {
 
         val service = ExpertiseServiceImpl(repository)
         // when
-        val result = service.getAll()
+        val result = service.getAllPaginated(1, 100)
 
         // then
         verify(exactly = 1) { repository.findAll() }
-        assertEquals(expertiseList.map { it.toDTO() }, result)
+        assertEquals(expertiseList.map { it.toDTO() }, result.data)
     }
 
     @Test

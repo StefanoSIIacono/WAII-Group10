@@ -4,6 +4,7 @@ import com.lab2.server.data.Message
 
 data class MessageDTO(
     val id: Long?,
+    val index: Int,
     val timestamp: java.util.Date,
     val body: String,
     val attachments: MutableList<AttachmentDTO>,
@@ -16,11 +17,15 @@ data class BodyMessageDTO(
     val attachments: MutableList<AttachmentBodyDTO>,
 )
 
-data class MessageReadAck(
-    val id: Int
-)
-
 
 fun Message.toDTO(): MessageDTO {
-    return MessageDTO(id, timestamp, body, attachments.map { it.toDTO() }.toMutableList(), expert?.toDTO(), ticket.id!!)
+    return MessageDTO(
+        id,
+        index,
+        timestamp,
+        body,
+        attachments.map { it.toDTO() }.toMutableList(),
+        expert?.toDTO(),
+        ticket.id!!
+    )
 }

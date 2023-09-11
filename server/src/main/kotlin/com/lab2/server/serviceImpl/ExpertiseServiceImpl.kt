@@ -4,12 +4,14 @@ package com.lab2.server.serviceImpl
 import com.lab2.server.data.Expertise
 import com.lab2.server.dto.*
 import com.lab2.server.exceptionsHandler.exceptions.DuplicatedExpertiseException
+import com.lab2.server.exceptionsHandler.exceptions.ExpertiseCurrentlyInUseException
 import com.lab2.server.exceptionsHandler.exceptions.ExpertiseNotFoundException
 import com.lab2.server.repositories.ExpertiseRepository
 import com.lab2.server.services.ExpertiseService
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import kotlin.math.min
 
 @Service
 class ExpertiseServiceImpl(private val expertiseRepository: ExpertiseRepository) : ExpertiseService {
@@ -23,16 +25,19 @@ class ExpertiseServiceImpl(private val expertiseRepository: ExpertiseRepository)
         if (totalSize % offset != 0) {
             totalPages += 1
         }
-        val meta = PagedMetadata(page, totalPages, totalSize)
+        val meta = PagedMetadata(page + 1, totalPages, totalSize)
 
-        return PagedDTO(meta, exp.experts.toList().subList(page * offset, (page + 1) * offset).map { it.toDTO() })
+        return PagedDTO(
+            meta,
+            exp.experts.toList().subList(min(page * offset, totalSize), min(totalSize, (page + 1) * offset))
+                .map { it.toDTO() })
     }
 
     override fun getAllPaginated(page: Int, offset: Int): PagedDTO<ExpertiseDTO> {
         val pageResult = expertiseRepository.findAll(PageRequest.of(page, offset, Sort.by("field")))
-        val meta = PagedMetadata(pageResult.number, pageResult.totalPages, pageResult.numberOfElements)
+        val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
 
-        return PagedDTO(meta, pageResult.toList().map { it.toDTO() })
+        return PagedDTO(meta, pageResult.content.map { it.toDTO() })
     }
 
     override fun getExpertise(field: String): ExpertiseDTO {
@@ -51,6 +56,14 @@ class ExpertiseServiceImpl(private val expertiseRepository: ExpertiseRepository)
         val expertiseEntity =
             expertiseRepository.findByField(expertise) ?: throw ExpertiseNotFoundException("Expertise not found")
 
+        if (expertiseEntity.experts.size > 0) {
+            throw ExpertiseCurrentlyInUseException("Expertise that has been used can't be deleted")
+        }
+
         expertiseRepository.delete(expertiseEntity)
+    }
+
+    override fun unsafeGetExpertise(expertise: String): Expertise? {
+        return expertiseRepository.findByField(expertise)
     }
 }

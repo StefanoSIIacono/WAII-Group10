@@ -3,6 +3,7 @@ package com.lab2.server.controllers
 import com.lab2.server.dto.*
 import com.lab2.server.services.MessageService
 import io.micrometer.observation.annotation.Observed
+import jakarta.transaction.Transactional
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import lombok.extern.slf4j.Slf4j
@@ -26,29 +27,31 @@ class MessageController(private val messageService: MessageService) {
         @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
         principal: JwtAuthenticationToken
     ): PagedDTO<MessageDTO> {
-        return messageService.getTicketPagedMessages(ticketId, principal, page, offset)
+        return messageService.getTicketPagedMessages(ticketId, principal, page - 1, offset)
     }
 
-    @PostMapping("/tickets/{ticketId}/messages", consumes = ["multipart/form-data"])
+    @PostMapping("/tickets/{ticketId}/messages")
     @ResponseStatus(HttpStatus.CREATED)
     @Secured("EXPERT", "PROFILE")
+    @Transactional
     fun addMessage(
         @PathVariable ticketId: Long,
-        @RequestPart message: BodyMessageDTO,
+        @RequestBody(required = true) message: BodyMessageDTO,
         principal: JwtAuthenticationToken
     ) {
         SqmNode.log.info("Adding new message")
         messageService.handleNewMessage(principal, ticketId, message)
     }
 
-    @PutMapping("/tickets/{ticketId}/messages/ack")
+    @PutMapping("/tickets/{ticketId}/messages/{messageIndex}/ack")
     @ResponseStatus(HttpStatus.OK)
     @Secured("EXPERT", "PROFILE")
+    @Transactional
     fun ackTicketPaging(
         @PathVariable ticketId: Long,
-        @RequestBody(required = true) ack: MessageReadAck,
+        @PathVariable messageIndex: Int,
         principal: JwtAuthenticationToken
     ) {
-        messageService.acknowledgeMessage(ticketId, principal, ack)
+        messageService.acknowledgeMessage(ticketId, principal, messageIndex)
     }
 }

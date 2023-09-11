@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.*
 @Slf4j
 class ProductController(private val productService: ProductService) {
 
-    @GetMapping("/products/")
+    @GetMapping("/products")
     @ResponseStatus(HttpStatus.OK)
     fun getAllPaginated(
         @RequestParam(required = false, defaultValue = "1") @Min(1) page: Int,
         @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
     ): PagedDTO<ProductDTO> {
         log.info("Retrieving all products")
-        return productService.getAllPaged(page, offset)
+        return productService.getAllPaged(page - 1, offset)
     }
 
     @GetMapping("/products/{productId}")

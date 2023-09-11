@@ -1,4 +1,4 @@
-package com.lab2.server.unitTest
+package com.lab2.server.unit
 
 import com.lab2.server.data.Address
 import com.lab2.server.data.Profile
@@ -22,24 +22,24 @@ class ProfileServiceTest {
     fun getAllTest() {
         // given
         val profileList = mutableListOf(
-            Profile("mariorossi@gmail.com", "Mario", "Rossi", null),
-            Profile("luigiverdi@gmail.com", "Luigi", "Verdi", null)
+            Profile("mariorossi@gmail.com", "Mario", "Rossi", Address("a", "b", "c", "d")),
+            Profile("luigiverdi@gmail.com", "Luigi", "Verdi", Address("a", "b", "c", "d"))
         )
         every { repository.findAll() } returns profileList
 
         val service = ProfileServiceImpl(repository)
         // when
-        val result = service.getAll()
+        val result = service.getAllPaginated(1, 100)
 
         // then
         verify(exactly = 1) { repository.findAll() }
-        assertEquals(profileList.map { it.toDTO() }, result)
+        assertEquals(profileList.map { it.toDTO() }, result.data)
     }
 
     @Test
     fun getProfileByEmailTest() {
         // given
-        val profile = Profile("mariorossi@gmail.com", "mario", "ross", null)
+        val profile = Profile("mariorossi@gmail.com", "mario", "ross", Address("a", "b", "c", "d"))
         every { repository.findByIdOrNull("mariorossi@gmail.com") } returns profile
 
         val service = ProfileServiceImpl(repository)
@@ -68,20 +68,18 @@ class ProfileServiceTest {
     @Test
     fun insertProfileTest() {
         // given
-        var createProfile = ProfileDTO("mariorossi@gmail.com", "mario", "rossi", null)
-        val createAddress = AddressDTO("mariorossi@gmail.com", "c", "c", "z", "s", "h", createProfile)
-        val profile = Profile("mariorossi@gmail.com", "mario", "rossi",null)
-        val address = Address(createAddress.city,
-                                createAddress.country,
-                                createAddress.zipCode,
-                                createAddress.street,
-                                createAddress.houseNumber,
-                                profile)
-        val getaddresdto=address.toDTO()
-        createProfile.address=getaddresdto
-        profile.addAddress(address)
+        val createAddress = AddressDTO("mariorossi@gmail.com", "c", "c", "z")
+        val createProfile = ProfileDTO("mariorossi@gmail.com", "mario", "rossi", createAddress)
+        val profile = Profile("mariorossi@gmail.com", "mario", "rossi", Address("a", "b", "c", "d"))
+        val address = Address(
+            createAddress.address,
+            createAddress.zipCode,
+            createAddress.city,
+            createAddress.country
+        )
+        profile.editAddress(address)
         every { repository.existsById("mariorossi@gmail.com") } returns false
-        every { repository.save(any())  } returns profile
+        every { repository.save(any()) } returns profile
 
 
         val service = ProfileServiceImpl(repository)
@@ -89,26 +87,26 @@ class ProfileServiceTest {
         service.insertProfile(createProfile)
 
         // then
-        verify(exactly = 1) { repository.existsById("mariorossi@gmail.com")  }
-        verify(exactly = 1) { repository.save(any())  }
+        verify(exactly = 1) { repository.existsById("mariorossi@gmail.com") }
+        verify(exactly = 1) { repository.save(any()) }
     }
 
     @Test
     fun insertExistingProfileTest() {
         // given
-        val createProfile = ProfileDTO("mariorossi@gmail.com", "mario", "ross", null)
-        val createAddress = AddressDTO("mariorossi@gmail.com","c", "c", "z", "s", "h", createProfile)
-        val profile = Profile("mariorossi@gmail.com", "mario", "rossi",null)
-        val address = Address(createAddress.city,
-                createAddress.country,
-                createAddress.zipCode,
-                createAddress.street,
-                createAddress.houseNumber,
-                profile)
+        val createAddress = AddressDTO("mariorossi@gmail.com", "c", "c", "z")
+        val createProfile = ProfileDTO("mariorossi@gmail.com", "mario", "rossi", createAddress)
+        val profile = Profile("mariorossi@gmail.com", "mario", "rossi", Address("a", "b", "c", "d"))
+        val address = Address(
+            createAddress.address,
+            createAddress.zipCode,
+            createAddress.city,
+            createAddress.country
+        )
 
-        profile.addAddress(address)
+        profile.editAddress(address)
         every { repository.existsById("mariorossi@gmail.com") } returns true
-        every { repository.save(any())  } returns profile
+        every { repository.save(any()) } returns profile
 
         val service = ProfileServiceImpl(repository)
         // when
@@ -121,8 +119,8 @@ class ProfileServiceTest {
 
         // then
 
-        verify(exactly = 1) { repository.existsById("mariorossi@gmail.com")  }
-        verify(exactly = 0) { repository.save(any())  }
+        verify(exactly = 1) { repository.existsById("mariorossi@gmail.com") }
+        verify(exactly = 0) { repository.save(any()) }
         assertEquals(exceptionThrown, true)
     }
 

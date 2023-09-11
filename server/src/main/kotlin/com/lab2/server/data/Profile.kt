@@ -11,7 +11,7 @@ class Profile(
     var name: String,
     var surname: String,
 
-    @OneToOne(mappedBy = "profile", cascade = [CascadeType.ALL])
+    @OneToOne(mappedBy = "profile", cascade = [CascadeType.ALL], orphanRemoval = true)
     var address: Address,
 ) {
     @OneToMany(mappedBy = "profile")

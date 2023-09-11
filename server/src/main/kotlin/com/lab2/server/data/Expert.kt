@@ -12,7 +12,7 @@ class Expert(
     val email: String,
     var name: String,
     var surname: String,
-    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST])
     @JoinTable(
         name = "expert_expertise",
         joinColumns = [JoinColumn(name = "expert_email")],
@@ -35,8 +35,8 @@ class Expert(
     }
 
     fun removeExpertise(e: Expertise) {
-        this.expertises.filter { it.field != e.field }
-        e.experts.filter { it.email != this.email }
+        this.expertises.removeAll { it.field == e.field }
+        e.experts.removeAll { it.email == this.email }
     }
 
 }

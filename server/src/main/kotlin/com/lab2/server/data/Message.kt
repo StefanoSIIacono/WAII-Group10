@@ -6,6 +6,7 @@ import jakarta.persistence.*
 @Table(name = "messages")
 class Message(
 
+    val index: Int,
     @Temporal(TemporalType.TIMESTAMP)
     val timestamp: java.util.Date,
     val body: String,

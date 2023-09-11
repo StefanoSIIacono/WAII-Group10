@@ -1,4 +1,4 @@
-package com.lab2.server.unitTest
+package com.lab2.server.unit
 
 import com.lab2.server.data.Product
 import com.lab2.server.dto.toDTO
@@ -25,11 +25,11 @@ class ProductServiceTest {
 
         val service = ProductServiceImpl(repository)
         // when
-        val result = service.getAll()
+        val result = service.getAllPaged(1, 100)
 
         // then
         verify(exactly = 1) { repository.findAll() }
-        assertEquals(productList.map { it.toDTO() }, result)
+        assertEquals(productList.map { it.toDTO() }, result.data)
     }
 
     @Test

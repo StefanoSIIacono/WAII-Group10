@@ -32,7 +32,7 @@ class TicketingController(private val ticketService: TicketService) {
         principal: JwtAuthenticationToken
     ): PagedDTO<TicketDTO> {
         log.info("Retrieving all tickets")
-        return ticketService.getAllPaginated(page, offset, principal)
+        return ticketService.getAllPaginated(page - 1, offset, principal)
     }
 
     @GetMapping("/tickets/{ticketId}")
@@ -53,6 +53,19 @@ class TicketingController(private val ticketService: TicketService) {
     }
 
     @PutMapping("/tickets/{ticketId}/open")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Secured("MANAGER", "EXPERT")
+    @Transactional
+    fun openTicket(@PathVariable ticketId: Long, principal: JwtAuthenticationToken) {
+        log.info("Reopening ticket  $ticketId")
+        ticketService.setTicketStatus(
+            principal,
+            ticketId,
+            Status.OPEN,
+        )
+    }
+
+    @PutMapping("/tickets/{ticketId}/reopen")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("PROFILE")
     @Transactional
