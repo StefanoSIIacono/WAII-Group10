@@ -1,9 +1,7 @@
 package com.lab2.server.unit
 
 import com.lab2.server.data.*
-import com.lab2.server.dto.ExpertDTO
-import com.lab2.server.dto.ExpertiseDTO
-import com.lab2.server.dto.toDTO
+import com.lab2.server.dto.*
 import com.lab2.server.exceptionsHandler.exceptions.ExpertNotFoundException
 import com.lab2.server.repositories.ExpertRepository
 import com.lab2.server.serviceImpl.ExpertServiceImpl
@@ -14,6 +12,9 @@ import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import java.util.*
 
@@ -23,19 +24,28 @@ class ExpertServiceTest {
 
     @Test
     fun getAllTest() {
-        val expertList = mutableListOf(
-            Expert("e1@e1.com", "John", "Doe"),
-            Expert("e2@e2.com", "Jane", "Smith")
+        val expertPage = PageImpl(
+            listOf(
+                Expert("e1@e1.com", "John", "Doe"),
+                Expert("e2@e2.com", "Jane", "Smith")
+            ), PageRequest.of(0, 100, Sort.by("name")), 2
         )
-        every { repository.findAll() } returns expertList
+        every { repository.findAll(PageRequest.of(0, 100, Sort.by("name"))) } returns expertPage
 
         val service = ExpertServiceImpl(repository, expertiseService)
         // when
-        val result = service.getAllPaginated(1, 100)
+        val result = service.getAllPaginated(0, 100)
 
         // then
-        verify(exactly = 1) { repository.findAll() }
-        assertEquals(expertList.map { it.toDTO() }, result.data)
+        verify(exactly = 1) { repository.findAll(PageRequest.of(0, 100, Sort.by("name"))) }
+        assertEquals(
+            PagedDTO(
+                PagedMetadata(
+                    expertPage.number + 1,
+                    expertPage.totalPages,
+                    expertPage.numberOfElements
+                ), expertPage.content.map { it.toDTO() }), result
+        )
     }
 
     @Test
@@ -90,8 +100,7 @@ class ExpertServiceTest {
         service.insertExpert(expertDTO)
 
         // then
-        verify(exactly = 2) { repository.save(any()) }
-        verify(exactly = 1) { repository.findByIdOrNull(expertDTO.email) }
+        verify(exactly = 1) { repository.save(any()) }
         verify(exactly = 1) { expertiseService.getExpertise(expertise) }
     }
 
@@ -100,18 +109,18 @@ class ExpertServiceTest {
     fun addExpertiseToExpertTest() {
         // given
         val expert = ExpertDTO("e1@e1.com", "John", "Doe")
-        val expertise = ExpertiseDTO("Backend")
+        val expertise = Expertise("Backend")
 
         every { repository.findByIdOrNull(expert.email) } returns expert.toExpert()
         every { repository.save(any()) } returns expert.toExpert()
-        every { expertiseService.getExpertise(expertise.field) } returns expertise
+        every { expertiseService.unsafeGetExpertise(expertise.field) } returns expertise
 
         val service = ExpertServiceImpl(repository, expertiseService)
         // when
         service.addExpertiseToExpert(expert.email, expertise.field)
         // then
         verify(exactly = 1) { repository.findByIdOrNull(expert.email) }
-        verify(exactly = 1) { expertiseService.getExpertise(expertise.field) }
+        verify(exactly = 1) { expertiseService.unsafeGetExpertise(expertise.field) }
         verify(exactly = 1) { repository.save(any()) }
     }
 
@@ -151,14 +160,11 @@ class ExpertServiceTest {
         )
 
         every { repository.save(any()) } returns expert
-
-        val service = ExpertServiceImpl(repository, expertiseService)
         // when
         ticket.addStatus(TicketStatus(Status.IN_PROGRESS, Date(System.currentTimeMillis())), Roles.MANAGER, expert)
 
         // then
         assertEquals(1, expert.inProgressTickets.size)
         assertTrue(expert.inProgressTickets.contains(ticket))
-        verify(exactly = 1) { repository.save(expert) }
     }
 }
