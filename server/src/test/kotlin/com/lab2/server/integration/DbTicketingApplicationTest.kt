@@ -4,7 +4,7 @@ import com.lab2.server.data.*
 import com.lab2.server.dto.*
 import com.lab2.server.repositories.*
 import dasniko.testcontainers.keycloak.KeycloakContainer
-import org.junit.jupiter.api.AfterEach
+import jakarta.transaction.Transactional
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -106,7 +106,14 @@ class DbTicketingApplicationTest {
         Profile("luigi.verdi@gmail.com", "luigi", "verdi", Address("address", "zipCode", "city", "country"))
 
     @BeforeEach
+    @Transactional
     fun setUp() {
+        ticketingRepository.deleteAll()
+        profileRepository.deleteAll()
+        productRepository.deleteAll()
+        expertRepository.deleteAll()
+        expertiseRepository.deleteAll()
+        messageRepository.deleteAll()
         val requestFactory = SimpleClientHttpRequestFactory()
         requestFactory.setOutputStreaming(false)
         restTemplate.restTemplate.requestFactory = requestFactory
@@ -195,9 +202,8 @@ class DbTicketingApplicationTest {
                         var time = System.currentTimeMillis()
                         for (j in 0 until NUMBEROFENTITIES) {
                             val attachment = "WnK3mmyVMFFMZInbdSP8wQ=="
-                            println("ticket ${ticket.id} has ${ticket.messages.size} messages")
                             val message = Message(
-                                ticket.messages.size,
+                                j,
                                 Date(time),
                                 "body${j}",
                                 mutableListOf(Attachment(attachment, attachment.length.toLong(), "contentType"))
@@ -231,16 +237,6 @@ class DbTicketingApplicationTest {
             TokenDTO::class.java
         )
         return "Bearer " + resp.body?.access_token
-    }
-
-    @AfterEach
-    fun cleanUpRepositories() {
-        ticketingRepository.deleteAll()
-        profileRepository.deleteAll()
-        productRepository.deleteAll()
-        expertRepository.deleteAll()
-        expertiseRepository.deleteAll()
-        messageRepository.deleteAll()
     }
 
     private inline fun <reified T> getRequest(path: String, role: Roles? = null): ResponseEntity<T> {
@@ -637,19 +633,15 @@ class DbTicketingApplicationTest {
 
         val body = response2.body!!
 
-        ticket.messages.forEach { println(it.id) }
-        println(body.data.size)
-        body.data.forEach { println(it.id) }
-
         assertEquals(HttpStatus.CREATED, response.statusCode)
         assertNotNull(body)
         assertEquals(body.meta.currentPage, 1)
-        //assertEquals(body.meta.totalElements, ticket.messages.size + 1)
+        assertEquals(body.meta.totalElements, ticket.messages.size + 1)
         assertEquals(body.meta.totalPages, ceil((ticket.messages.size + 1).toDouble() / 100).toInt())
-        //assertEquals(body.data.size, min(ticket.messages.size + 1, 100))
+        assertEquals(body.data.size, min(ticket.messages.size + 1, 100))
         assertEquals(body.data[0].body, message.body)
         assertEquals(body.data[0].expert?.email, expert.email)
-        assertEquals(body.data[0].index, ticket.messages.size + 1)
+        assertEquals(body.data[0].index, ticket.messages.last().index + 1)
         assertEquals(body.data[0].attachments.size, 1)
     }
 
@@ -849,7 +841,7 @@ class DbTicketingApplicationTest {
         assertEquals(response.statusCode, HttpStatus.OK)
         assertNotNull(body)
         assertEquals(body.meta.currentPage, 1)
-        //assertEquals(body.meta.totalElements, tickets.size)
+        assertEquals(body.meta.totalElements, tickets.size)
         assertEquals(body.meta.totalPages, ceil(tickets.size.toDouble() / 100).toInt())
         assertEquals(body.data.size, min(tickets.size, 100))
     }

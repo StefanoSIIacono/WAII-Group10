@@ -11,6 +11,14 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 interface TicketService {
     fun getAllPaginated(page: Int, offset: Int, user: JwtAuthenticationToken): PagedDTO<TicketDTO>
     fun getTicketByID(ticketId: Long, user: JwtAuthenticationToken): TicketDTO
+
+    fun getTicketsByEmailPaginated(
+        email: String,
+        page: Int,
+        offset: Int,
+        user: JwtAuthenticationToken
+    ): PagedDTO<TicketDTO>
+
     fun insertTicket(ticket: TicketCreateBodyDTO, user: JwtAuthenticationToken)
     fun setTicketStatus(
         user: JwtAuthenticationToken,

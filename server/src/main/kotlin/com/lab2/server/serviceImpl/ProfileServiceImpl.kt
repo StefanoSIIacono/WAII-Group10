@@ -1,7 +1,6 @@
 package com.lab2.server.serviceImpl
 
 import com.lab2.server.data.Profile
-import com.lab2.server.data.Roles
 import com.lab2.server.data.toAddress
 import com.lab2.server.dto.*
 import com.lab2.server.exceptionsHandler.exceptions.DuplicateProfileException
@@ -13,8 +12,6 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
-import javax.ws.rs.NotAuthorizedException
-import kotlin.math.min
 
 @Service
 class ProfileServiceImpl(private val profileRepository: ProfileRepository) :
@@ -28,37 +25,6 @@ class ProfileServiceImpl(private val profileRepository: ProfileRepository) :
 
     override fun getProfileByEmail(email: String): ProfileDTO {
         return profileRepository.findByIdOrNull(email)?.toDTO() ?: throw ProfileNotFoundException("Profile not found")
-    }
-
-    override fun getTicketsByEmailPaginated(
-        email: String,
-        page: Int,
-        offset: Int,
-        user: JwtAuthenticationToken
-    ): PagedDTO<TicketDTO> {
-        val profile = profileRepository.findByIdOrNull(email)
-
-        if (profile === null) {
-            throw ProfileNotFoundException("Profile not found")
-        }
-
-        val userRole = Roles.values()
-            .firstOrNull { sc -> user.authorities.map { it.authority }.contains(sc.name) }
-        if (email != user.name && userRole != Roles.MANAGER) {
-            throw NotAuthorizedException("Not allowed")
-        }
-
-        val totalSize = profile.tickets.size
-        var totalPages = totalSize / offset
-        if (totalSize % offset != 0) {
-            totalPages += 1
-        }
-        val meta = PagedMetadata(page + 1, totalPages, totalSize)
-
-        return PagedDTO(
-            meta,
-            profile.tickets.toList().subList(min(page * offset, totalSize), min((page + 1) * offset, totalSize))
-                .map { it.toDTO() })
     }
 
     override fun insertProfile(profile: ProfileDTO) {

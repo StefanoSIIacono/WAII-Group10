@@ -2,6 +2,7 @@ package com.lab2.server.controllers
 
 import com.lab2.server.dto.*
 import com.lab2.server.services.ProfileService
+import com.lab2.server.services.TicketService
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import org.hibernate.query.sqm.tree.SqmNode.log
@@ -12,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class ProfileController(private val profileService: ProfileService) {
+class ProfileController(private val profileService: ProfileService, private val ticketService: TicketService) {
     @GetMapping("/profiles")
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER")
@@ -51,7 +52,7 @@ class ProfileController(private val profileService: ProfileService) {
         principal: JwtAuthenticationToken
     ): PagedDTO<TicketDTO> {
         log.info("Retrieving all ticket for profile linked to $email")
-        return profileService.getTicketsByEmailPaginated(email, page - 1, offset, principal)
+        return ticketService.getTicketsByEmailPaginated(email, page - 1, offset, principal)
     }
 
 }

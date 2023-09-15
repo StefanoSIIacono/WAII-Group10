@@ -10,10 +10,10 @@ import com.lab2.server.exceptionsHandler.exceptions.TicketNotFoundException
 import com.lab2.server.repositories.MessageRepository
 import com.lab2.server.services.MessageService
 import com.lab2.server.services.TicketService
+import org.springframework.data.domain.PageRequest
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import java.util.*
-import kotlin.math.min
 
 @Service
 class MessageServiceImpl(
@@ -37,7 +37,7 @@ class MessageServiceImpl(
         }
 
         val message = Message(
-            ticket.messages.size,
+            ticket.messages.last().index + 1,
             currentTimestamp,
             messageDTO.body,
         )
@@ -104,17 +104,9 @@ class MessageServiceImpl(
             throw TicketNotFoundException("No ticket found")
         }
 
-        val totalSize = ticket.messages.size
-        println("totalsize $totalSize")
-        var totalPages = totalSize / offset
-        if (totalSize % offset != 0) {
-            totalPages += 1
-        }
-        val meta = PagedMetadata(page + 1, totalPages, totalSize)
-        return PagedDTO(
-            meta,
-            ticket.messages.sortedByDescending { it.timestamp }
-                .subList(min(page * offset, totalSize), min(totalSize, (page + 1) * offset))
-                .map { it.toDTO() })
+        val pageResult = messageRepository.findByTicketIdOrderByTimestampDesc(ticketID, PageRequest.of(page, offset))
+
+        val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
+        return PagedDTO(meta, pageResult.content.map { it.toDTO() })
     }
 }

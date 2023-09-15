@@ -60,6 +60,31 @@ class TicketServiceImpl(
         return ticket.toDTO(user.name)
     }
 
+    override fun getTicketsByEmailPaginated(
+        email: String,
+        page: Int,
+        offset: Int,
+        user: JwtAuthenticationToken
+    ): PagedDTO<TicketDTO> {
+        val profile = profileService.unsafeProfileByEmail(email)
+
+        if (profile === null) {
+            throw ProfileNotFoundException("Profile not found")
+        }
+
+        val userRole = Roles.values()
+            .firstOrNull { sc -> user.authorities.map { it.authority }.contains(sc.name) }
+        if (email != user.name && userRole != Roles.MANAGER) {
+            throw NotAuthorizedException("Not allowed")
+        }
+
+        val pageResult = ticketingRepository.findAllByProfileEmail(profile.email, PageRequest.of(page, offset))
+
+        val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
+
+        return PagedDTO(meta, pageResult.content.map { it.toDTO() })
+    }
+
     override fun insertTicket(ticket: TicketCreateBodyDTO, user: JwtAuthenticationToken) {
         val product = productService.getProduct(ticket.product)
         val profile = profileService.unsafeProfileByEmail(user.name)!!

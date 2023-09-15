@@ -3,7 +3,7 @@ package com.lab2.server.data
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "messages")
+@Table(name = "messages", uniqueConstraints = [UniqueConstraint(columnNames = ["index", "ticket_id"])])
 class Message(
 
     val index: Int,

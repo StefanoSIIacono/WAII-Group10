@@ -13,6 +13,7 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 
+// TODO: polling endpoint
 @RestController
 @Slf4j
 @Observed
