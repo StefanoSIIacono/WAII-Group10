@@ -174,15 +174,15 @@ class DbTicketingApplicationTest {
 
         for ((expert, profile) in listOf(Pair(mainExpert, mainProfile), Pair(experts[1], profiles[1]))) {
             val statusChanges = listOf(
-                Triple(TicketStatus(Status.OPEN, Date(System.currentTimeMillis())), Roles.PROFILE, null),
+                Triple(Status.OPEN, Roles.PROFILE, null),
                 Triple(
-                    TicketStatus(Status.IN_PROGRESS, Date(System.currentTimeMillis().inc())),
+                    Status.IN_PROGRESS,
                     Roles.MANAGER,
                     expert
                 ),
-                Triple(TicketStatus(Status.RESOLVED, Date(System.currentTimeMillis().plus(2))), Roles.EXPERT, null),
-                Triple(TicketStatus(Status.CLOSED, Date(System.currentTimeMillis().plus(3))), Roles.PROFILE, null),
-                Triple(TicketStatus(Status.REOPENED, Date(System.currentTimeMillis().plus(4))), Roles.PROFILE, null)
+                Triple(Status.RESOLVED, Roles.EXPERT, null),
+                Triple(Status.CLOSED, Roles.PROFILE, null),
+                Triple(Status.REOPENED, Roles.PROFILE, null)
             )
             for (statusChange in statusChanges) {
                 val product = products[0]
@@ -196,9 +196,16 @@ class DbTicketingApplicationTest {
                     product
                 )
 
+                var statusTimestamp = System.currentTimeMillis()
+
                 for (status in statusChanges) {
-                    ticket.addStatus(statusChange.first, statusChange.second, statusChange.third)
-                    if (status.first.status === Status.IN_PROGRESS) {
+                    ticket.addStatus(
+                        TicketStatus(status.first, Date(statusTimestamp)),
+                        status.second,
+                        status.third
+                    )
+                    statusTimestamp = statusTimestamp.inc()
+                    if (status.first === Status.IN_PROGRESS) {
                         var time = System.currentTimeMillis()
                         for (j in 0 until NUMBEROFENTITIES) {
                             val attachment = "WnK3mmyVMFFMZInbdSP8wQ=="
@@ -216,11 +223,10 @@ class DbTicketingApplicationTest {
                             time = time.inc()
                         }
                     }
-                    if (status.first.status === statusChange.first.status) {
+                    if (status.first === statusChange.first) {
                         break
                     }
                 }
-
                 tickets.add(ticket)
                 ticketingRepository.save(ticket)
             }
@@ -612,6 +618,42 @@ class DbTicketingApplicationTest {
         val response = getRequest<String>("/tickets/${ticket.id}/messages", Roles.PROFILE)
 
         assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+    }
+
+    @Test
+    fun testGetProfileUnreadMessages() {
+        val profile = mainProfile
+        val tickets =
+            tickets.filter { ticket -> ticket.messages.size > 0 && ticket.profile.email == profile.email && ticket.messages.any { it.expert != null } && ticket.lastReadMessageIndexProfile < ticket.messages.last { it.expert != null }.index }
+
+        val response = getRequest<PagedDTO<UnreadMessagesDTO>>("/messages/unread", Roles.PROFILE)
+
+        val body = response.body!!
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertNotNull(body)
+        assertEquals(body.meta.currentPage, 1)
+        assertEquals(body.meta.totalElements, tickets.size)
+        assertEquals(body.meta.totalPages, ceil(tickets.size.toDouble() / 100).toInt())
+        assertEquals(body.data.size, min(tickets.size, 100))
+    }
+
+    @Test
+    fun testGetExpertUnreadMessages() {
+        val expert = mainExpert
+        val tickets =
+            tickets.filter { ticket -> ticket.messages.size > 0 && ticket.expert?.email == expert.email && ticket.messages.any { it.expert == null } && ticket.lastReadMessageIndexExpert < ticket.messages.last { it.expert == null }.index }
+
+        val response = getRequest<PagedDTO<UnreadMessagesDTO>>("/messages/unread", Roles.EXPERT)
+
+        val body = response.body!!
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertNotNull(body)
+        assertEquals(body.meta.currentPage, 1)
+        assertEquals(body.meta.totalElements, tickets.size)
+        assertEquals(body.meta.totalPages, ceil(tickets.size.toDouble() / 100).toInt())
+        assertEquals(body.data.size, min(tickets.size, 100))
     }
 
     @Test

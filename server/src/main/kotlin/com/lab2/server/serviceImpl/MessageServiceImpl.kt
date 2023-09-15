@@ -109,4 +109,29 @@ class MessageServiceImpl(
         val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
         return PagedDTO(meta, pageResult.content.map { it.toDTO() })
     }
+
+    override fun getUnreadMessages(
+        user: JwtAuthenticationToken,
+        page: Int,
+        offset: Int
+    ): PagedDTO<UnreadMessagesDTO> {
+        val userRole = Roles.values()
+            .firstOrNull { sc -> user.authorities.map { it.authority }.contains(sc.name) }
+        val pageResult = if (userRole == Roles.PROFILE) messageRepository.findAllProfileUnreadMessages(
+            user.name,
+            PageRequest.of(page, offset)
+        ) else messageRepository.findAllExpertUnreadMessages(user.name, PageRequest.of(page, offset))
+
+        val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
+
+        return PagedDTO(
+            meta,
+            pageResult.content.map { ticket ->
+                UnreadMessagesDTO(
+                    ticket.id!!,
+                    if (userRole == Roles.PROFILE) ticket.lastReadMessageIndexProfile else ticket.lastReadMessageIndexExpert,
+                    if (userRole == Roles.PROFILE) ticket.messages.maxOf { it.index } - ticket.lastReadMessageIndexProfile else ticket.messages.maxOf { it.index } - ticket.lastReadMessageIndexExpert
+                )
+            })
+    }
 }

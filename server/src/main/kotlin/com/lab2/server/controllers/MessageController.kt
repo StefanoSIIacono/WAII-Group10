@@ -31,6 +31,17 @@ class MessageController(private val messageService: MessageService) {
         return messageService.getTicketPagedMessages(ticketId, principal, page - 1, offset)
     }
 
+    @GetMapping("/messages/unread")
+    @ResponseStatus(HttpStatus.OK)
+    @Secured("EXPERT", "PROFILE")
+    fun getPagedUnreadMessages(
+        @RequestParam(required = false, defaultValue = "1") @Min(1) page: Int,
+        @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
+        principal: JwtAuthenticationToken
+    ): PagedDTO<UnreadMessagesDTO> {
+        return messageService.getUnreadMessages(principal, page - 1, offset)
+    }
+
     @PostMapping("/tickets/{ticketId}/messages")
     @ResponseStatus(HttpStatus.CREATED)
     @Secured("EXPERT", "PROFILE")
