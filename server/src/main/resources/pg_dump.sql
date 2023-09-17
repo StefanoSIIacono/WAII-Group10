@@ -187,6 +187,12 @@ CREATE SEQUENCE public.messages_seq
 
 ALTER TABLE public.messages_seq OWNER TO postgres;
 
+CREATE INDEX idx_paging ON messages
+    (
+    ticket_id,
+    timestamp DESC
+    );
+
 --
 -- Name: products; Type: TABLE; Schema: public; Owner: postgres
 --
