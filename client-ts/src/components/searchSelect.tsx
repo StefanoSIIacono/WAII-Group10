@@ -1,20 +1,25 @@
 import { useCallback, useRef, useState } from 'react';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import { searchExpertiseByName, searchProductsByName } from '../utils/Api';
-import { ExpertiseDTO, ProductDTO } from '../types';
+import { searchExpertiseByName, searchExpertsByName, searchProductsByName } from '../utils/Api';
+import { ExpertDTO, ExpertiseDTO, ProductDTO } from '../types';
 
 type Props = {
-  type: 'products' | 'expertises';
-  onSelect: (selected?: ProductDTO | ExpertiseDTO) => void;
+  type: 'products' | 'expertises' | 'experts';
+  onSelect: (selected?: ProductDTO | ExpertiseDTO | ExpertDTO) => void;
 };
 
 export function SearchSelect({ type, onSelect }: Props) {
-  const makeAndHandleRequest = type === 'products' ? searchProductsByName : searchExpertiseByName;
+  const makeAndHandleRequest =
+    type === 'products'
+      ? searchProductsByName
+      : type === 'expertises'
+      ? searchExpertiseByName
+      : searchExpertsByName;
 
   const [isLoading, setIsLoading] = useState(false);
-  const [options, setOptions] = useState<(ProductDTO | ExpertiseDTO)[]>([]);
+  const [options, setOptions] = useState<(ProductDTO | ExpertiseDTO | ExpertDTO)[]>([]);
   const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState<ProductDTO | ExpertiseDTO>();
+  const [selected, setSelected] = useState<ProductDTO | ExpertiseDTO | ExpertDTO>();
   const [showRequiredError, setShowRequiredError] = useState(false);
 
   const page = useRef(1);
@@ -65,8 +70,8 @@ export function SearchSelect({ type, onSelect }: Props) {
         style: showRequiredError ? { borderColor: 'red', color: 'red' } : {}
       }}
       onChange={(option) => {
-        onSelect(option as unknown as ProductDTO | ExpertiseDTO);
-        setSelected(option as unknown as ProductDTO | ExpertiseDTO);
+        onSelect(option as unknown as ProductDTO | ExpertiseDTO | ExpertDTO);
+        setSelected(option as unknown as ProductDTO | ExpertiseDTO | ExpertDTO);
         setShowRequiredError(false);
       }}
       minLength={2}
@@ -82,14 +87,22 @@ export function SearchSelect({ type, onSelect }: Props) {
       paginate
       placeholder={`Select ${type}`}
       renderMenuItemChildren={(option) => {
-        const item = option as ProductDTO | ExpertiseDTO;
+        const item = option as ProductDTO | ExpertiseDTO | ExpertDTO;
         return (
           <div
             key={
-              type == 'expertises' ? (item as ExpertiseDTO).field : (item as ProductDTO).productId
+              type === 'expertises'
+                ? (item as ExpertiseDTO).field
+                : type === 'products'
+                ? (item as ProductDTO).productId
+                : (item as ExpertDTO).email
             }>
             <span>
-              {type == 'expertises' ? (item as ExpertiseDTO).field : (item as ProductDTO).name}
+              {type === 'expertises'
+                ? (item as ExpertiseDTO).field
+                : type === 'products'
+                ? (item as ProductDTO).name
+                : (item as ExpertDTO).email}
             </span>
           </div>
         );

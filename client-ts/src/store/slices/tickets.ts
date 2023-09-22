@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ApiResponse, PagedDTO, Roles, Status, TicketDTO } from '../../types';
-import { getTickets } from '../../utils/Api';
+import { getTicket, getTickets } from '../../utils/Api';
 import { createAppAsyncThunk } from '../hooks';
 
 // Define a type for the slice state
@@ -52,6 +52,10 @@ export const getPreviousTicketsThunk = createAppAsyncThunk(
   }
 );
 
+export const updateTicketThunk = createAppAsyncThunk('updateTicket', async (id: number) => {
+  return getTicket(id);
+});
+
 export const counterSlice = createSlice({
   name: 'tickets',
   initialState,
@@ -61,6 +65,13 @@ export const counterSlice = createSlice({
       if (action.payload.success && action.payload.data?.data) {
         state.tickets = action.payload.data.data;
         state.currentPage = action.payload.data.meta.currentPage;
+      }
+    },
+    updateTicket: (state, action: PayloadAction<ApiResponse<TicketDTO>>) => {
+      state.loading = false;
+      if (action.payload.success && action.payload.data) {
+        const newTicket = action.payload.data;
+        state.tickets = state.tickets.map((t) => (t.id === newTicket.id ? newTicket : t));
       }
     },
     startRequest: (state) => {
@@ -86,9 +97,12 @@ export const counterSlice = createSlice({
     builder.addCase(getPreviousTicketsThunk.fulfilled, (_, action) => {
       updateTickets(action.payload);
     });
+    builder.addCase(updateTicketThunk.fulfilled, (_, action) => {
+      updateTicket(action.payload);
+    });
   }
 });
 
-export const { startRequest, updateTickets } = counterSlice.actions;
+export const { startRequest, updateTickets, updateTicket } = counterSlice.actions;
 
 export default counterSlice.reducer;

@@ -27,6 +27,11 @@ export function NavBar() {
                 Profile
               </Button>
             </NavLink>
+            <NavLink to="/logout" className="ms-2">
+              <Button variant="outline-light" size="sm">
+                Logout
+              </Button>
+            </NavLink>
           </Nav>
         </Container>
       </Navbar>

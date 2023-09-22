@@ -9,6 +9,9 @@ import { useEffect } from 'react';
 import { checkAuthentication } from './store/slices/authentication';
 //import { TicketPage } from './pages/Ticket';
 import { CreateTicketForm } from './pages/profile/createTicket';
+import { UserProfile } from './pages/profile/profile';
+import { ExpertsDashboard } from './pages/manager/expertsDashboard';
+import { CreateExpertForm } from './pages/manager/createExpert';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -26,6 +29,9 @@ function App() {
             <Route path="/*" element={<Navigate to="/dashboard" />} />
             <Route path="/tickets/new" element={<CreateTicketForm />} />
             <Route path="/dashboard" element={<Home />} />
+            <Route path="/user" element={<UserProfile />} />
+            <Route path="/dashboard/experts" element={<ExpertsDashboard />} />
+            <Route path="/experts/create" element={<CreateExpertForm />} />
           </Route>
         ) : (
           <>

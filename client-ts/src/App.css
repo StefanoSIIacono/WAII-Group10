@@ -80,8 +80,12 @@ body > #root > div {
 
 .ticket-right-container-product-container {
   display: flex;
-  flex-direction: row;
   align-items: center;
+}
+
+.ticket-right-container-second-header {
+  display: flex;
+  justify-content: space-between;
 }
 
 .ticket-right-container-product-details {

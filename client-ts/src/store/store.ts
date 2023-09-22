@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authenticationReducer from './slices/authentication';
 import ticketsReducer from './slices/tickets';
+import expertsReducer from './slices/experts';
 
 export const store = configureStore({
   reducer: {
     authenticate: authenticationReducer,
-    tickets: ticketsReducer
+    tickets: ticketsReducer,
+    experts: expertsReducer
   }
 });
 

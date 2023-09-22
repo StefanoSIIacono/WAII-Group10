@@ -17,7 +17,8 @@ import {
   ChangeProfileInfoDTO,
   TicketCreateBodyDTO,
   TicketInProgressBodyDTO,
-  Priority
+  Priority,
+  Status
 } from '../types';
 
 // TODO: add better error descriptions
@@ -46,6 +47,10 @@ export async function getMe() {
 
 export async function getExperts(page?: number, offset?: number) {
   return getPaginated<ExpertDTO>('/experts', page, offset);
+}
+
+export async function searchExpertsByName(name: string, page?: number, offset?: number) {
+  return getPaginated<ProductDTO>(`/experts/search/${name}`, page, offset);
 }
 
 export async function getExpert(email: string) {
@@ -160,6 +165,33 @@ export async function closeTicket(ticketId: number) {
 
 export async function resolveTicket(ticketId: number) {
   return put(`/tickets/${ticketId}/resolved`);
+}
+
+export async function setTicketStatus(
+  ticketId: number,
+  status: Status,
+  ticketInProgressBodyDTO?: TicketInProgressBodyDTO
+) {
+  switch (status) {
+    case Status.OPEN: {
+      return openTicket(ticketId);
+    }
+    case Status.CLOSED: {
+      return closeTicket(ticketId);
+    }
+    case Status.IN_PROGRESS: {
+      if (!ticketInProgressBodyDTO) {
+        throw new Error('Specify expert and priority');
+      }
+      return inProgessTicket(ticketId, ticketInProgressBodyDTO);
+    }
+    case Status.REOPENED: {
+      return reOpenTicket(ticketId);
+    }
+    case Status.RESOLVED: {
+      return resolveTicket(ticketId);
+    }
+  }
 }
 
 export async function inProgessTicket(
