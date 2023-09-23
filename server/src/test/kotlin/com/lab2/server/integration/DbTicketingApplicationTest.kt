@@ -233,25 +233,26 @@ class DbTicketingApplicationTest {
         }
     }
 
-    fun getBearerToken(role: Roles): String {
+    fun login(role: Roles): String? {
         val username =
             if (role === Roles.MANAGER) "bigboss@tickets.admin.com" else if (role === Roles.EXPERT) "mastro.gesualdo@tickets.com" else "luigi.verdi@gmail.com"
         val requestEntity: HttpEntity<LoginDTO> = HttpEntity(LoginDTO(username, "password"))
         val resp = restTemplate.postForEntity(
             "/login",
             requestEntity,
-            TokenDTO::class.java
+            String::class.java
         )
-        return "Bearer " + resp.body?.access_token
+
+        return resp.headers.getFirst(HttpHeaders.SET_COOKIE)
     }
 
     private inline fun <reified T> getRequest(path: String, role: Roles? = null): ResponseEntity<T> {
         val headers = HttpHeaders()
         if (role !== null) {
-            headers.set(
-                "Authorization",
-                getBearerToken(role)
-            )
+            val cookie = login(role)
+            if (cookie != null) {
+                headers.add(HttpHeaders.COOKIE, cookie)
+            }
         }
         val getEntity: HttpEntity<String> = HttpEntity(null, headers)
         return restTemplate.exchange(
@@ -265,10 +266,10 @@ class DbTicketingApplicationTest {
     private inline fun <R, reified T> postRequest(path: String, body: R?, role: Roles? = null): ResponseEntity<T> {
         val headers = HttpHeaders()
         if (role !== null) {
-            headers.set(
-                "Authorization",
-                getBearerToken(role)
-            )
+            val cookie = login(role)
+            if (cookie != null) {
+                headers.add(HttpHeaders.COOKIE, cookie)
+            }
         }
         headers.contentType = MediaType.APPLICATION_JSON
         val postEntity: HttpEntity<R> = HttpEntity(body, headers)
@@ -282,10 +283,10 @@ class DbTicketingApplicationTest {
     private inline fun <R, reified T> putRequest(path: String, body: R?, role: Roles? = null): ResponseEntity<T> {
         val headers = HttpHeaders()
         if (role !== null) {
-            headers.set(
-                "Authorization",
-                getBearerToken(role)
-            )
+            val cookie = login(role)
+            if (cookie != null) {
+                headers.add(HttpHeaders.COOKIE, cookie)
+            }
         }
         val postEntity: HttpEntity<R> = HttpEntity(body, headers)
         return restTemplate.exchange(
@@ -299,10 +300,10 @@ class DbTicketingApplicationTest {
     private inline fun <R, reified T> deleteRequest(path: String, body: R?, role: Roles? = null): ResponseEntity<T> {
         val headers = HttpHeaders()
         if (role !== null) {
-            headers.set(
-                "Authorization",
-                getBearerToken(role)
-            )
+            val cookie = login(role)
+            if (cookie != null) {
+                headers.add(HttpHeaders.COOKIE, cookie)
+            }
         }
         val deleteEntity: HttpEntity<R> = HttpEntity(body, headers)
         return restTemplate.exchange(

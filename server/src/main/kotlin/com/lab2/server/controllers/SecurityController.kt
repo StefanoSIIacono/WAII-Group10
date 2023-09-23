@@ -5,6 +5,8 @@ import com.lab2.server.dto.*
 import com.lab2.server.exceptionsHandler.exceptions.*
 import com.lab2.server.services.SecurityService
 import io.micrometer.observation.annotation.Observed
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
 import lombok.extern.slf4j.Slf4j
 import org.springframework.http.HttpStatus
@@ -37,8 +39,12 @@ class SecurityController(
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    fun login(@RequestBody(required = true) body: LoginDTO): TokenDTO {
-        return securityService.login(body)
+    fun login(@RequestBody(required = true) body: LoginDTO, response: HttpServletResponse) {
+        val jwt = securityService.login(body)
+        val cookie = Cookie("token", jwt.access_token)
+        cookie.secure = false
+        cookie.isHttpOnly = true
+        response.addCookie(cookie)
     }
 
     @GetMapping("/me")
