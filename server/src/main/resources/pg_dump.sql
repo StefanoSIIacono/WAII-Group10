@@ -25,11 +25,10 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.addresses (
-    address_id character varying(255) NOT NULL,
+    id bigint NOT NULL,
     city character varying(255),
     country character varying(255),
-    house_number character varying(255),
-    street character varying(255),
+    address character varying(255),
     zip_code character varying(255),
     profile_email character varying(255)
 );
@@ -37,13 +36,23 @@ CREATE TABLE public.addresses (
 
 ALTER TABLE public.addresses OWNER TO postgres;
 
+CREATE SEQUENCE public.addresses_seq
+    START WITH 1
+    INCREMENT BY 50
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.addresses_seq OWNER TO postgres;
+
 --
 -- Name: attachments; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.attachments (
     id bigint NOT NULL,
-    attachment bytea,
+    attachment character varying(255),
     content_type character varying(255),
     size smallint NOT NULL,
     message_id bigint
@@ -72,7 +81,7 @@ ALTER TABLE public.attachments_seq OWNER TO postgres;
 
 CREATE TABLE public.expert_expertise (
     expert_email character varying(255) NOT NULL,
-    expertise_id bigint NOT NULL
+    expertise_field character varying(255)  NOT NULL
 );
 
 
@@ -83,26 +92,11 @@ ALTER TABLE public.expert_expertise OWNER TO postgres;
 --
 
 CREATE TABLE public.expertises (
-    id bigint NOT NULL,
-    field character varying(255)
+    field character varying(255) NOT NULL
 );
 
 
 ALTER TABLE public.expertises OWNER TO postgres;
-
---
--- Name: expertises_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.expertises_seq
-    START WITH 1
-    INCREMENT BY 50
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.expertises_seq OWNER TO postgres;
 
 --
 -- Name: experts; Type: TABLE; Schema: public; Owner: postgres
@@ -164,6 +158,7 @@ ALTER TABLE public.managers_seq OWNER TO postgres;
 
 CREATE TABLE public.messages (
     id bigint NOT NULL,
+    index int NOT NULL,
     body character varying(255),
     "timestamp" timestamp(6) without time zone,
     expert_email character varying(255),
@@ -187,7 +182,7 @@ CREATE SEQUENCE public.messages_seq
 
 ALTER TABLE public.messages_seq OWNER TO postgres;
 
-CREATE INDEX idx_paging ON messages
+CREATE INDEX idx_paging ON public.messages
     (
     ticket_id,
     timestamp DESC
@@ -271,10 +266,12 @@ CREATE TABLE public.tickets (
     id bigint NOT NULL,
     obj character varying(255),
     priority character varying(255),
-    arg_id bigint,
+    arg_field character varying(255),
     expert_email character varying(255),
     product_id character varying(255),
-    profile_email character varying(255)
+    profile_email character varying(255),
+    last_read_message_index_expert int NOT NULL,
+    last_read_message_index_profile int NOT NULL
 );
 
 
@@ -298,10 +295,10 @@ ALTER TABLE public.tickets_seq OWNER TO postgres;
 -- Data for Name: addresses; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.addresses (address_id, city, country, house_number, street, zip_code, profile_email) FROM stdin;
-1	turin	italy	12	via vigone	10138	mario.rossi@gmail.com
-2	narnia	italy	2	via narnia	98172	luigi.verdi@gmail.com
-3	scampia	italy	18	via mun	12121	sergio.bianchi@gmail.com
+COPY public.addresses (id, city, country, address, zip_code, profile_email) FROM stdin;
+1	turin	italy	via vigone 12	10138	mario.rossi@gmail.com
+2	narnia	italy	via narnia 2	98172	luigi.verdi@gmail.com
+3	scampia	italy	via mun 18	12121	sergio.bianchi@gmail.com
 \.
 
 
@@ -317,11 +314,11 @@ COPY public.attachments (id, attachment, content_type, size, message_id) FROM st
 -- Data for Name: expert_expertise; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.expert_expertise (expert_email, expertise_id) FROM stdin;
-gino.cuccagno@tickets.com	2
-mohamed.letija@tickets.com	3
-pino.paolino@tickets.com	4
-mastro.gesualdo@tickets.com	1
+COPY public.expert_expertise (expert_email, expertise_field) FROM stdin;
+gino.cuccagno@tickets.com	DAMAGED-PRODUCT
+mohamed.letija@tickets.com	COMPUTER
+pino.paolino@tickets.com	ELECTRONIC
+mastro.gesualdo@tickets.com	WRONG-DELIVERY
 \.
 
 
@@ -329,13 +326,13 @@ mastro.gesualdo@tickets.com	1
 -- Data for Name: expertises; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.expertises (id, field) FROM stdin;
-1	WRONG-DELIVERY
-2	DAMAGED-PRODUCT
-3	COMPUTER
-4	ELECTRONIC
-5	MECHANICAL
-6	ELECTRIC
+COPY public.expertises (field) FROM stdin;
+WRONG-DELIVERY
+DAMAGED-PRODUCT
+COMPUTER
+ELECTRONIC
+MECHANICAL
+ELECTRIC
 \.
 
 
@@ -365,7 +362,7 @@ bigboss@tickets.admin.com	BIG	BOSS
 -- Data for Name: messages; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.messages (id, body, "timestamp", expert_email, ticket_id) FROM stdin;
+COPY public.messages (id, "index", body, "timestamp", expert_email, ticket_id) FROM stdin;
 \.
 
 
@@ -415,10 +412,10 @@ COPY public.statuses (id, status, status_changer, "timestamp", expert_email, tic
 -- Data for Name: tickets; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.tickets (id, obj, priority, arg_id, expert_email, product_id, profile_email) FROM stdin;
-1	obj	LOW	1	mastro.gesualdo@tickets.com	9781292204482	mario.rossi@gmail.com
-2	i need help	HIGH	3	mohamed.letija@tickets.com	9786420945091	mario.rossi@gmail.com
-3	you ruined my birthday	MEDIUM	4	pino.paolino@tickets.com	9781617137080	luigi.verdi@gmail.com
+COPY public.tickets (id, obj, priority, arg_field, expert_email, product_id, profile_email, last_read_message_index_expert, last_read_message_index_profile) FROM stdin;
+1	obj	LOW	WRONG-DELIVERY	mastro.gesualdo@tickets.com	9781292204482	mario.rossi@gmail.com	0	0
+2	i need help	HIGH	COMPUTER	mohamed.letija@tickets.com	9786420945091	mario.rossi@gmail.com	0	0
+3	you ruined my birthday	MEDIUM	ELECTRONIC	pino.paolino@tickets.com	9781617137080	luigi.verdi@gmail.com	0	0
 \.
 
 
@@ -430,17 +427,13 @@ SELECT pg_catalog.setval('public.attachments_seq', 1, false);
 
 
 --
--- Name: expertises_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.expertises_seq', 1, false);
-
-
---
 -- Name: experts_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.experts_seq', 1, false);
+
+
+SELECT pg_catalog.setval('public.addresses_seq', 1, false);
 
 
 --
@@ -483,7 +476,7 @@ SELECT pg_catalog.setval('public.tickets_seq', 1, false);
 --
 
 ALTER TABLE ONLY public.addresses
-    ADD CONSTRAINT addresses_pkey PRIMARY KEY (address_id);
+    ADD CONSTRAINT addresses_pkey PRIMARY KEY (id);
 
 
 --
@@ -499,7 +492,7 @@ ALTER TABLE ONLY public.attachments
 --
 
 ALTER TABLE ONLY public.expert_expertise
-    ADD CONSTRAINT expert_expertise_pkey PRIMARY KEY (expert_email, expertise_id);
+    ADD CONSTRAINT expert_expertise_pkey PRIMARY KEY (expert_email, expertise_field);
 
 
 --
@@ -507,7 +500,7 @@ ALTER TABLE ONLY public.expert_expertise
 --
 
 ALTER TABLE ONLY public.expertises
-    ADD CONSTRAINT expertises_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT expertises_pkey PRIMARY KEY (field);
 
 
 --
@@ -567,14 +560,6 @@ ALTER TABLE ONLY public.tickets
 
 
 --
--- Name: expertises uk_3600doxk9hy6emdkrho38epjk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.expertises
-    ADD CONSTRAINT uk_3600doxk9hy6emdkrho38epjk UNIQUE (field);
-
-
---
 -- Name: messages fk3jvl9mj8r5ao5vlfgq6gsnnyt; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -587,7 +572,7 @@ ALTER TABLE ONLY public.messages
 --
 
 ALTER TABLE ONLY public.tickets
-    ADD CONSTRAINT fk4vad8oe6n0d1yflqkd4sj13as FOREIGN KEY (arg_id) REFERENCES public.expertises(id);
+    ADD CONSTRAINT fk4vad8oe6n0d1yflqkd4sj13as FOREIGN KEY (arg_field) REFERENCES public.expertises(field);
 
 
 --
@@ -667,7 +652,7 @@ ALTER TABLE ONLY public.expert_expertise
 --
 
 ALTER TABLE ONLY public.expert_expertise
-    ADD CONSTRAINT fkrh70nqipdmx0hcpx12w5u5fqt FOREIGN KEY (expertise_id) REFERENCES public.expertises(id);
+    ADD CONSTRAINT fkrh70nqipdmx0hcpx12w5u5fqt FOREIGN KEY (expertise_field) REFERENCES public.expertises(field);
 
 
 --
