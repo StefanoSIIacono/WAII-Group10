@@ -7,13 +7,7 @@ data class ExpertDTO(
     val name: String,
     val surname: String,
     val expertises: MutableSet<ExpertiseDTO> = mutableSetOf(),
-    var changedStatuses: MutableList<TicketStatusDTO> = mutableListOf()
 )
-{
-    fun addExpertiseDTO(e: ExpertiseDTO) {
-        this.expertises.add(e)
-    }
-}
 
 data class CreateExpertDTO(
     val email: String,
@@ -28,7 +22,7 @@ fun Expert.toDTO(): ExpertDTO {
         this.email,
         this.name,
         this.surname,
-        this.expertises.map { it.toDTO()}.toMutableSet()
+        this.expertises.map { it.toDTO() }.toMutableSet()
     )
 }
 

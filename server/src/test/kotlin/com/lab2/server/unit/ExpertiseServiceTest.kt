@@ -1,8 +1,11 @@
-package com.lab2.server.unitTest
+package com.lab2.server.unit
 
 import com.lab2.server.data.Expertise
+import com.lab2.server.dto.PagedDTO
+import com.lab2.server.dto.PagedMetadata
 import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.DuplicatedExpertiseException
+import com.lab2.server.exceptionsHandler.exceptions.ExpertiseNotFoundException
 import com.lab2.server.repositories.ExpertiseRepository
 import com.lab2.server.serviceImpl.ExpertiseServiceImpl
 import io.mockk.every
@@ -11,25 +14,37 @@ import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 
 class ExpertiseServiceTest {
     private val repository = mockk<ExpertiseRepository>()
 
     @Test
     fun getAllTest() {
-        val expertiseList = mutableListOf(
-            Expertise("Backend"),
-            Expertise("Frontend")
+        val expertisePage = PageImpl(
+            listOf(
+                Expertise("Backend"),
+                Expertise("Frontend")
+            ), PageRequest.of(0, 100, Sort.by("field")), 2
         )
-        every { repository.findAll() } returns expertiseList
+        every { repository.findAll(PageRequest.of(0, 100, Sort.by("field"))) } returns expertisePage
 
         val service = ExpertiseServiceImpl(repository)
         // when
-        val result = service.getAll()
+        val result = service.getAllPaginated(0, 100)
 
         // then
-        verify(exactly = 1) { repository.findAll() }
-        assertEquals(expertiseList.map { it.toDTO() }, result)
+        verify(exactly = 1) { repository.findAll(PageRequest.of(0, 100, Sort.by("field"))) }
+        assertEquals(
+            PagedDTO(
+                PagedMetadata(
+                    expertisePage.number + 1,
+                    expertisePage.totalPages,
+                    expertisePage.numberOfElements
+                ), expertisePage.content.map { it.toDTO() }), result
+        )
     }
 
     @Test
@@ -54,11 +69,14 @@ class ExpertiseServiceTest {
 
         val service = ExpertiseServiceImpl(repository)
         // when
-        val result = service.getExpertise("Backend")
+        try {
+            service.getExpertise("Backend")
+        } catch (e: ExpertiseNotFoundException) {
+            assertEquals("Expertise doesn't exists!", e.message)
+        }
 
         // then
         verify(exactly = 1) { repository.findByField("Backend") }
-        assertEquals(null, result)
     }
 
     @Test
