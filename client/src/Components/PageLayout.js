@@ -1,10 +1,22 @@
-import { Col, Container, Row, Alert } from "react-bootstrap";
-import { SidebarProd, SidebarProf } from "./Sidebar";
-import { ProductsTable, ProfileTable, ProductTable } from "./Tables";
+import {Col, Container, Row, Alert, Button} from "react-bootstrap";
+import { SidebarProd,
+    //SidebarProf,
+    SidebarTic} from "./Sidebar";
+import { ProductsTable, ProfileTable, ExpertTable, ProductTable, TicketsTable } from "./Tables";
 import { MyNavbar } from "./Navbar";
 import { Outlet } from "react-router-dom";
-import { AddProfileForm, EditProfileForm, GetProfileForm, GetProductForm } from "./Forms";
-
+import {
+    SignupForm,
+    EditProfileForm,
+    GetProfileForm,
+    GetExpertForm,
+    GetProductForm,
+    AddTicketForm,
+    LoginForm,
+    AddExpertForm
+} from "./Forms";
+import { Box } from "./ManagerDashboardBox.js"
+import {useState} from "react";
 
 function HomePage() {
   return (<Container className="Home">
@@ -30,6 +42,7 @@ function ProductsPage(props) {
     </div>
   );
 }
+
 function GetProductPage(props) {
   return (
     <div><Row>
@@ -47,31 +60,75 @@ function GetProductPage(props) {
 }
 
 function ProfilesPage(props) {
+
+    const [email, setEmail] = useState('');
+
+    const changeEmail = (email) => {
+        setEmail(email)
+    }
+
+    const handleClean = () => {
+        props.setEdit(false)
+        props.readProfileByMail(null)
+        setEmail('')
+    }
+
   return (
     <div>
       <Row>
-        <Col xs={3} className="Menu">
-          <SidebarProf edit={props.edit} setEdit={props.setEdit} />
-        </Col>
         <Col className="ProTitle" xs={8}>
-          <h1>Profile:</h1>
+          <h1>Profiles:</h1>
           <h2>Insert the profile email:</h2>
-          <GetProfileForm readProfileByMail={props.readProfileByMail} setEdit={props.setEdit} />
-          <ProfileTable profile={props.profile} />
+          <GetProfileForm readProfileByMail={props.readProfileByMail} setEdit={props.setEdit}
+                          setProfile={props.setProfile} email={email} changeEmail={changeEmail}/>
+          <Button align='right' variant='danger' onClick={handleClean}>Clean</Button>
+          <ProfileTable profiles={props.profiles} profile={props.profile} setEdit={props.setEdit}/>
         </Col>
+
       </Row>
     </div>
   );
 }
 
-function AddProfilePage(props) {
+function ExpertsPage(props) {
+
+    const [email, setEmail] = useState('');
+
+    const changeEmail = (email) => {
+        setEmail(email)
+    }
+
+    const handleClean = () => {
+        props.setEdit(false)
+        props.readExpertByMail(null)
+        setEmail('')
+    }
+
+    return (
+        <div>
+            <Row>
+                <Col className="ExpTitle" xs={8}>
+                    <h1>Experts:</h1>
+                    <h2>Insert the expert email:</h2>
+                    <GetExpertForm readExpertByMail={props.readExpertByMail} setEdit={props.setEdit}
+                                    setExpert={props.setExpert} email={email} changeEmail={changeEmail}/>
+                    <Button align='right' variant='danger' onClick={handleClean}>Clean</Button>
+                    <ExpertTable experts={props.experts} expert={props.expert} setEdit={props.setEdit}/>
+                </Col>
+
+            </Row>
+        </div>
+    );
+}
+
+function SignupPage(props) {
   return (
     <Row>
       <Col>
         <div>
-          <h1 className="ProTitle">Add profile</h1>
-          <AddProfileForm
-            addProfile={props.addProfile}
+          <h1 className="ProTitle">Sign up</h1>
+          <SignupForm
+            signup={props.signup}
           />
         </div>
       </Col>
@@ -99,10 +156,86 @@ function EditProfilePage(props) {
   );
 }
 
+function TicketsPage(props) {
+  return (
+    <div><Row>
+      <Col xs={3} className="Menu">
+        <SidebarTic />
+      </Col>
+      <Col className="ProTitle" xs={8}>
+        <h1>Tickets:</h1>
+        <div className="TableContainer">
+          <TicketsTable className="ProTable" tickets={props.tickets} />
+        </div>
+      </Col>
+    </Row>
+    </div>
+  );
+}
+
+function CreateTicketPage(props) {
+  return (
+    <Row>
+      <Col>
+        <div>
+          <h1 className="ProTitle">Add ticket</h1>
+          <AddTicketForm
+            addTicket={props.addTicket}
+          />
+        </div>
+      </Col>
+    </Row>
+  );
+}
+
+// NUOVO
+function CreateExpertPage(props) {
+    return (
+        <Row>
+            <Col>
+                <div>
+                    <h1 className="ProTitle">Add expert</h1>
+                    <AddExpertForm
+                        addExpert={props.addExpert}
+                        expertises={props.expertises}
+                    />
+                </div>
+            </Col>
+        </Row>
+    );
+}
+
+// NUOVO
+function ManagerDashboard(props){
+    return (
+        <div>
+            <h1 style={{color: 'white'}}>Dashboard</h1>
+            <div className="box-container">
+                <Box title="Homepage" linkTo="/manager" />
+                <Box title="Manage Experts" linkTo="/manager/experts"/>
+            </div>
+            <div className="box-container">
+                <Box title="Manage Tickets" linkTo="/tickets"/>
+                <Box title="Manage Profiles" linkTo="/profiles"/>
+            </div>
+        </div>
+    );
+}
+
+function LoginPage(props) {
+  return (
+    <Container className="Auth-form-container">
+      <Row className="align-items-center Auth-form" class="fill">
+        <Col md={{ span: 6, offset: 3 }}><LoginForm login={props.login} /></Col>
+      </Row>
+    </Container>
+  );
+}
+
 function AppLayout(props) {
   return (
     <div>
-      <MyNavbar />
+      <MyNavbar loggedIn={props.loggedIn} handleLogout={props.handleLogout} text="Login" />
       <div style={{
         backgroundImage: `url("../background.jpg")`,
         backgroundPosition: 'center',
@@ -121,4 +254,18 @@ function AppLayout(props) {
     </div>
   )
 }
-export { AppLayout, HomePage, ProfilesPage, ProductsPage, AddProfilePage, EditProfilePage, GetProductPage }
+export {
+    AppLayout,
+    HomePage,
+    ProfilesPage,
+    ExpertsPage,
+    ProductsPage,
+    SignupPage,
+    EditProfilePage,
+    GetProductPage,
+    TicketsPage,
+    CreateTicketPage,
+    CreateExpertPage,
+    ManagerDashboard,
+    LoginPage
+}

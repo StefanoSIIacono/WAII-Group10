@@ -1,12 +1,14 @@
 import React from 'react';
-import { Container, Navbar} from 'react-bootstrap';
+import { Container, Navbar, Button} from 'react-bootstrap';
 import {TicketDetailed } from 'react-bootstrap-icons';
 import { NavLink } from 'react-router-dom'
+import {LogoutButton} from './Forms'
 
 import 'bootstrap/dist/css/bootstrap.css';
 import '../App.css'
 
-const MyNavbar = () => {
+// TODO: if manager is logged in, the home button redirect to the dashboard
+const MyNavbar = (props) => {
     return (
         <Navbar className="Navbar" collapseOnSelect expand="lg" bg="dark" variant="dark">
             <Container fluid>
@@ -29,10 +31,23 @@ const MyNavbar = () => {
                     </Navbar.Brand>
                     </NavLink>
                     <NavLink to='/profiles' className='navItem' >
-                    <Navbar.Brand>
+                    <Navbar.Brand style={{marginRight: '10vh'}}>
                         Profiles
                     </Navbar.Brand>
                     </NavLink>
+                    <NavLink to='/tickets' className='navItem' >
+                    <Navbar.Brand>
+                        Tickets
+                    </Navbar.Brand>
+                    </NavLink>
+                    <Navbar.Text>
+                        {props.loggedIn ? <LogoutButton logout={props.handleLogout} /> : (
+                            <>
+                            <NavLink to="/signup"> <Button variant="outline-light" size="lg">Signup</Button></NavLink>
+                            <NavLink to="/login"><Button variant="outline-light" size="lg">{props.text}</Button></NavLink>
+                        </>
+                        )}
+                    </ Navbar.Text>
                 </Navbar.Collapse>
             </Container>
         </Navbar>

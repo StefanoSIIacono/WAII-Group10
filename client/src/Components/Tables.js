@@ -1,7 +1,8 @@
 import { Table, Col, Row} from "react-bootstrap";
-import { ProductRow, ProfileRow } from "./Rows";
+import { ProductRow, ProfileRow, ExpertRow, TicketRow} from "./Rows";
 
 function ProductsTable(props) {
+
   return <>
     <Table responsive hover className="TableStuff" >
           <h2><Row>
@@ -18,6 +19,7 @@ function ProductsTable(props) {
     </Table>
   </>
 }
+
 function ProductTable(props) {
   return <>
     <Table responsive className="TableStuff">
@@ -36,6 +38,7 @@ function ProductTable(props) {
 }
 
 function ProfileTable(props) {
+
   return <>
     <Table responsive className="TableStuff">
       <thead>
@@ -46,11 +49,57 @@ function ProfileTable(props) {
         </tr>
       </thead>
       <tbody>
-        <ProfileRow key={props.profile.email} profile={props.profile} />
+      {!props.profile ? props.profiles.map((p) => (<ProfileRow classname="RowStyle" key={p.email} profile={p} />)) :
+          <ProfileRow classname="RowStyle" key={props.profile.email} profile={props.profile} setEdit={props.setEdit} />
+      }
       </tbody>
     </Table>
   </>
 }
 
+function ExpertTable(props) {
 
-export { ProductsTable, ProfileTable, ProductTable };
+  return <>
+    <Table responsive className="TableStuff">
+      <thead>
+      <tr>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Surname</th>
+      </tr>
+      </thead>
+      <tbody>
+      {!props.expert ? props.experts.map((e) => (<ExpertRow classname="RowStyle" key={e.email} expert={e} />)) :
+          <ExpertRow classname="RowStyle" key={props.expert.email} expert={props.expert} setEdit={props.setEdit} />
+      }
+      </tbody>
+    </Table>
+  </>
+}
+
+function TicketsTable(props) {
+  return <>
+    <Table responsive hover className="TableStuff" >
+          <h2><Row>
+            <Col>ID</Col>
+            <Col>Object</Col>
+            <Col>Argument</Col>
+            <Col>Object</Col>
+            <Col>Expert</Col>
+            <Col>Product</Col>
+            <Col>Priority</Col>
+            <Col>Status</Col>
+            <Col>Messages</Col>
+          </Row>
+          </h2>
+        <div className="ScrollB">
+          <tbody >
+            {props.tickets.map((p) => (<TicketRow classname="RowStyle" key={props.ticket.ticketI} ticket={props.ticket} />))}
+          </tbody>
+        </div>
+    </Table>
+  </>
+}
+
+
+export { ProductsTable, ProfileTable, ExpertTable, ProductTable, TicketsTable};

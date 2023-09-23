@@ -14,14 +14,25 @@ function SidebarProd(props) {
     )
 }
 
-function SidebarProf(props) {
+/*function SidebarProf(props) {
     return (
         <ListGroup as="ul" className="Drawer">
             <ListGroup.Item as="li" variant="dark">GetFromMail</ListGroup.Item>
-            { props.edit && <NavLink to={'/editProfile'}  className="Drawer-li"><ListGroup.Item as="li">Put</ListGroup.Item></NavLink>}
-            <NavLink to={'/addProfile'}  className="Drawer-li"><ListGroup.Item as="li">Post</ListGroup.Item></NavLink>
+            </ListGroup>
+    )
+}*/
+
+function SidebarTic(props) {
+    return (
+        <ListGroup as="ul" className="Drawer">
+           <ListGroup as="ul" className="Drawer">
+            <NavLink to={'/tickets'}  className="Drawer-li"><ListGroup.Item as="li" variant="dark" > GetAll</ListGroup.Item></NavLink>
+            <NavLink to={'/createTicket'}  className="Drawer-li"><ListGroup.Item as="li">CreateTicket</ListGroup.Item></NavLink>
+        </ListGroup>
         </ListGroup>
     )
 }
 
-export { SidebarProd, SidebarProf };
+export { SidebarProd,
+    //SidebarProf,
+    SidebarTic};

@@ -11,7 +11,6 @@ import jakarta.validation.constraints.Min
 import lombok.extern.slf4j.Slf4j
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.http.HttpStatus
-import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -52,7 +51,7 @@ class ExpertController(private val expertService: ExpertService) {
 
     @PutMapping("/experts/{email}/expertise")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("MANAGER")
+    //@Secured("MANAGER")
     @Transactional
     fun addExpertise(@PathVariable email: String, @RequestBody(required = true) expertise: ExpertiseDTO) {
         expertService.addExpertiseToExpert(email, expertise.field)
