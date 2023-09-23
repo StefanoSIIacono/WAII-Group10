@@ -15,20 +15,22 @@ import java.util.stream.Stream
 @Component
 class JwtAuthConverter(
 
-        private val properties: JwtAuthConverterProperties) :
+    private val properties: JwtAuthConverterProperties
+) :
     Converter<Jwt?, AbstractAuthenticationToken?> {
 
     private val jwtGrantedAuthoritiesConverter = JwtGrantedAuthoritiesConverter()
     override fun convert(jwt: Jwt): AbstractAuthenticationToken {
 
         val authorities: Collection<GrantedAuthority> = Stream
-                .concat(jwtGrantedAuthoritiesConverter
-                            .convert(jwt)!!
-                            .stream(),
-                        extractResourceRoles(jwt)
-                            .stream()
-                )
-                .collect(Collectors.toSet())
+            .concat(
+                jwtGrantedAuthoritiesConverter
+                    .convert(jwt)!!
+                    .stream(),
+                extractResourceRoles(jwt)
+                    .stream()
+            )
+            .collect(Collectors.toSet())
         return JwtAuthenticationToken(jwt, authorities, getPrincipalClaimName(jwt))
     }
 

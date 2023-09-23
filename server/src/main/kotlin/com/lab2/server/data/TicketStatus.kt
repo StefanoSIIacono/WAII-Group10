@@ -5,26 +5,20 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "statuses")
-class TicketStatus (
+class TicketStatus(
 
     var status: Status,
 
     @Temporal(TemporalType.TIMESTAMP)
     val timestamp: java.util.Date,
 
+    ) : EntityBase<Long>() {
     @ManyToOne
-    var ticket: Ticket,
+    lateinit var ticket: Ticket
 
     @Enumerated(value = EnumType.STRING)
-    val statusChanger: StatusChanger = StatusChanger.PROFILE,
+    lateinit var statusChanger: Roles
 
     @ManyToOne
-    var expert: Expert? = null,
-
-): EntityBase<Long>()
-
-/*
-fun TicketStatusDTO.toTicketStatus(): TicketStatus {
-    return TicketStatus(status, timestamp, ticket, statusChanger, expert?.toExpert())
+    var expert: Expert? = null
 }
-*/

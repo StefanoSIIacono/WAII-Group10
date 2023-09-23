@@ -1,18 +1,16 @@
 package com.lab2.server.services
 
 import com.lab2.server.data.Expert
-import com.lab2.server.data.Ticket
-import com.lab2.server.dto.CreateExpertDTO
 import com.lab2.server.dto.ExpertDTO
-import com.lab2.server.dto.ExpertiseDTO
+import com.lab2.server.dto.PagedDTO
 
 interface ExpertService {
 
-    fun getAll(): MutableSet<ExpertDTO>
-    fun getExpertByEmail(email: String): ExpertDTO?
-    fun getExpertisesByExpert(email: String): MutableSet<ExpertiseDTO>
-    fun insertExpert(expert: ExpertDTO, expertises: MutableSet<String>?)
+    fun getAllPaginated(page: Int, offset: Int): PagedDTO<ExpertDTO>
+    fun searchByEmailPaginated(email: String, page: Int, offset: Int): PagedDTO<ExpertDTO>
+    fun getExpertByEmail(email: String): ExpertDTO
+    fun insertExpert(expert: ExpertDTO)
     fun addExpertiseToExpert(expertEmail: String, expertise: String)
-
-    fun addTicketToExpert(expert: Expert, ticket: Ticket)
+    fun removeExpertiseFromExpert(expertEmail: String, expertise: String)
+    fun unsafeGetExpertByEmail(email: String): Expert?
 }

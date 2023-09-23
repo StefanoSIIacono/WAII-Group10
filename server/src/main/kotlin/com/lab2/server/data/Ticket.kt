@@ -3,17 +3,15 @@ package com.lab2.server.data
 import jakarta.persistence.*
 
 @Entity
-@Table (name = "tickets")
-class Ticket (
-
-
+@Table(name = "tickets")
+class Ticket(
     val obj: String,
 
     @ManyToOne
     var arg: Expertise,
 
     @Enumerated(value = EnumType.STRING)
-    var priority: Priority,
+    var priority: Priority?,
 
     @ManyToOne
     var profile: Profile,
@@ -22,48 +20,58 @@ class Ticket (
     var expert: Expert? = null,
 
     @ManyToOne
-    var product: Product
-
-    ): EntityBase<Long>()
-{
+    var product: Product,
+) : EntityBase<Long>() {
     @OneToMany(mappedBy = "ticket", cascade = [CascadeType.ALL])
     var statusHistory = mutableListOf<TicketStatus>()
 
-    @OneToMany(mappedBy = "ticket")
+    @OneToMany(mappedBy = "ticket", cascade = [CascadeType.ALL])
     var messages = mutableListOf<Message>()
 
-    /*fun addMessage(m: Message){
-        m.ticket = this
-        this.messages.add(m)
-    }*/
+    var lastReadMessageIndexProfile: Int = 0
+    var lastReadMessageIndexExpert: Int = 0
 
-    fun removeExpert(){
-        this.expert?.inProgressTickets?.remove(this)
-        this.expert = null
+    fun changePriority(p: Priority) {
+        this.priority = p
     }
 
-    fun addStatus(s: TicketStatus){
-        //s.ticket = this
+    fun addStatus(s: TicketStatus, sc: Roles, e: Expert? = null) {
+        s.ticket = this
+        s.statusChanger = sc
+        s.expert = e
+        this.expert = e
+        if (e === null) {
+            this.expert?.inProgressTickets?.filter { it.id === this.id }
+        } else {
+            e.inProgressTickets.add(this)
+        }
         statusHistory.add(s)
     }
 
-    fun addProduct(p: Product){
-        p.tickets.add(this)
-        this.product = p
+    fun addMessageFromExpert(m: Message) {
+        m.expert = this.expert
+        m.ticket = this
+        this.messages.add(m)
     }
 
-    fun addProfile(p: Profile){
-        p.tickets.add(this)
-        this.profile = p
+    fun addMessageFromProfile(m: Message) {
+        m.expert = null
+        m.ticket = this
+        this.messages.add(m)
     }
 
-    fun newPriority(p: Priority) {
-        this.priority = p
+    fun updateLastReadExpert(index: Int?) {
+        lastReadMessageIndexExpert = index ?: messages.size
+    }
+
+    fun updateLastReadProfile(index: Int?) {
+        lastReadMessageIndexProfile = index ?: messages.size
     }
 }
 
-/*
-fun TicketDTO.toTicket(): Ticket {
-    return Ticket (obj, arg, priority, profile, expert?.toExpert(), product.toProduct())
+enum class Priority {
+    TOASSIGN,
+    LOW,
+    MEDIUM,
+    HIGH
 }
- */

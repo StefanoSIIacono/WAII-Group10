@@ -5,45 +5,38 @@ import jakarta.persistence.*
 
 // ------------------------------- EXPERT -------------------------------
 @Entity
-@Table (name = "experts")
+@Table(name = "experts")
 class Expert(
-        @Id
-        @Column(updatable = false, nullable = false)
-        val email: String,
-        var name: String,
-        var surname: String,
-)
-{
-    @ManyToMany
-    @JoinTable(name = "expert_expertise",
-            joinColumns = [JoinColumn(name="expert_email")],
-            inverseJoinColumns = [JoinColumn(name = "expertise_id")]
+    @Id
+    @Column(updatable = false, nullable = false)
+    val email: String,
+    var name: String,
+    var surname: String,
+    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST])
+    @JoinTable(
+        name = "expert_expertise",
+        joinColumns = [JoinColumn(name = "expert_email")],
+        inverseJoinColumns = [JoinColumn(name = "expertise_field")]
     )
-    val expertises: MutableSet<Expertise> = mutableSetOf()
+    val expertises: MutableSet<Expertise> = mutableSetOf(),
+) {
 
     @OneToMany(mappedBy = "expert")
-    var inProgressTickets = mutableListOf<Ticket>()
+    var inProgressTickets: MutableList<Ticket> = mutableListOf()
 
     @OneToMany(mappedBy = "expert")
-    var changedStatuses = mutableListOf<TicketStatus>()
+    var changedStatuses: MutableList<TicketStatus> = mutableListOf()
 
-    @OneToMany( mappedBy = "expert")
+    @OneToMany(mappedBy = "expert")
     var messages: MutableSet<Message> = mutableSetOf()
-
-    fun addTicket(t: Ticket){
-        t.expert = this
-        this.inProgressTickets.add(t)
-    }
-
-
-    fun addTicketStatus(s: TicketStatus){
-        s.expert = this
-        this.changedStatuses.add(s)
-    }
-
     fun addExpertise(e: Expertise) {
         this.expertises.add(e)
         e.experts.add(this)
+    }
+
+    fun removeExpertise(e: Expertise) {
+        this.expertises.removeAll { it.field == e.field }
+        e.experts.removeAll { it.email == this.email }
     }
 
 }

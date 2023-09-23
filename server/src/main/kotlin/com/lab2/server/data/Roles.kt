@@ -1,6 +1,6 @@
 package com.lab2.server.data
 
-enum class StatusChanger {
+enum class Roles {
     PROFILE,
     EXPERT,
     MANAGER

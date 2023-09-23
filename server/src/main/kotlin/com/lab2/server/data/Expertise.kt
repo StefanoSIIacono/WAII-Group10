@@ -5,32 +5,15 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "expertises")
-class Expertise (
-    @Column(unique = true)
+class Expertise(
+    @Id
+    @Column(updatable = false, nullable = false)
     val field: String
-
-
-): EntityBase<Long>()
-{
-    @OneToMany(mappedBy = "arg")
-    val tickets: MutableSet<Ticket> = mutableSetOf()
-
+) {
     @ManyToMany(mappedBy = "expertises")
     val experts: MutableSet<Expert> = mutableSetOf()
-
-    fun addExpert(e: Expert) {
-        this.experts.add(e)
-        e.expertises.add(this)
-    }
-
-    fun addTicket(t:Ticket){
-        this.tickets.add(t)
-        t.arg=this
-    }
 }
 
 fun ExpertiseDTO.toExpertise(): Expertise {
-    val expertise = Expertise(this.field)
-    expertise.id = this.id
-    return expertise
+    return Expertise(this.field)
 }
