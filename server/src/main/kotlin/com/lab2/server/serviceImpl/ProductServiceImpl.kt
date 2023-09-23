@@ -21,6 +21,13 @@ class ProductServiceImpl(private val productRepository: ProductRepository) : Pro
         return PagedDTO(meta, pageResult.content.map { it.toDTO() })
     }
 
+    override fun searchByNamePaged(name: String, page: Int, offset: Int): PagedDTO<ProductDTO> {
+        val pageResult = productRepository.findByNameContaining(name, PageRequest.of(page, offset, Sort.by("name")))
+        val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
+
+        return PagedDTO(meta, pageResult.content.map { it.toDTO() })
+    }
+
     override fun getProduct(productId: String): ProductDTO {
         return productRepository.findByIdOrNull(productId)?.toDTO()
             ?: throw ProductNotFoundException("Product not found")

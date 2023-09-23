@@ -26,6 +26,17 @@ class ProductController(private val productService: ProductService) {
         return productService.getAllPaged(page - 1, offset)
     }
 
+    @GetMapping("/products/search/{name}")
+    @ResponseStatus(HttpStatus.OK)
+    fun searchByNamePaginated(
+        @PathVariable name: String,
+        @RequestParam(required = false, defaultValue = "1") @Min(1) page: Int,
+        @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
+    ): PagedDTO<ProductDTO> {
+        log.info("Retrieving all products")
+        return productService.searchByNamePaged(name, page - 1, offset)
+    }
+
     @GetMapping("/products/{productId}")
     @ResponseStatus(HttpStatus.OK)
     fun getProduct(@PathVariable productId: String): ProductDTO {

@@ -30,6 +30,18 @@ class ExpertController(private val expertService: ExpertService) {
         return expertService.getAllPaginated(page - 1, offset)
     }
 
+    @GetMapping("/experts/search/{email}")
+    @ResponseStatus(HttpStatus.OK)
+    @Secured("MANAGER")
+    fun searchByEmailPaginated(
+        @PathVariable email: String,
+        @RequestParam(required = false, defaultValue = "1") @Min(1) page: Int,
+        @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
+    ): PagedDTO<ExpertDTO> {
+        log.info("Retrieving all experts")
+        return expertService.searchByEmailPaginated(email, page - 1, offset)
+    }
+
     @GetMapping("/experts/{email}")
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER")

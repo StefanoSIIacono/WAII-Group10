@@ -29,6 +29,18 @@ class ExpertiseController(private val expertiseService: ExpertiseService) {
         return expertiseService.getAllPaginated(page - 1, offset)
     } // THE PROFILE CAN TAKE A LOOK ON THE EXPERTISES FOR TICKET ARGUMENT
 
+    @GetMapping("/expertises/search/{field}")
+    @ResponseStatus(HttpStatus.OK)
+    @Secured("MANAGER", "PROFILE")
+    fun searchByFieldPaginated(
+        @PathVariable field: String,
+        @RequestParam(required = false, defaultValue = "1") @Min(1) page: Int,
+        @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
+    ): PagedDTO<ExpertiseDTO> {
+        log.info("Retrieving all expertises")
+        return expertiseService.searchByFieldPaginated(field, page - 1, offset)
+    }
+
     @GetMapping("/expertises/{field}/experts")
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER")

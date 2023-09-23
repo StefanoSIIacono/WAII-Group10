@@ -28,6 +28,12 @@ class ExpertServiceImpl(
         return PagedDTO(meta, pageResult.content.map { it.toDTO() })
     }
 
+    override fun searchByEmailPaginated(email: String, page: Int, offset: Int): PagedDTO<ExpertDTO> {
+        val pageResult = expertRepository.findByEmailContaining(email, PageRequest.of(page, offset, Sort.by("name")))
+        val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
+        return PagedDTO(meta, pageResult.content.map { it.toDTO() })
+    }
+
     override fun getExpertByEmail(email: String): ExpertDTO {
         return expertRepository.findByIdOrNull(email)?.toDTO() ?: throw ExpertNotFoundException("Expert not found")
     }
