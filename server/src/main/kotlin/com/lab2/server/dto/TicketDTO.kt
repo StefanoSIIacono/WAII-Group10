@@ -8,9 +8,10 @@ data class TicketDTO(
     val obj: String,
     val arg: ExpertiseDTO,
     val priority: Priority?,
-    val profile: String,
-    val expert: String?,
-    val product: String,
+    val profile: ProfileDTO,
+    val creationDate: java.util.Date,
+    val expert: ExpertDTO?,
+    val product: ProductDTO,
     val status: TicketStatusDTO,
     val lastReadMessageIndex: Int?,
 )
@@ -35,9 +36,10 @@ fun Ticket.toDTO(loggedUser: String? = null): TicketDTO {
         this.obj,
         this.arg.toDTO(),
         this.priority,
-        this.profile.email,
-        this.expert?.email,
-        this.product.id,
+        this.profile.toDTO(),
+        this.statusHistory.first().timestamp,
+        this.expert?.toDTO(),
+        this.product.toDTO(),
         this.statusHistory.maxBy { it.timestamp }.toDTO(),
         if (loggedUser == this.profile.email) this.lastReadMessageIndexProfile else (if (loggedUser == this.expert?.email) this.lastReadMessageIndexExpert else null)
     )

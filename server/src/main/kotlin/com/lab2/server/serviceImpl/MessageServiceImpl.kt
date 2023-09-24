@@ -23,7 +23,7 @@ class MessageServiceImpl(
     override fun handleNewMessage(sender: JwtAuthenticationToken, ticketId: Long, messageDTO: BodyMessageDTO) {
         val ticket = ticketingService.unsafeGetTicketByID(ticketId)
             ?: throw TicketNotFoundException("Ticket not found")
-
+        
         if (ticket.expert?.email != sender.name && ticket.profile.email != sender.name) {
             throw TicketNotFoundException("No ticket found")
         }

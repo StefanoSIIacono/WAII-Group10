@@ -13,6 +13,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
 import org.springframework.web.util.WebUtils
 
 
@@ -29,6 +32,7 @@ class WebSecurityConfig(
     @Throws(Exception::class)
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf().disable()
+        http.cors()
         http.authorizeHttpRequests()
             .anyRequest()
             .permitAll()
@@ -41,12 +45,30 @@ class WebSecurityConfig(
     }
 
     fun tokenExtractor(request: HttpServletRequest): String? {
-        if (request.requestURI.startsWith("/login")) {
+        if (request.requestURI.startsWith("/login") || request.requestURI.startsWith("/user/logout")) {
             return null
         }
         val header = request.getHeader(HttpHeaders.AUTHORIZATION)
         if (header != null) return header.replace("Bearer ", "")
         return WebUtils.getCookie(request, "token")?.value
+    }
+
+    @Bean
+    fun corsFilter(): CorsFilter? {
+        val source = UrlBasedCorsConfigurationSource()
+        val config = CorsConfiguration()
+        config.allowCredentials = true;
+        config.addAllowedOrigin("http://localhost:3001")
+        config.addAllowedHeader("*")
+        config.addAllowedMethod("OPTIONS")
+        config.addAllowedMethod("HEAD")
+        config.addAllowedMethod("GET")
+        config.addAllowedMethod("PUT")
+        config.addAllowedMethod("POST")
+        config.addAllowedMethod("DELETE")
+        config.addAllowedMethod("PATCH")
+        source.registerCorsConfiguration("/**", config)
+        return CorsFilter(source)
     }
 
     @Bean

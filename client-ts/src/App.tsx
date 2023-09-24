@@ -7,7 +7,6 @@ import { RegisterForm } from './pages/Register';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { useEffect } from 'react';
 import { checkAuthentication } from './store/slices/authentication';
-//import { TicketPage } from './pages/Ticket';
 import { CreateTicketForm } from './pages/profile/createTicket';
 import { UserProfile } from './pages/profile/profile';
 import { ExpertsDashboard } from './pages/manager/expertsDashboard';
@@ -15,8 +14,7 @@ import { CreateExpertForm } from './pages/manager/createExpert';
 
 function App() {
   const dispatch = useAppDispatch();
-  const { authenticated } = useAppSelector((state) => state.authenticate);
-
+  const { authenticated, loading } = useAppSelector((state) => state.authenticate);
   useEffect(() => {
     dispatch(checkAuthentication());
   }, []);
@@ -24,22 +22,25 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {!authenticated ? (
-          <Route element={<AppLayout />}>
-            <Route path="/*" element={<Navigate to="/dashboard" />} />
-            <Route path="/tickets/new" element={<CreateTicketForm />} />
-            <Route path="/dashboard" element={<Home />} />
-            <Route path="/user" element={<UserProfile />} />
-            <Route path="/dashboard/experts" element={<ExpertsDashboard />} />
-            <Route path="/experts/create" element={<CreateExpertForm />} />
-          </Route>
-        ) : (
-          <>
-            <Route path="/*" element={<Navigate to="/login" />} />
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/register" element={<RegisterForm />} />
-          </>
-        )}
+        {!loading ? (
+          authenticated ? (
+            <Route element={<AppLayout />}>
+              <Route path="/*" element={<Navigate to="/dashboard" />} />
+              <Route path="/tickets/new" element={<CreateTicketForm />} />
+              <Route path="/dashboard" element={<Home />} />
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/experts" element={<ExpertsDashboard />} />
+              <Route path="/experts/new" element={<CreateExpertForm />} />
+              <Route path="/experts/edit/:id" element={<CreateExpertForm />} />
+            </Route>
+          ) : (
+            <>
+              <Route path="/*" element={<Navigate to="/login" />} />
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/register" element={<RegisterForm />} />
+            </>
+          )
+        ) : null}
       </Routes>
     </BrowserRouter>
   );

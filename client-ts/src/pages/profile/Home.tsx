@@ -1,29 +1,38 @@
-import { useEffect, useState } from 'react';
-import { /*useAppDispatch,*/ useAppSelector } from '../../store/hooks';
-//import { getLastTicketsThunk } from '../../store/slices/tickets';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import {
+  getCurrentPageTicketsThunk,
+  getLastTicketsThunk,
+  getNextTicketsThunk,
+  getPreviousTicketsThunk
+} from '../../store/slices/tickets';
 import {
   ExpertDTO,
   MessageDTO,
   Priority,
-  ProductDTO,
+  Roles,
   Status,
-  TicketDTO,
-  TicketInProgressBodyDTO
+  TicketInProgressBodyDTO,
+  validStatusChanges
 } from '../../types';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Button, Badge, Form, Modal } from 'react-bootstrap';
-import { getProduct, getTicketMessages, setTicketStatus } from '../../utils/Api';
+import { addMessage, getTicketMessages, setTicketStatus } from '../../utils/Api';
 import { updateTicketThunk } from '../../store/slices/tickets';
 import { SearchSelect } from '../../components/searchSelect';
+import dayjs from 'dayjs';
+import { Paperclip, Send, XCircle, ArrowLeft, ArrowRight } from 'react-bootstrap-icons';
 
 export function Home() {
-  //const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
+  const hiddenFileInput = useRef<HTMLInputElement>(null);
   //const navigate = useNavigate();
-  const { tickets } = useAppSelector((state) => state.tickets);
+  const { tickets, currentPage, totalPages } = useAppSelector((state) => state.tickets);
   const { user } = useAppSelector((state) => state.authenticate);
-  const [selectedTicket, setSelectedTicket] = useState<TicketDTO | undefined>();
-  const [selectedProducts, setSelectedProducts] = useState<ProductDTO | undefined>();
+  const [selectedTicketId, setSelectedTicketId] = useState<number | undefined>();
   const [selectedMessages, setSelectedMessages] = useState<MessageDTO[] | undefined>();
+
+  const [files, setFiles] = useState<File[]>([]);
 
   const [newMessageBody, setNewMessageBody] = useState('');
 
@@ -32,106 +41,168 @@ export function Home() {
   const [currentInProgressExpertSelection, setCurrentInProgressExpertSelection] = useState<
     ExpertDTO | undefined
   >();
-  const [currentInProgressPrioritySelection, setCurrentInProgressPrioritySelection] = useState<
-    Priority | undefined
-  >();
+  const [currentInProgressPrioritySelection, setCurrentInProgressPrioritySelection] =
+    useState<Priority>(Priority.MEDIUM);
+
+  const selectedTicket = tickets.find((t) => t.id === selectedTicketId);
+  const userRole = user?.role;
+
+  let allowedStatusChanges =
+    userRole === Roles.MANAGER
+      ? [Status.OPEN, Status.CLOSED, Status.RESOLVED, Status.IN_PROGRESS]
+      : userRole === Roles.PROFILE
+      ? [Status.CLOSED, Status.RESOLVED, Status.REOPENED]
+      : [Status.CLOSED, Status.OPEN];
+
+  if (currentStatusValue !== undefined) {
+    allowedStatusChanges = allowedStatusChanges.filter((asc) =>
+      validStatusChanges[currentStatusValue].includes(asc)
+    );
+    if (!allowedStatusChanges.includes(currentStatusValue)) {
+      allowedStatusChanges = [currentStatusValue, ...allowedStatusChanges];
+    }
+  }
 
   useEffect(() => {
-    //dispatch(getLastTicketsThunk());
+    dispatch(getLastTicketsThunk());
   }, []);
 
   useEffect(() => {
     const go = async () => {
       if (selectedTicket) {
-        const messages = await getTicketMessages(selectedTicket.id);
-        const product = await getProduct(selectedTicket.product);
-        setCurrentStatusValue(selectedTicket.status.status);
-        if (messages.success && messages.data?.data) {
-          setSelectedMessages(messages.data?.data);
-        }
-        if (product.success && product.data) {
-          setSelectedProducts(product.data);
+        setCurrentStatusValue(Status[selectedTicket.status.status]);
+        if (userRole !== Roles.MANAGER) {
+          const messages = await getTicketMessages(selectedTicket.id);
+          if (messages.success && messages.data?.data) {
+            setSelectedMessages(messages.data?.data);
+          }
         }
       }
     };
     go();
-    setSelectedProducts({
-      name: 'product1',
-      productId: '1',
-      brand: 'brand1'
-    });
-    setSelectedMessages([
-      {
-        id: 1,
-        index: 0,
-        timestamp: '1',
-        body: 'CIAO COME VA',
-        attachments: [],
-        ticket: 1
-      }
-    ]);
   }, [selectedTicket]);
 
   const updateStatus = async (
     newStatus: Status,
     ticketInProgressBodyDTO?: TicketInProgressBodyDTO
   ) => {
-    console.log(newStatus, Status[0]);
     if (!selectedTicket) {
       return;
     }
     const response = await setTicketStatus(selectedTicket.id, newStatus, ticketInProgressBodyDTO);
     if (response.success) {
-      updateTicketThunk(selectedTicket.id);
+      if (userRole === Roles.EXPERT) {
+        dispatch(getCurrentPageTicketsThunk());
+        return;
+      }
+      dispatch(updateTicketThunk(selectedTicket.id));
     }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-  };
-  /*
-  const rowEvents: { onClick: RowEventHandler<TicketDTO> } = {
-    onClick: (_, row) => {
-      navigate(`/tickets/${row.id}`);
+    if (!selectedTicketId) {
+      return;
+    }
+
+    const request = await addMessage(selectedTicketId, {
+      body: newMessageBody,
+      attachments: await Promise.all(
+        files.map(async (f) => ({
+          attachment: btoa(
+            new Uint8Array(await f.arrayBuffer()).reduce(
+              (data, byte) => data + String.fromCharCode(byte),
+              ''
+            )
+          ),
+          contentType: f.type
+        }))
+      )
+    });
+
+    if (request.success) {
+      setNewMessageBody('');
+      setFiles([]);
+      const messages = await getTicketMessages(selectedTicketId);
+      if (messages.success && messages.data?.data) {
+        setSelectedMessages(messages.data?.data);
+      }
     }
   };
-*/
+
+  const handleUploadClick = () => {
+    if (hiddenFileInput.current) {
+      hiddenFileInput.current.click();
+    }
+  };
+
+  const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files !== null && e.target.files[0]) {
+      const newFile = e.target.files[0];
+      setFiles((oldFiles) => [...oldFiles, newFile]);
+    }
+  };
+
+  const handleDeleteAttachment = (name: string) => {
+    setFiles((oldFiles) => oldFiles.filter((f) => f.name !== name));
+  };
+
   return (
     <div className="ticket-body">
       <div className="ticket-container">
         <div className="ticket-left-container">
           <div className="ticket-left-container-header">
             <h3>Tickets</h3>
-            <Link to="/tickets/new">
-              <Button>New Ticket</Button>
-            </Link>
+            {userRole === Roles.PROFILE && (
+              <Link to="/tickets/new">
+                <Button>New Ticket</Button>
+              </Link>
+            )}
           </div>
           <div className="ticket-left-container-tickets">
-            {tickets.map((t) => (
-              <Container
-                onClick={() => setSelectedTicket(t)}
-                key={t.id}
-                style={selectedTicket?.id === t.id ? { borderColor: 'blue' } : {}}
-                className={`border border-2 ${
-                  selectedTicket?.id === t.id ? 'border-info' : 'border-dark'
-                } rounded fill my-1`}>
-                <Row className="d-flex justify-content-between">
-                  <Col md="auto">{t.obj}</Col>
-                  <Col md="auto">{t.status.timestamp}</Col>
-                </Row>
-                <Row>
-                  <Col md="auto" className="m-2 p-0">
-                    <Badge bg="info">{Status[t.status.status]}</Badge>
-                  </Col>
-                  <Col md="auto" className="m-2 p-0">
-                    <Badge bg="secondary">{t.arg.field}</Badge>
-                  </Col>
-                  <Col md="auto" className="m-2 p-0">
-                    <Badge>{t.priority}</Badge>
-                  </Col>
-                </Row>
-              </Container>
-            ))}
+            {tickets.map((t) => {
+              return (
+                <Container
+                  onClick={() => setSelectedTicketId(t.id)}
+                  key={t.id}
+                  className={`border border-2 ${
+                    selectedTicket?.id === t.id ? 'border-info' : 'border-dark'
+                  } rounded fill my-1 ticket-left-container-ticket`}>
+                  <Row className="d-flex justify-content-between">
+                    <Col className="ellipsis-text">{t.obj}</Col>
+                    <Col md="auto">{dayjs(t.creationDate).format('DD/MM/YYYY HH:mm')}</Col>
+                  </Row>
+                  <Row>
+                    <Col md="auto" className="mx-1 my-2 p-0">
+                      <Badge bg="info">{t.status.status}</Badge>
+                    </Col>
+                    <Col md="auto" className="mx-1 my-2 p-0">
+                      <Badge bg="secondary">{t.arg.field}</Badge>
+                    </Col>
+                    <Col md="auto" className="mx-1 my-2 p-0">
+                      <Badge>{t.priority}</Badge>
+                    </Col>
+                  </Row>
+                </Container>
+              );
+            })}
+          </div>
+          <div className="ticket-left-container-pagination">
+            <Button
+              onClick={() => {
+                dispatch(getPreviousTicketsThunk());
+              }}
+              disabled={currentPage === 1}>
+              <ArrowLeft />
+            </Button>
+            <p>{`Page ${currentPage}`}</p>
+            <Button
+              onClick={() => {
+                dispatch(getNextTicketsThunk());
+              }}
+              disabled={currentPage === totalPages}>
+              <ArrowRight />
+            </Button>
           </div>
         </div>
         <div className="ticket-right-container">
@@ -140,23 +211,31 @@ export function Home() {
               <div className="ticket-right-header">
                 <h1 className="m-0">{`${selectedTicket?.obj}`}</h1>
                 <div className="ticket-right-container-badges">
-                  <Badge bg="primary">{selectedTicket?.arg.field}</Badge>
-                  <Badge bg="info">{selectedTicket && Status[selectedTicket.status.status]}</Badge>
-                  <p className="p-1">{`Last update: ${selectedTicket?.status.timestamp}`}</p>
+                  <Badge bg="info">{selectedTicket?.status.status}</Badge>
+                  <Badge bg="secondary">{selectedTicket?.arg.field}</Badge>
+                  <Badge>{selectedTicket?.priority}</Badge>
+                  <p className="p-1">{`Last status update: ${
+                    selectedTicket
+                      ? dayjs(selectedTicket.status.timestamp).format('DD/MM/YYYY HH:mm')
+                      : ''
+                  }`}</p>
                 </div>
-
+                <p className="my-3">{`Opened by: ${selectedTicket.profile.name} ${selectedTicket.profile.surname} (${selectedTicket.profile.email})`}</p>
                 <div className="ticket-right-container-second-header">
                   <div className="ticket-right-container-product-container">
                     <h5 className="p-0">{'Product'}</h5>
                     <div className="ticket-right-container-product-details">
-                      <h6>{selectedProducts?.name}</h6>
-                      <p>{selectedProducts?.brand}</p>
+                      <h6>{selectedTicket.product.name}</h6>
+                      <p>{selectedTicket.product.brand}</p>
                     </div>
                   </div>
                   <Form.Group controlId="state">
                     <Form.Label>Set ticket status</Form.Label>
                     <Form.Select
                       onChange={(status) => {
+                        if (+status.target.value === currentStatusValue) {
+                          return;
+                        }
                         if (+status.target.value === Status.IN_PROGRESS) {
                           setShowInProgressModal(true);
                           return;
@@ -164,45 +243,115 @@ export function Home() {
                         updateStatus(+status.target.value);
                         setCurrentStatusValue(+status.target.value);
                       }}
+                      disabled={allowedStatusChanges.length < 2}
                       value={currentStatusValue}
                       aria-label="Default select example">
-                      <option value={Status.OPEN}>Open</option>
-                      <option value={Status.CLOSED}>Closed</option>
-                      <option value={Status.IN_PROGRESS}>In progress</option>
+                      {allowedStatusChanges.map((asc) => (
+                        <option key={asc} value={asc}>
+                          {Status[asc]}
+                        </option>
+                      ))}
                     </Form.Select>
                   </Form.Group>
                 </div>
+                {selectedTicket.expert && (
+                  <div className="ticket-right-containe-expert-container">
+                    <p>{`Assigned expert: ${selectedTicket.expert.name} ${
+                      selectedTicket.expert.surname
+                    } ${userRole === Roles.MANAGER ? `(${selectedTicket.expert.email})` : ''}`}</p>
+                  </div>
+                )}
               </div>
-              <div className="ticket-right-messages-container">
-                <div className="ticket-right-chat-container">
-                  {selectedMessages?.map((m) => (
-                    <div key={m.id}>
-                      <div>
-                        <h4>{m.expert?.email ?? user?.email}</h4>
-                        <p>{m.timestamp}</p>
+              {userRole !== Roles.MANAGER && (
+                <div className="ticket-right-messages-container">
+                  <div className="ticket-right-chat-container">
+                    {selectedMessages?.map((m) => (
+                      <div key={m.id} className="border-bottom my-2">
+                        <div>
+                          <h4>
+                            {m.expert
+                              ? `${m.expert.name} ${m.expert.surname}`
+                              : `${selectedTicket.profile.name} ${selectedTicket.profile.surname}`}
+                          </h4>
+                          <p>{dayjs(m.timestamp).format('DD/MM/YYYY HH:mm')}</p>
+                        </div>
+                        <p>{m.body}</p>
+                        {m.attachments.length > 0 && <h6>{'Attachments:'}</h6>}
+                        <div className="ticket-right-attachments-container">
+                          {m.attachments.map((a) => (
+                            <div key={a.id} className="border ticket-right-attachment-container">
+                              {a.contentType.startsWith('image') ? (
+                                <img
+                                  className="ticket-right-attachment-image"
+                                  src={URL.createObjectURL(
+                                    new Blob([
+                                      Uint8Array.from(atob(a.attachment), (c) => c.charCodeAt(0))
+                                    ])
+                                  )}
+                                />
+                              ) : (
+                                <p>File</p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <p>{m.body}</p>
+                    ))}
+                  </div>
+                  <div className="ticket-right-attachments-container">
+                    {files.map((f) => (
+                      <div key={f.name}>
+                        <XCircle
+                          onClick={() => handleDeleteAttachment(f.name)}
+                          className="ticket-right-attachment-close-button"
+                        />
+                        <div className="border ticket-right-attachment-container">
+                          {f.type.startsWith('image') ? (
+                            <img
+                              className="ticket-right-attachment-image"
+                              src={URL.createObjectURL(f)}
+                            />
+                          ) : (
+                            <p>File</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <Form className="ticket-right-messages-form" onSubmit={handleSubmit}>
+                    <Form.Group controlId="body">
+                      <Form.Control
+                        as="textarea"
+                        rows={4}
+                        type="text"
+                        value={newMessageBody}
+                        disabled={currentStatusValue !== Status.IN_PROGRESS}
+                        placeholder="Message"
+                        onChange={(ev) => setNewMessageBody(ev.target.value)}
+                        required
+                      />
+                    </Form.Group>
+                    <div className="ticket-right-messages-button-container">
+                      <Button disabled={currentStatusValue !== Status.IN_PROGRESS} type="submit">
+                        <Send size={20} />
+                      </Button>
+                      <input
+                        onChange={handleUpload}
+                        ref={hiddenFileInput}
+                        accept=".jpg"
+                        type="file"
+                        style={{ display: 'none' }}
+                      />
+                      <Button
+                        variant="secondary"
+                        onClick={handleUploadClick}
+                        disabled={currentStatusValue !== Status.IN_PROGRESS || files.length > 3}>
+                        <Paperclip size={20} />
+                      </Button>
                     </div>
-                  ))}
+                  </Form>
                 </div>
-
-                <Form className="ticket-right-messages-form" onSubmit={handleSubmit}>
-                  <Form.Group controlId="body">
-                    <Form.Control
-                      as="textarea"
-                      rows={4}
-                      type="text"
-                      value={newMessageBody}
-                      placeholder="Message"
-                      onChange={(ev) => setNewMessageBody(ev.target.value)}
-                      required
-                    />
-                  </Form.Group>
-                  <Button className="mt-2 mx-auto w-50" type="submit">
-                    Send
-                  </Button>
-                </Form>
-              </div>
+              )}
             </div>
           )}
         </div>
@@ -222,6 +371,7 @@ export function Home() {
               <Form.Label>Expert</Form.Label>
               <SearchSelect
                 type="experts"
+                expertise={selectedTicket?.arg.field}
                 onSelect={(selected) => setCurrentInProgressExpertSelection(selected as ExpertDTO)}
               />
             </Form.Group>
@@ -231,7 +381,7 @@ export function Home() {
                 onChange={(priority) => {
                   setCurrentInProgressPrioritySelection(+priority.target.value);
                 }}
-                value={currentStatusValue}
+                value={currentInProgressPrioritySelection}
                 aria-label="Default select example">
                 <option value={Priority.HIGH}>High</option>
                 <option value={Priority.MEDIUM}>Medium</option>
@@ -249,6 +399,7 @@ export function Home() {
                 priority: currentInProgressPrioritySelection!
               });
               setCurrentStatusValue(Status.IN_PROGRESS);
+              setShowInProgressModal(false);
             }}
             disabled={!currentInProgressExpertSelection || !currentInProgressPrioritySelection}>
             Confirm

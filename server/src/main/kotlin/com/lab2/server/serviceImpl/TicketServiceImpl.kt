@@ -5,14 +5,15 @@ import com.lab2.server.dto.*
 import com.lab2.server.exceptionsHandler.exceptions.*
 import com.lab2.server.repositories.TicketingRepository
 import com.lab2.server.services.*
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.ws.rs.NotAuthorizedException
+import kotlin.math.ceil
+import kotlin.math.max
+import kotlin.math.min
 
 @Service
 class TicketServiceImpl(
@@ -24,24 +25,35 @@ class TicketServiceImpl(
 ) :
     TicketService {
 
-    override fun getAllPaginated(page: Int, offset: Int, user: JwtAuthenticationToken): PagedDTO<TicketDTO> {
+    override fun getAllPaginated(
+        page: Int,
+        offset: Int,
+        user: JwtAuthenticationToken
+    ): PagedDTO<TicketDTO> {
         val userRole = Roles.values()
             .firstOrNull { sc -> user.authorities.map { it.authority }.contains(sc.name) }
 
-        val pageResult: Page<Ticket> = if (userRole === Roles.MANAGER) {
-            ticketingRepository.findAll(PageRequest.of(page, offset, Sort.by("obj")))
+        val result: List<Ticket> = if (userRole === Roles.MANAGER) {
+            ticketingRepository.findAll()
         } else if (userRole === Roles.EXPERT) {
-            ticketingRepository.findAllByExpertEmail(user.name, PageRequest.of(page, offset, Sort.by("obj")))
+            ticketingRepository.findAllByExpertEmail(user.name)
         } else if (userRole === Roles.PROFILE) {
-            ticketingRepository.findAllByProfileEmail(user.name, PageRequest.of(page, offset, Sort.by("obj")))
+            ticketingRepository.findAllByProfileEmail(user.name)
         } else {
             throw NotAuthorizedException("Not authorized")
         }
 
+        val sortedResult = result.sortedWith(compareBy<Ticket> { it.statusHistory.last().status }.thenBy { it.priority }
+            .thenBy { it.statusHistory.last().timestamp })
 
-        val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
+        val numberOfPages = ceil(sortedResult.size.toDouble() / offset).toInt()
+        val numberOfElements = min(offset, max(0, sortedResult.size - offset * page))
 
-        return PagedDTO(meta, pageResult.content.map { it.toDTO(user.name) })
+        val meta = PagedMetadata(min(page + 1, numberOfPages), numberOfPages, numberOfElements)
+
+        return PagedDTO(
+            meta,
+            sortedResult.subList(page * offset, page * offset + numberOfElements).map { it.toDTO(user.name) })
     }
 
     override fun getTicketByID(ticketId: Long, user: JwtAuthenticationToken): TicketDTO {

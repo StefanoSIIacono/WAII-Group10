@@ -1,13 +1,12 @@
 package com.lab2.server.serviceImpl
 
 import com.lab2.server.data.Expert
-import com.lab2.server.data.toExpertise
+import com.lab2.server.data.Expertise
 import com.lab2.server.dto.ExpertDTO
 import com.lab2.server.dto.PagedDTO
 import com.lab2.server.dto.PagedMetadata
 import com.lab2.server.dto.toDTO
 import com.lab2.server.exceptionsHandler.exceptions.ExpertNotFoundException
-import com.lab2.server.exceptionsHandler.exceptions.ExpertiseNotFoundException
 import com.lab2.server.repositories.ExpertRepository
 import com.lab2.server.services.ExpertService
 import com.lab2.server.services.ExpertiseService
@@ -28,8 +27,20 @@ class ExpertServiceImpl(
         return PagedDTO(meta, pageResult.content.map { it.toDTO() })
     }
 
-    override fun searchByEmailPaginated(email: String, page: Int, offset: Int): PagedDTO<ExpertDTO> {
-        val pageResult = expertRepository.findByEmailContaining(email, PageRequest.of(page, offset, Sort.by("name")))
+    override fun searchByEmailAndExpertisePaginated(
+        email: String,
+        expertise: String?,
+        page: Int,
+        offset: Int
+    ): PagedDTO<ExpertDTO> {
+        val pageResult = if (expertise === null) expertRepository.findByEmailContaining(
+            email,
+            PageRequest.of(page, offset, Sort.by("name"))
+        ) else expertRepository.findByEmailContainingAndExpertisesField(
+            email,
+            expertise,
+            PageRequest.of(page, offset, Sort.by("name"))
+        )
         val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
         return PagedDTO(meta, pageResult.content.map { it.toDTO() })
     }
@@ -44,23 +55,19 @@ class ExpertServiceImpl(
             expert.name,
             expert.surname
         )
-        expert.expertises.forEach { expertEntity.addExpertise(expertiseService.getExpertise(it.field).toExpertise()) }
+        expert.expertises.forEach { expertEntity.addExpertise(Expertise(it.field)) }
         expertRepository.save(expertEntity)
     }
 
     override fun addExpertiseToExpert(expertEmail: String, expertise: String) {
-        val expertiseObject =
-            expertiseService.unsafeGetExpertise(expertise) ?: throw ExpertiseNotFoundException("Expertise not found")
         val expert = expertRepository.findByIdOrNull(expertEmail) ?: throw ExpertNotFoundException("Expert not found")
-        expert.addExpertise(expertiseObject)
+        expert.addExpertise(Expertise(expertise))
         expertRepository.save(expert)
     }
 
     override fun removeExpertiseFromExpert(expertEmail: String, expertise: String) {
-        val expertiseObject =
-            expertiseService.unsafeGetExpertise(expertise) ?: throw ExpertiseNotFoundException("Expertise not found")
         val expert = expertRepository.findByIdOrNull(expertEmail) ?: throw ExpertNotFoundException("Expert not found")
-        expert.removeExpertise(expertiseObject)
+        expert.removeExpertise(Expertise(expertise))
         expertRepository.save(expert)
     }
 

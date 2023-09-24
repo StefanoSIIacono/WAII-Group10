@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Form, Button, Stack, Row, Col } from 'react-bootstrap';
 import { editProfile } from '../../utils/Api';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { checkAuthentication } from '../../store/slices/authentication';
 
 export function UserProfile() {
+  const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.authenticate);
-  const navigate = useNavigate();
   const [email] = useState(user?.email);
   const [name, setName] = useState(user?.name);
   const [surname, setSurname] = useState(user?.surname);
@@ -31,8 +31,16 @@ export function UserProfile() {
       console.log(request.error);
       return;
     }
-    navigate('/login');
+    dispatch(checkAuthentication());
   };
+
+  const hasBeenModified =
+    name !== user?.name ||
+    surname !== user?.surname ||
+    address !== user?.address?.address ||
+    city !== user?.address?.city ||
+    country !== user?.address?.country ||
+    zip !== user?.address?.zipCode;
 
   return (
     <div className="fill d-flex align-items-center justify-content-center">
@@ -110,7 +118,7 @@ export function UserProfile() {
               />
             </Form.Group>
           </Row>
-          <Button className="mt-2 mx-auto w-50" type="submit">
+          <Button disabled={!hasBeenModified} className="mt-2 mx-auto w-50" type="submit">
             Save
           </Button>
         </Stack>

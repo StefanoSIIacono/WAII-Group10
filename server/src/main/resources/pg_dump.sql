@@ -52,9 +52,9 @@ ALTER TABLE public.addresses_seq OWNER TO postgres;
 
 CREATE TABLE public.attachments (
     id bigint NOT NULL,
-    attachment character varying(255),
+    attachment character varying(7000000),
     content_type character varying(255),
-    size smallint NOT NULL,
+    size bigint NOT NULL,
     message_id bigint
 );
 
@@ -159,7 +159,7 @@ ALTER TABLE public.managers_seq OWNER TO postgres;
 CREATE TABLE public.messages (
     id bigint NOT NULL,
     index int NOT NULL,
-    body character varying(255),
+    body character varying(10000),
     "timestamp" timestamp(6) without time zone,
     expert_email character varying(255),
     ticket_id bigint
@@ -319,6 +319,9 @@ gino.cuccagno@tickets.com	DAMAGED-PRODUCT
 mohamed.letija@tickets.com	COMPUTER
 pino.paolino@tickets.com	ELECTRONIC
 mastro.gesualdo@tickets.com	WRONG-DELIVERY
+pickle.rick@tickets.com	ELECTRONIC
+pickle.rick@tickets.com	COMPUTER
+pickle.rick@tickets.com	WRONG-DELIVERY
 \.
 
 
@@ -433,7 +436,7 @@ SELECT pg_catalog.setval('public.attachments_seq', 1, false);
 SELECT pg_catalog.setval('public.experts_seq', 1, false);
 
 
-SELECT pg_catalog.setval('public.addresses_seq', 1, false);
+SELECT pg_catalog.setval('public.addresses_seq', 3, false);
 
 
 --
@@ -461,14 +464,14 @@ SELECT pg_catalog.setval('public.sequence_1', 1, false);
 -- Name: statuses_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.statuses_seq', 1, false);
+SELECT pg_catalog.setval('public.statuses_seq', 3, false);
 
 
 --
 -- Name: tickets_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.tickets_seq', 1, false);
+SELECT pg_catalog.setval('public.tickets_seq', 3, false);
 
 
 --

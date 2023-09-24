@@ -47,6 +47,17 @@ class SecurityController(
         response.addCookie(cookie)
     }
 
+    @PostMapping("/user/logout")
+    @ResponseStatus(HttpStatus.OK)
+    fun logout(response: HttpServletResponse) {
+        val cookie = Cookie("token", null)
+        cookie.maxAge = 0
+        cookie.secure = false
+        cookie.isHttpOnly = true
+        cookie.path = "/"
+        response.addCookie(cookie)
+    }
+
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
     @Secured("MANAGER", "PROFILE", "EXPERT")

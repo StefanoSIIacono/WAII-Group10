@@ -93,7 +93,7 @@ class TicketingController(private val ticketService: TicketService) {
 
     @PutMapping("/tickets/{ticketId}/resolved")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("PROFILE", "EXPERT")
+    @Secured("PROFILE", "MANAGER")
     @Transactional
     fun resolveTicket(@PathVariable ticketId: Long, principal: JwtAuthenticationToken) {
         log.info("Resolving ticket  $ticketId")

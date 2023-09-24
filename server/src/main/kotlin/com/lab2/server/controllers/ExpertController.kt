@@ -35,11 +35,12 @@ class ExpertController(private val expertService: ExpertService) {
     @Secured("MANAGER")
     fun searchByEmailPaginated(
         @PathVariable email: String,
+        @RequestParam(required = false) expertise: String?,
         @RequestParam(required = false, defaultValue = "1") @Min(1) page: Int,
         @RequestParam(required = false, defaultValue = "100") @Min(1) @Max(100) offset: Int,
     ): PagedDTO<ExpertDTO> {
         log.info("Retrieving all experts")
-        return expertService.searchByEmailPaginated(email, page - 1, offset)
+        return expertService.searchByEmailAndExpertisePaginated(email, expertise, page - 1, offset)
     }
 
     @GetMapping("/experts/{email}")
@@ -52,7 +53,7 @@ class ExpertController(private val expertService: ExpertService) {
 
     @PutMapping("/experts/{email}/expertise")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    //@Secured("MANAGER")
+    @Secured("MANAGER")
     @Transactional
     fun addExpertise(@PathVariable email: String, @RequestBody(required = true) expertise: ExpertiseDTO) {
         expertService.addExpertiseToExpert(email, expertise.field)

@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ApiResponse, PagedDTO, Roles, Status, TicketDTO } from '../../types';
+import { createSlice } from '@reduxjs/toolkit';
+import { TicketDTO } from '../../types';
 import { getTicket, getTickets } from '../../utils/Api';
 import { createAppAsyncThunk } from '../hooks';
 
@@ -7,37 +7,28 @@ import { createAppAsyncThunk } from '../hooks';
 interface TicketsState {
   loading: boolean;
   currentPage: number;
+  totalPages: number;
   tickets: TicketDTO[];
 }
 
 const initialState: TicketsState = {
   loading: false,
   currentPage: 1,
-  tickets: Array(20)
-    .fill({
-      id: 1,
-      obj: 'ciao',
-      arg: {
-        field: 'computers'
-      },
-      profile: 'this',
-      product: 'a product',
-      status: {
-        status: Status.OPEN,
-        statusChanger: Roles.EXPERT,
-        timestamp: '1'
-      }
-    })
-    .map((t, i) => ({
-      ...t,
-      obj: `obj${i}`,
-      id: i
-    }))
+  totalPages: 10,
+  tickets: []
 };
 
 export const getLastTicketsThunk = createAppAsyncThunk('getLastTickets', async () => {
   return getTickets();
 });
+
+export const getCurrentPageTicketsThunk = createAppAsyncThunk(
+  'getCurrentPageTickets',
+  async (_, ThunkApi) => {
+    const currentPage = ThunkApi.getState().tickets.currentPage;
+    return getTickets(currentPage);
+  }
+);
 
 export const getNextTicketsThunk = createAppAsyncThunk('getNextTickets', async (_, ThunkApi) => {
   const currentPage = ThunkApi.getState().tickets.currentPage;
@@ -59,50 +50,62 @@ export const updateTicketThunk = createAppAsyncThunk('updateTicket', async (id: 
 export const counterSlice = createSlice({
   name: 'tickets',
   initialState,
-  reducers: {
-    updateTickets: (state, action: PayloadAction<ApiResponse<PagedDTO<TicketDTO>>>) => {
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(getLastTicketsThunk.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getCurrentPageTicketsThunk.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getNextTicketsThunk.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getPreviousTicketsThunk.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getLastTicketsThunk.fulfilled, (state, action) => {
       state.loading = false;
       if (action.payload.success && action.payload.data?.data) {
         state.tickets = action.payload.data.data;
         state.currentPage = action.payload.data.meta.currentPage;
+        state.totalPages = action.payload.data.meta.totalPages;
       }
-    },
-    updateTicket: (state, action: PayloadAction<ApiResponse<TicketDTO>>) => {
+    });
+    builder.addCase(getCurrentPageTicketsThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      if (action.payload.success && action.payload.data?.data) {
+        state.tickets = action.payload.data.data;
+        state.currentPage = action.payload.data.meta.currentPage;
+        state.totalPages = action.payload.data.meta.totalPages;
+      }
+    });
+    builder.addCase(getNextTicketsThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      if (action.payload.success && action.payload.data?.data) {
+        state.tickets = action.payload.data.data;
+        state.currentPage = action.payload.data.meta.currentPage;
+        state.totalPages = action.payload.data.meta.totalPages;
+      }
+    });
+    builder.addCase(getPreviousTicketsThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      if (action.payload.success && action.payload.data?.data) {
+        state.tickets = action.payload.data.data;
+        state.currentPage = action.payload.data.meta.currentPage;
+        state.totalPages = action.payload.data.meta.totalPages;
+      }
+    });
+    builder.addCase(updateTicketThunk.fulfilled, (state, action) => {
       state.loading = false;
       if (action.payload.success && action.payload.data) {
         const newTicket = action.payload.data;
         state.tickets = state.tickets.map((t) => (t.id === newTicket.id ? newTicket : t));
       }
-    },
-    startRequest: (state) => {
-      state.loading = true;
-    }
-  },
-  extraReducers: (builder) => {
-    builder.addCase(getLastTicketsThunk.pending, () => {
-      startRequest();
-    });
-    builder.addCase(getNextTicketsThunk.pending, () => {
-      startRequest();
-    });
-    builder.addCase(getPreviousTicketsThunk.pending, () => {
-      startRequest();
-    });
-    builder.addCase(getLastTicketsThunk.fulfilled, (_, action) => {
-      updateTickets(action.payload);
-    });
-    builder.addCase(getNextTicketsThunk.fulfilled, (_, action) => {
-      updateTickets(action.payload);
-    });
-    builder.addCase(getPreviousTicketsThunk.fulfilled, (_, action) => {
-      updateTickets(action.payload);
-    });
-    builder.addCase(updateTicketThunk.fulfilled, (_, action) => {
-      updateTicket(action.payload);
     });
   }
 });
 
-export const { startRequest, updateTickets, updateTicket } = counterSlice.actions;
+// export const { startRequest, updateTickets, updateTicket } = counterSlice.actions;
 
 export default counterSlice.reducer;

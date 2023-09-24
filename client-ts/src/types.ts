@@ -28,12 +28,20 @@ export enum Priority {
 }
 
 export enum Status {
+  IN_PROGRESS,
+  REOPENED,
   OPEN,
   RESOLVED,
-  CLOSED,
-  IN_PROGRESS,
-  REOPENED
+  CLOSED
 }
+
+export const validStatusChanges = {
+  [Status.OPEN]: [Status.RESOLVED, Status.CLOSED, Status.IN_PROGRESS],
+  [Status.RESOLVED]: [Status.CLOSED, Status.REOPENED],
+  [Status.CLOSED]: [Status.REOPENED],
+  [Status.IN_PROGRESS]: [Status.OPEN, Status.CLOSED, Status.RESOLVED],
+  [Status.REOPENED]: [Status.IN_PROGRESS, Status.CLOSED, Status.RESOLVED]
+};
 
 export type PagedDTO<T> = {
   meta: {
@@ -88,6 +96,15 @@ export type CreateExpertDTO = {
   name: string;
   surname: string;
   expertises: string[];
+};
+
+export type MeDTOFromApi = {
+  email: string;
+  role: string;
+  name: string;
+  surname: string;
+  expertises?: ExpertiseDTO[];
+  address?: AddressDTO;
 };
 
 export type MeDTO = {
@@ -153,7 +170,7 @@ export type ChangeProfileInfoDTO = {
 };
 
 export type TicketStatusDTO = {
-  status: Status;
+  status: keyof typeof Status;
   timestamp: string;
   statusChanger: Roles;
   expert?: string;
@@ -164,9 +181,10 @@ export type TicketDTO = {
   obj: string;
   arg: ExpertiseDTO;
   priority?: Priority;
-  profile: string;
-  expert?: string;
-  product: string;
+  profile: ProfileDTO;
+  creationDate: string;
+  expert?: ExpertDTO;
+  product: ProductDTO;
   status: TicketStatusDTO;
   lastReadMessageIndex?: number;
 };

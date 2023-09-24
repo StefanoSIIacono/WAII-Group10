@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface TicketingRepository : JpaRepository<Ticket, Long> {
     fun findAllByProfileEmail(email: String, pageable: Pageable): Page<Ticket>
-    fun findAllByExpertEmail(email: String, pageable: Pageable): Page<Ticket>
+    fun findAllByProfileEmail(email: String): List<Ticket>
+    fun findAllByExpertEmail(email: String): List<Ticket>
 }

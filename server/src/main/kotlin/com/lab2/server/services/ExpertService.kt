@@ -7,7 +7,13 @@ import com.lab2.server.dto.PagedDTO
 interface ExpertService {
 
     fun getAllPaginated(page: Int, offset: Int): PagedDTO<ExpertDTO>
-    fun searchByEmailPaginated(email: String, page: Int, offset: Int): PagedDTO<ExpertDTO>
+    fun searchByEmailAndExpertisePaginated(
+        email: String,
+        expertise: String?,
+        page: Int,
+        offset: Int
+    ): PagedDTO<ExpertDTO>
+
     fun getExpertByEmail(email: String): ExpertDTO
     fun insertExpert(expert: ExpertDTO)
     fun addExpertiseToExpert(expertEmail: String, expertise: String)

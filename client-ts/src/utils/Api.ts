@@ -1,7 +1,6 @@
 import {
   ApiResponse,
   LoginDTO,
-  TokenDTO,
   CreateProfileDTO,
   CreateExpertDTO,
   MeDTO,
@@ -18,15 +17,23 @@ import {
   TicketCreateBodyDTO,
   TicketInProgressBodyDTO,
   Priority,
-  Status
+  Status,
+  MeDTOFromApi,
+  Roles
 } from '../types';
+
+const URL = 'http://localhost:8080';
 
 // TODO: add better error descriptions
 
 // Security
 
 export async function login(loginDTO: LoginDTO) {
-  return post<LoginDTO, TokenDTO>('/login', loginDTO, true);
+  return post<LoginDTO, string>('/login', loginDTO);
+}
+
+export async function logout() {
+  return post('/user/logout');
 }
 
 export async function signup(createProfileDTO: CreateProfileDTO) {
@@ -39,8 +46,20 @@ export async function createExpert(
   return post<CreateExpertDTO>('/expert', createExpertDTO);
 }
 
-export async function getMe() {
-  return get<MeDTO>('/me');
+export async function getMe(): Promise<ApiResponse<MeDTO>> {
+  const request = await get<MeDTOFromApi>('/me');
+
+  const result: ApiResponse<MeDTO> = {
+    ...request,
+    data: request.data
+      ? {
+          ...request.data,
+          role: Roles[request.data.role as keyof typeof Roles]
+        }
+      : undefined
+  };
+
+  return result;
 }
 
 // Expert
@@ -49,8 +68,17 @@ export async function getExperts(page?: number, offset?: number) {
   return getPaginated<ExpertDTO>('/experts', page, offset);
 }
 
-export async function searchExpertsByName(name: string, page?: number, offset?: number) {
-  return getPaginated<ProductDTO>(`/experts/search/${name}`, page, offset);
+export async function searchExpertsByNameAndExpertise(
+  name: string,
+  expertise?: string,
+  page?: number,
+  offset?: number
+) {
+  return getPaginated<ProductDTO>(
+    `/experts/search/${name}${expertise ? `?expertise=${expertise}` : ''}`,
+    page,
+    offset
+  );
 }
 
 export async function getExpert(email: string) {
@@ -98,7 +126,7 @@ export async function getUnreadMessages(page?: number, offset?: number) {
 }
 
 export async function addMessage(ticketId: number, bodyMessageDTO: BodyMessageDTO) {
-  return post<BodyMessageDTO>(`/tickets/${ticketId}/message`, bodyMessageDTO);
+  return post<BodyMessageDTO>(`/tickets/${ticketId}/messages`, bodyMessageDTO);
 }
 
 export async function ackMessage(ticketId: number, index: number) {
@@ -214,16 +242,17 @@ async function getPaginated<T>(
 ): Promise<ApiResponse<PagedDTO<T>>> {
   try {
     let paramsString = '';
+    const params = [];
     if (page) {
-      paramsString += `page=${page}`;
+      params.push(`page=${page}`);
     }
     if (offset) {
-      paramsString += `offset=${offset}`;
+      params.push(`offset=${offset}`);
     }
-    if (paramsString.length > 0) {
-      paramsString = `?${paramsString}`;
+    if (params.length > 0) {
+      paramsString = `?${params.join('&')}`;
     }
-    const response = await fetch(`${path}${paramsString}`, {
+    const response = await fetch(`${URL}${path}${paramsString}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -258,7 +287,8 @@ async function getPaginated<T>(
 
 async function get<T>(path: string): Promise<ApiResponse<T>> {
   try {
-    const response = await fetch(path, {
+    console.log(`${URL}${path}`);
+    const response = await fetch(`${URL}${path}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -297,7 +327,7 @@ async function post<S = undefined, T = undefined>(
   content = false
 ): Promise<ApiResponse<T>> {
   try {
-    const response = await fetch(path, {
+    const response = await fetch(`${URL}${path}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -336,7 +366,7 @@ async function put<S = undefined, T = undefined>(
   content = false
 ): Promise<ApiResponse<T>> {
   try {
-    const response = await fetch(path, {
+    const response = await fetch(`${URL}${path}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -375,7 +405,7 @@ async function del<S = undefined, T = undefined>(
   content = false
 ): Promise<ApiResponse<T>> {
   try {
-    const response = await fetch(path, {
+    const response = await fetch(`${URL}${path}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
