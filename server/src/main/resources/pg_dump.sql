@@ -24,17 +24,19 @@ SET default_table_access_method = heap;
 -- Name: addresses; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.addresses (
-    id bigint NOT NULL,
-    city character varying(255),
-    country character varying(255),
-    address character varying(255),
-    zip_code character varying(255),
+CREATE TABLE public.addresses
+(
+    id            bigint NOT NULL,
+    city          character varying(255),
+    country       character varying(255),
+    address       character varying(255),
+    zip_code      character varying(255),
     profile_email character varying(255)
 );
 
 
-ALTER TABLE public.addresses OWNER TO postgres;
+ALTER TABLE public.addresses
+    OWNER TO postgres;
 
 CREATE SEQUENCE public.addresses_seq
     START WITH 1
@@ -44,22 +46,25 @@ CREATE SEQUENCE public.addresses_seq
     CACHE 1;
 
 
-ALTER TABLE public.addresses_seq OWNER TO postgres;
+ALTER TABLE public.addresses_seq
+    OWNER TO postgres;
 
 --
 -- Name: attachments; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.attachments (
-    id bigint NOT NULL,
-    attachment character varying(7000000),
+CREATE TABLE public.attachments
+(
+    id           bigint NOT NULL,
+    attachment   character varying(7000000),
     content_type character varying(255),
-    size bigint NOT NULL,
-    message_id bigint
+    size         bigint NOT NULL,
+    message_id   bigint
 );
 
 
-ALTER TABLE public.attachments OWNER TO postgres;
+ALTER TABLE public.attachments
+    OWNER TO postgres;
 
 --
 -- Name: attachments_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -73,43 +78,50 @@ CREATE SEQUENCE public.attachments_seq
     CACHE 1;
 
 
-ALTER TABLE public.attachments_seq OWNER TO postgres;
+ALTER TABLE public.attachments_seq
+    OWNER TO postgres;
 
 --
 -- Name: expert_expertise; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.expert_expertise (
-    expert_email character varying(255) NOT NULL,
-    expertise_field character varying(255)  NOT NULL
+CREATE TABLE public.expert_expertise
+(
+    expert_email    character varying(255) NOT NULL,
+    expertise_field character varying(255) NOT NULL
 );
 
 
-ALTER TABLE public.expert_expertise OWNER TO postgres;
+ALTER TABLE public.expert_expertise
+    OWNER TO postgres;
 
 --
 -- Name: expertises; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.expertises (
+CREATE TABLE public.expertises
+(
     field character varying(255) NOT NULL
 );
 
 
-ALTER TABLE public.expertises OWNER TO postgres;
+ALTER TABLE public.expertises
+    OWNER TO postgres;
 
 --
 -- Name: experts; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.experts (
-    email character varying(255) NOT NULL,
-    name character varying(255),
+CREATE TABLE public.experts
+(
+    email   character varying(255) NOT NULL,
+    name    character varying(255),
     surname character varying(255)
 );
 
 
-ALTER TABLE public.experts OWNER TO postgres;
+ALTER TABLE public.experts
+    OWNER TO postgres;
 
 --
 -- Name: experts_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -123,20 +135,23 @@ CREATE SEQUENCE public.experts_seq
     CACHE 1;
 
 
-ALTER TABLE public.experts_seq OWNER TO postgres;
+ALTER TABLE public.experts_seq
+    OWNER TO postgres;
 
 --
 -- Name: managers; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.managers (
-    email character varying(255) NOT NULL,
-    name character varying(255),
+CREATE TABLE public.managers
+(
+    email   character varying(255) NOT NULL,
+    name    character varying(255),
     surname character varying(255)
 );
 
 
-ALTER TABLE public.managers OWNER TO postgres;
+ALTER TABLE public.managers
+    OWNER TO postgres;
 
 --
 -- Name: managers_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -150,23 +165,26 @@ CREATE SEQUENCE public.managers_seq
     CACHE 1;
 
 
-ALTER TABLE public.managers_seq OWNER TO postgres;
+ALTER TABLE public.managers_seq
+    OWNER TO postgres;
 
 --
 -- Name: messages; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.messages (
-    id bigint NOT NULL,
-    index int NOT NULL,
-    body character varying(10000),
-    "timestamp" timestamp(6) without time zone,
+CREATE TABLE public.messages
+(
+    id           bigint NOT NULL,
+    index        int    NOT NULL,
+    body         character varying(10000),
+    "timestamp"  timestamp(6) without time zone,
     expert_email character varying(255),
-    ticket_id bigint
+    ticket_id    bigint
 );
 
 
-ALTER TABLE public.messages OWNER TO postgres;
+ALTER TABLE public.messages
+    OWNER TO postgres;
 
 --
 -- Name: messages_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -180,39 +198,44 @@ CREATE SEQUENCE public.messages_seq
     CACHE 1;
 
 
-ALTER TABLE public.messages_seq OWNER TO postgres;
+ALTER TABLE public.messages_seq
+    OWNER TO postgres;
 
 CREATE INDEX idx_paging ON public.messages
     (
-    ticket_id,
-    timestamp DESC
-    );
+     ticket_id,
+     timestamp DESC
+        );
 
 --
 -- Name: products; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.products (
-    id character varying(255) NOT NULL,
+CREATE TABLE public.products
+(
+    id    character varying(255) NOT NULL,
     brand character varying(255),
-    name character varying(255)
+    name  character varying(255)
 );
 
 
-ALTER TABLE public.products OWNER TO postgres;
+ALTER TABLE public.products
+    OWNER TO postgres;
 
 --
 -- Name: profiles; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.profiles (
-    email character varying(255) NOT NULL,
-    name character varying(255),
+CREATE TABLE public.profiles
+(
+    email   character varying(255) NOT NULL,
+    name    character varying(255),
     surname character varying(255)
 );
 
 
-ALTER TABLE public.profiles OWNER TO postgres;
+ALTER TABLE public.profiles
+    OWNER TO postgres;
 
 --
 -- Name: sequence_1; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -226,23 +249,26 @@ CREATE SEQUENCE public.sequence_1
     CACHE 1;
 
 
-ALTER TABLE public.sequence_1 OWNER TO postgres;
+ALTER TABLE public.sequence_1
+    OWNER TO postgres;
 
 --
 -- Name: statuses; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.statuses (
-    id bigint NOT NULL,
-    status smallint,
+CREATE TABLE public.statuses
+(
+    id             bigint NOT NULL,
+    status         smallint,
     status_changer character varying(255),
-    "timestamp" timestamp(6) without time zone,
-    expert_email character varying(255),
-    ticket_id bigint
+    "timestamp"    timestamp(6) without time zone,
+    expert_email   character varying(255),
+    ticket_id      bigint
 );
 
 
-ALTER TABLE public.statuses OWNER TO postgres;
+ALTER TABLE public.statuses
+    OWNER TO postgres;
 
 --
 -- Name: statuses_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -256,26 +282,29 @@ CREATE SEQUENCE public.statuses_seq
     CACHE 1;
 
 
-ALTER TABLE public.statuses_seq OWNER TO postgres;
+ALTER TABLE public.statuses_seq
+    OWNER TO postgres;
 
 --
 -- Name: tickets; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.tickets (
-    id bigint NOT NULL,
-    obj character varying(255),
-    priority character varying(255),
-    arg_field character varying(255),
-    expert_email character varying(255),
-    product_id character varying(255),
-    profile_email character varying(255),
-    last_read_message_index_expert int NOT NULL,
-    last_read_message_index_profile int NOT NULL
+CREATE TABLE public.tickets
+(
+    id                              bigint NOT NULL,
+    obj                             character varying(255),
+    priority                        character varying(255),
+    arg_field                       character varying(255),
+    expert_email                    character varying(255),
+    product_id                      character varying(255),
+    profile_email                   character varying(255),
+    last_read_message_index_expert  int    NOT NULL,
+    last_read_message_index_profile int    NOT NULL
 );
 
 
-ALTER TABLE public.tickets OWNER TO postgres;
+ALTER TABLE public.tickets
+    OWNER TO postgres;
 
 --
 -- Name: tickets_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -289,7 +318,8 @@ CREATE SEQUENCE public.tickets_seq
     CACHE 1;
 
 
-ALTER TABLE public.tickets_seq OWNER TO postgres;
+ALTER TABLE public.tickets_seq
+    OWNER TO postgres;
 
 --
 -- Data for Name: addresses; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -357,7 +387,7 @@ mastro.gesualdo@tickets.com	Mastro	Gesualdo
 --
 
 COPY public.managers (email, name, surname) FROM stdin;
-bigboss@tickets.admin.com	BIG	BOSS
+bigboss@tickets.admin.com	Big	Boss
 \.
 
 
@@ -380,9 +410,6 @@ COPY public.products (id, brand, name) FROM stdin;
 9781942275732	Zenescope Entertainment	The Black Sable by Joe Brusha (Paperback, 2018)
 9781941610428	Fons Vitae,US	The Prophetic Ethics and the Courtesies of Living by Al-Ghazali (Paperback, 2019)
 9781617137082	Hal Leonard Corporation	My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)
-9781617137080	Hal Leonard Corporation	My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)
-9781617137083	Hal Leonard Corporation	My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)
-9781617137084	Hal Leonard Corporation	My Years with Townes Van Zandt: Music, Genius and Rage by Harold F. Eggers (Hardcover, 2018)
 5707286436169	Nissens	Nissens 95601 Dryer Air Conditioning OE Replacement Top Quality
 9786420945091	Mercedes-Benz	MERCEDES CLS 320 CDI C219 2007 RHD Air Intake Hose Pipe Tube A6420945097
 5030917124013	Sony	PlayStation 3 Ps3 Destiny Vanguard Edition UK IMPORT a VideoGames
@@ -394,9 +421,9 @@ COPY public.products (id, brand, name) FROM stdin;
 --
 
 COPY public.profiles (email, name, surname) FROM stdin;
-mario.rossi@gmail.com	mario	rossi
-luigi.verdi@gmail.com	luigi	verdi
-sergio.bianchi@gmail.com	sergio	bianchi
+mario.rossi@gmail.com	Mario	Rossi
+luigi.verdi@gmail.com	Luigi	Verdi
+sergio.bianchi@gmail.com	Sergio	Bianchi
 \.
 
 
@@ -405,9 +432,6 @@ sergio.bianchi@gmail.com	sergio	bianchi
 --
 
 COPY public.statuses (id, status, status_changer, "timestamp", expert_email, ticket_id) FROM stdin;
-1	1	MANAGER	1999-01-08 01:05:06	mastro.gesualdo@tickets.com	1
-2	2	EXPERT	2000-02-18 05:25:46	mohamed.letija@tickets.com	2
-3	3	PROFILE	2006-06-13 22:21:46	pino.paolino@tickets.com	3
 \.
 
 
@@ -415,10 +439,8 @@ COPY public.statuses (id, status, status_changer, "timestamp", expert_email, tic
 -- Data for Name: tickets; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.tickets (id, obj, priority, arg_field, expert_email, product_id, profile_email, last_read_message_index_expert, last_read_message_index_profile) FROM stdin;
-1	obj	LOW	WRONG-DELIVERY	mastro.gesualdo@tickets.com	9781292204482	mario.rossi@gmail.com	0	0
-2	i need help	HIGH	COMPUTER	mohamed.letija@tickets.com	9786420945091	mario.rossi@gmail.com	0	0
-3	you ruined my birthday	MEDIUM	ELECTRONIC	pino.paolino@tickets.com	9781617137080	luigi.verdi@gmail.com	0	0
+COPY public.tickets (id, obj, priority, arg_field, expert_email, product_id, profile_email,
+                     last_read_message_index_expert, last_read_message_index_profile) FROM stdin;
 \.
 
 
@@ -567,7 +589,7 @@ ALTER TABLE ONLY public.tickets
 --
 
 ALTER TABLE ONLY public.messages
-    ADD CONSTRAINT fk3jvl9mj8r5ao5vlfgq6gsnnyt FOREIGN KEY (expert_email) REFERENCES public.experts(email);
+    ADD CONSTRAINT fk3jvl9mj8r5ao5vlfgq6gsnnyt FOREIGN KEY (expert_email) REFERENCES public.experts (email);
 
 
 --
@@ -575,7 +597,7 @@ ALTER TABLE ONLY public.messages
 --
 
 ALTER TABLE ONLY public.tickets
-    ADD CONSTRAINT fk4vad8oe6n0d1yflqkd4sj13as FOREIGN KEY (arg_field) REFERENCES public.expertises(field);
+    ADD CONSTRAINT fk4vad8oe6n0d1yflqkd4sj13as FOREIGN KEY (arg_field) REFERENCES public.expertises (field);
 
 
 --
@@ -583,7 +605,7 @@ ALTER TABLE ONLY public.tickets
 --
 
 ALTER TABLE ONLY public.tickets
-    ADD CONSTRAINT fk56p9eq8fjdagec8ydtf4r23lp FOREIGN KEY (profile_email) REFERENCES public.profiles(email);
+    ADD CONSTRAINT fk56p9eq8fjdagec8ydtf4r23lp FOREIGN KEY (profile_email) REFERENCES public.profiles (email);
 
 
 --
@@ -591,7 +613,7 @@ ALTER TABLE ONLY public.tickets
 --
 
 ALTER TABLE ONLY public.messages
-    ADD CONSTRAINT fk6iv985o3ybdk63srj731en4ba FOREIGN KEY (ticket_id) REFERENCES public.tickets(id);
+    ADD CONSTRAINT fk6iv985o3ybdk63srj731en4ba FOREIGN KEY (ticket_id) REFERENCES public.tickets (id);
 
 
 --
@@ -599,7 +621,7 @@ ALTER TABLE ONLY public.messages
 --
 
 ALTER TABLE ONLY public.statuses
-    ADD CONSTRAINT fk7c2j14r2cneccbwhv1idkoex5 FOREIGN KEY (expert_email) REFERENCES public.experts(email);
+    ADD CONSTRAINT fk7c2j14r2cneccbwhv1idkoex5 FOREIGN KEY (expert_email) REFERENCES public.experts (email);
 
 
 --
@@ -607,7 +629,7 @@ ALTER TABLE ONLY public.statuses
 --
 
 ALTER TABLE ONLY public.tickets
-    ADD CONSTRAINT fk9774jyfebsw99i91o35yaucxd FOREIGN KEY (expert_email) REFERENCES public.experts(email);
+    ADD CONSTRAINT fk9774jyfebsw99i91o35yaucxd FOREIGN KEY (expert_email) REFERENCES public.experts (email);
 
 
 --
@@ -615,7 +637,7 @@ ALTER TABLE ONLY public.tickets
 --
 
 ALTER TABLE ONLY public.tickets
-    ADD CONSTRAINT fkavo2av2fyyehcvlec0vowwu1j FOREIGN KEY (product_id) REFERENCES public.products(id);
+    ADD CONSTRAINT fkavo2av2fyyehcvlec0vowwu1j FOREIGN KEY (product_id) REFERENCES public.products (id);
 
 
 --
@@ -623,7 +645,7 @@ ALTER TABLE ONLY public.tickets
 --
 
 ALTER TABLE ONLY public.statuses
-    ADD CONSTRAINT fkc1qmjbxp508hwulx2kb898l5p FOREIGN KEY (ticket_id) REFERENCES public.tickets(id);
+    ADD CONSTRAINT fkc1qmjbxp508hwulx2kb898l5p FOREIGN KEY (ticket_id) REFERENCES public.tickets (id);
 
 
 --
@@ -631,7 +653,7 @@ ALTER TABLE ONLY public.statuses
 --
 
 ALTER TABLE ONLY public.attachments
-    ADD CONSTRAINT fkcf4ta8qdkixetfy7wnqfv3vkv FOREIGN KEY (message_id) REFERENCES public.messages(id);
+    ADD CONSTRAINT fkcf4ta8qdkixetfy7wnqfv3vkv FOREIGN KEY (message_id) REFERENCES public.messages (id);
 
 
 --
@@ -639,7 +661,7 @@ ALTER TABLE ONLY public.attachments
 --
 
 ALTER TABLE ONLY public.addresses
-    ADD CONSTRAINT fki4bubqretjd6r0py8vskj960v FOREIGN KEY (profile_email) REFERENCES public.profiles(email);
+    ADD CONSTRAINT fki4bubqretjd6r0py8vskj960v FOREIGN KEY (profile_email) REFERENCES public.profiles (email);
 
 
 --
@@ -647,7 +669,7 @@ ALTER TABLE ONLY public.addresses
 --
 
 ALTER TABLE ONLY public.expert_expertise
-    ADD CONSTRAINT fkmcl7gkeo699n9y0i1gt0x84vi FOREIGN KEY (expert_email) REFERENCES public.experts(email);
+    ADD CONSTRAINT fkmcl7gkeo699n9y0i1gt0x84vi FOREIGN KEY (expert_email) REFERENCES public.experts (email);
 
 
 --
@@ -655,7 +677,7 @@ ALTER TABLE ONLY public.expert_expertise
 --
 
 ALTER TABLE ONLY public.expert_expertise
-    ADD CONSTRAINT fkrh70nqipdmx0hcpx12w5u5fqt FOREIGN KEY (expertise_field) REFERENCES public.expertises(field);
+    ADD CONSTRAINT fkrh70nqipdmx0hcpx12w5u5fqt FOREIGN KEY (expertise_field) REFERENCES public.expertises (field);
 
 
 --

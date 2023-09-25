@@ -12,6 +12,12 @@ export type PaginationInfo = {
   offset?: number;
 };
 
+export type ErrorType = {
+  errorTitle: string;
+  errorDescription: string;
+  errorCode: string;
+};
+
 // DTOs
 
 export enum Roles {
@@ -61,6 +67,26 @@ export type ExpertDTO = {
   name: string;
   surname: string;
   expertises: ExpertiseDTO[];
+};
+
+export type StatsDTO = {
+  expertEmail: string;
+  ticketInProgress: number;
+  totalAssignedEver: number;
+  totalClosed: number;
+  totalTimeToSolveTickets: number;
+  closedPerDay: Chart1DataDTO[];
+  closedPerExpertise: Chart2DataDTO[];
+};
+
+export type Chart1DataDTO = {
+  data: string;
+  nticketClosed: number;
+};
+
+export type Chart2DataDTO = {
+  expertise: ExpertiseDTO;
+  nticketClosed: number;
 };
 
 export type LoginDTO = {
@@ -187,6 +213,7 @@ export type TicketDTO = {
   product: ProductDTO;
   status: TicketStatusDTO;
   lastReadMessageIndex?: number;
+  totalMessages?: number;
 };
 
 export type TicketCreateBodyDTO = {

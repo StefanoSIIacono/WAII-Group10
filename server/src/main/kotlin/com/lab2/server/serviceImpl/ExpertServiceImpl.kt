@@ -2,10 +2,7 @@ package com.lab2.server.serviceImpl
 
 import com.lab2.server.data.Expert
 import com.lab2.server.data.Expertise
-import com.lab2.server.dto.ExpertDTO
-import com.lab2.server.dto.PagedDTO
-import com.lab2.server.dto.PagedMetadata
-import com.lab2.server.dto.toDTO
+import com.lab2.server.dto.*
 import com.lab2.server.exceptionsHandler.exceptions.ExpertNotFoundException
 import com.lab2.server.repositories.ExpertRepository
 import com.lab2.server.services.ExpertService
@@ -69,6 +66,26 @@ class ExpertServiceImpl(
         val expert = expertRepository.findByIdOrNull(expertEmail) ?: throw ExpertNotFoundException("Expert not found")
         expert.removeExpertise(Expertise(expertise))
         expertRepository.save(expert)
+    }
+
+    override fun getExpertStats(email: String): StatsDTO {
+        getExpertByEmail(email)
+        val totalInProgress = expertRepository.countCurrentlyAssignedToExpert(email)
+        val totalAssignedEver = expertRepository.countAllEverAssignedToExpert(email)
+        val totalClosed = expertRepository.totalClosed(email)
+        val totalTimeToSolveTickets = expertRepository.totalTimeToSolveTickets(email)
+        val closedPerExpertise = expertRepository.closedPerExpertise(email)
+        val closedPerDay = expertRepository.closedPerDays(email)
+
+        return StatsDTO(
+            email,
+            totalInProgress ?: 0,
+            totalAssignedEver ?: 0,
+            totalClosed ?: 0,
+            totalTimeToSolveTickets ?: 0,
+            closedPerDay,
+            closedPerExpertise
+        )
     }
 
     override fun unsafeGetExpertByEmail(email: String): Expert? {

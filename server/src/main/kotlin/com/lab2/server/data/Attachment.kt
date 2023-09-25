@@ -1,13 +1,11 @@
 package com.lab2.server.data
 
-import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "attachments")
 class Attachment(
+    @Column(length = 7000000)
     val attachment: String,
     val size: Long,
     val contentType: String,

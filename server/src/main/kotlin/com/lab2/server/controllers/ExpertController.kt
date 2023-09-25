@@ -3,6 +3,7 @@ package com.lab2.server.controllers
 import com.lab2.server.dto.ExpertDTO
 import com.lab2.server.dto.ExpertiseDTO
 import com.lab2.server.dto.PagedDTO
+import com.lab2.server.dto.StatsDTO
 import com.lab2.server.services.ExpertService
 import io.micrometer.observation.annotation.Observed
 import jakarta.transaction.Transactional
@@ -65,5 +66,15 @@ class ExpertController(private val expertService: ExpertService) {
     @Transactional
     fun deleteExpertise(@PathVariable email: String, @RequestBody(required = true) expertise: ExpertiseDTO) {
         expertService.removeExpertiseFromExpert(email, expertise.field)
+    }
+
+    @GetMapping("/experts/{email}/stats")
+    @ResponseStatus(HttpStatus.OK)
+    @Secured("MANAGER")
+    fun getExpertStats(
+        @PathVariable email: String
+    ): StatsDTO {
+        log.info("Retrieving expert $email stats")
+        return expertService.getExpertStats(email)
     }
 }

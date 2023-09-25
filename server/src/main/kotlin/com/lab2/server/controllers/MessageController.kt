@@ -59,11 +59,22 @@ class MessageController(private val messageService: MessageService) {
     @ResponseStatus(HttpStatus.OK)
     @Secured("EXPERT", "PROFILE")
     @Transactional
-    fun ackTicketPaging(
+    fun ackTicketToIndex(
         @PathVariable ticketId: Long,
         @PathVariable messageIndex: Int,
         principal: JwtAuthenticationToken
     ) {
         messageService.acknowledgeMessage(ticketId, principal, messageIndex)
+    }
+
+    @PutMapping("/tickets/{ticketId}/messages/ack")
+    @ResponseStatus(HttpStatus.OK)
+    @Secured("EXPERT", "PROFILE")
+    @Transactional
+    fun ackTicketPaging(
+        @PathVariable ticketId: Long,
+        principal: JwtAuthenticationToken
+    ) {
+        messageService.acknowledgeMessage(ticketId, principal, null)
     }
 }

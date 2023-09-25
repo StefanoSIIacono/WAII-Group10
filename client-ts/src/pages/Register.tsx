@@ -3,9 +3,12 @@ import { Form, Button, Stack, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { signup } from '../utils/Api';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../store/hooks';
+import { addError } from '../store/slices/errors';
 
 export function RegisterForm() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -30,6 +33,13 @@ export function RegisterForm() {
       }
     });
     if (!request.success) {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: request.error!,
+          errorCode: request.statusCode.toString()
+        })
+      );
       console.log(request.error);
       return;
     }

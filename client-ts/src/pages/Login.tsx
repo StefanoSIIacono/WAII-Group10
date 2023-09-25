@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Form, Button, Stack } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { useAppDispatch } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { loginUser } from '../store/slices/authentication';
 
 export function LoginForm() {
   const dispatch = useAppDispatch();
+  const { errorAuthenticating } = useAppSelector((state) => state.authenticate);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -48,8 +49,10 @@ export function LoginForm() {
           <p>
             You don&apos;t have an account? <Link to="/register">Register</Link>
           </p>
-
           <Button type="submit">Login</Button>
+          {!!errorAuthenticating && (
+            <p style={{ color: 'red' }}>Username/Password do not correspond.</p>
+          )}
         </Stack>
       </Form>
     </div>

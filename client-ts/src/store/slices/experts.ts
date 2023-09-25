@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { ExpertDTO } from '../../types';
 import { getExperts } from '../../utils/Api';
 import { createAppAsyncThunk } from '../hooks';
+import { addError } from './errors';
 
 // Define a type for the slice state
 interface ExpertsState {
@@ -18,20 +19,71 @@ const initialState: ExpertsState = {
   experts: []
 };
 
-export const getExpertsThunk = createAppAsyncThunk('getExperts', async () => {
-  return getExperts();
+export const getExpertsThunk = createAppAsyncThunk('getExperts', async (_, { dispatch }) => {
+  const experts = await getExperts();
+  if (!experts.success) {
+    dispatch(
+      addError({
+        errorTitle: 'Network Error',
+        errorDescription: experts.error!,
+        errorCode: experts.statusCode.toString()
+      })
+    );
+  }
+  return experts;
 });
 
-export const getNextExpertsThunk = createAppAsyncThunk('getNextExperts', async (_, ThunkApi) => {
-  const currentPage = ThunkApi.getState().experts.currentPage;
-  return getExperts(currentPage + 1);
-});
+export const getCurrentExpertsThunk = createAppAsyncThunk(
+  'getCurrentExperts',
+  async (_, { dispatch, getState }) => {
+    const currentPage = getState().experts.currentPage;
+    const experts = await getExperts(currentPage);
+    if (!experts.success) {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: experts.error!,
+          errorCode: experts.statusCode.toString()
+        })
+      );
+    }
+    return experts;
+  }
+);
+
+export const getNextExpertsThunk = createAppAsyncThunk(
+  'getNextExperts',
+  async (_, { dispatch, getState }) => {
+    const currentPage = getState().experts.currentPage;
+    const experts = await getExperts(currentPage + 1);
+    if (!experts.success) {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: experts.error!,
+          errorCode: experts.statusCode.toString()
+        })
+      );
+    }
+    return experts;
+  }
+);
 
 export const getPreviousExpertsThunk = createAppAsyncThunk(
   'getPreviousRxperts',
-  async (_, ThunkApi) => {
-    const currentPage = ThunkApi.getState().experts.currentPage;
-    return getExperts(Math.max(currentPage - 1, 1));
+  async (_, { dispatch, getState }) => {
+    const currentPage = getState().experts.currentPage;
+    const experts = await getExperts(Math.max(currentPage - 1, 1));
+    if (!experts.success) {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: experts.error!,
+          errorCode: experts.statusCode.toString()
+        })
+      );
+    }
+    return experts;
   }
 );
 
@@ -47,6 +99,9 @@ export const counterSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(getPreviousExpertsThunk.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getCurrentExpertsThunk.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(getExpertsThunk.fulfilled, (state, action) => {
@@ -66,6 +121,14 @@ export const counterSlice = createSlice({
       }
     });
     builder.addCase(getPreviousExpertsThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      if (action.payload.success && action.payload.data?.data) {
+        state.experts = action.payload.data.data;
+        state.currentPage = action.payload.data.meta.currentPage;
+        state.totalPages = action.payload.data.meta.totalPages;
+      }
+    });
+    builder.addCase(getCurrentExpertsThunk.fulfilled, (state, action) => {
       state.loading = false;
       if (action.payload.success && action.payload.data?.data) {
         state.experts = action.payload.data.data;

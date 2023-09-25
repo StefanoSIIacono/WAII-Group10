@@ -5,9 +5,12 @@ import { SearchSelect } from '../../components/searchSelect';
 import { ExpertiseDTO, ProductDTO } from '../../types';
 import { createTicket } from '../../utils/Api';
 import { Paperclip, XCircle } from 'react-bootstrap-icons';
+import { addError } from '../../store/slices/errors';
+import { useAppDispatch } from '../../store/hooks';
 
 export function CreateTicketForm() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const hiddenFileInput = useRef<HTMLInputElement>(null);
   const [obj, setObj] = useState('');
   const [body, setBody] = useState('');
@@ -42,6 +45,13 @@ export function CreateTicketForm() {
     });
     if (!request.success) {
       console.log(request.error);
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: request.error!,
+          errorCode: request.statusCode.toString()
+        })
+      );
       return;
     }
 
@@ -128,7 +138,7 @@ export function CreateTicketForm() {
           <input
             onChange={handleUpload}
             ref={hiddenFileInput}
-            accept=".jpg"
+            accept=".jpg, .jpeg, .png"
             type="file"
             style={{ display: 'none' }}
           />

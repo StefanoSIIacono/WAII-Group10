@@ -101,7 +101,6 @@ class ExpertServiceTest {
 
         // then
         verify(exactly = 1) { repository.save(any()) }
-        verify(exactly = 1) { expertiseService.getExpertise(expertise) }
     }
 
 
@@ -120,7 +119,6 @@ class ExpertServiceTest {
         service.addExpertiseToExpert(expert.email, expertise.field)
         // then
         verify(exactly = 1) { repository.findByIdOrNull(expert.email) }
-        verify(exactly = 1) { expertiseService.unsafeGetExpertise(expertise.field) }
         verify(exactly = 1) { repository.save(any()) }
     }
 

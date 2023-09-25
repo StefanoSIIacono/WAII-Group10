@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { TicketDTO } from '../../types';
 import { getTicket, getTickets } from '../../utils/Api';
 import { createAppAsyncThunk } from '../hooks';
+import { addError } from './errors';
 
 // Define a type for the slice state
 interface TicketsState {
@@ -18,34 +19,93 @@ const initialState: TicketsState = {
   tickets: []
 };
 
-export const getLastTicketsThunk = createAppAsyncThunk('getLastTickets', async () => {
-  return getTickets();
-});
+export const getLastTicketsThunk = createAppAsyncThunk(
+  'getLastTickets',
+  async (_, { dispatch }) => {
+    const tickets = await getTickets();
+    if (!tickets.success) {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: tickets.error!,
+          errorCode: tickets.statusCode.toString()
+        })
+      );
+    }
+    return tickets;
+  }
+);
 
 export const getCurrentPageTicketsThunk = createAppAsyncThunk(
   'getCurrentPageTickets',
-  async (_, ThunkApi) => {
-    const currentPage = ThunkApi.getState().tickets.currentPage;
-    return getTickets(currentPage);
+  async (_, { dispatch, getState }) => {
+    const currentPage = getState().tickets.currentPage;
+    const tickets = await getTickets(currentPage);
+    if (!tickets.success) {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: tickets.error!,
+          errorCode: tickets.statusCode.toString()
+        })
+      );
+    }
+    return tickets;
   }
 );
 
-export const getNextTicketsThunk = createAppAsyncThunk('getNextTickets', async (_, ThunkApi) => {
-  const currentPage = ThunkApi.getState().tickets.currentPage;
-  return getTickets(currentPage + 1);
-});
+export const getNextTicketsThunk = createAppAsyncThunk(
+  'getNextTickets',
+  async (_, { dispatch, getState }) => {
+    const currentPage = getState().tickets.currentPage;
+    const tickets = await getTickets(currentPage + 1);
+    if (!tickets.success) {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: tickets.error!,
+          errorCode: tickets.statusCode.toString()
+        })
+      );
+    }
+    return getTickets(currentPage + 1);
+  }
+);
 
 export const getPreviousTicketsThunk = createAppAsyncThunk(
   'getPreviousTickets',
-  async (_, ThunkApi) => {
-    const currentPage = ThunkApi.getState().tickets.currentPage;
-    return getTickets(Math.max(currentPage - 1, 1));
+  async (_, { dispatch, getState }) => {
+    const currentPage = getState().tickets.currentPage;
+    const tickets = await getTickets(Math.max(currentPage - 1, 1));
+    if (!tickets.success) {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: tickets.error!,
+          errorCode: tickets.statusCode.toString()
+        })
+      );
+    }
+    return tickets;
   }
 );
 
-export const updateTicketThunk = createAppAsyncThunk('updateTicket', async (id: number) => {
-  return getTicket(id);
-});
+export const updateTicketThunk = createAppAsyncThunk(
+  'updateTicket',
+  async (id: number, { dispatch }) => {
+    const ticket = await getTicket(id);
+    if (!ticket.success) {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: ticket.error!,
+          errorCode: ticket.statusCode.toString()
+        })
+      );
+    }
+    return ticket;
+  }
+);
 
 export const counterSlice = createSlice({
   name: 'tickets',

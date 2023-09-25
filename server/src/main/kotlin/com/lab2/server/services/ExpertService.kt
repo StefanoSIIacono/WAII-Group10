@@ -3,6 +3,7 @@ package com.lab2.server.services
 import com.lab2.server.data.Expert
 import com.lab2.server.dto.ExpertDTO
 import com.lab2.server.dto.PagedDTO
+import com.lab2.server.dto.StatsDTO
 
 interface ExpertService {
 
@@ -18,5 +19,6 @@ interface ExpertService {
     fun insertExpert(expert: ExpertDTO)
     fun addExpertiseToExpert(expertEmail: String, expertise: String)
     fun removeExpertiseFromExpert(expertEmail: String, expertise: String)
+    fun getExpertStats(email: String): StatsDTO
     fun unsafeGetExpertByEmail(email: String): Expert?
 }

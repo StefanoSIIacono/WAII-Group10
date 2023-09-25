@@ -7,7 +7,8 @@ import { ExpertiseDTO } from '../../types';
 import Typeahead from 'react-bootstrap-typeahead/types/core/Typeahead';
 import { Plus, Trash } from 'react-bootstrap-icons';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { getExpertsThunk } from '../../store/slices/experts';
+import { getCurrentExpertsThunk } from '../../store/slices/experts';
+import { addError } from '../../store/slices/errors';
 
 export function CreateExpertForm() {
   const navigate = useNavigate();
@@ -34,6 +35,13 @@ export function CreateExpertForm() {
         expertises: expertises.map((e) => e.field)
       });
       if (!request.success) {
+        dispatch(
+          addError({
+            errorTitle: 'Network Error',
+            errorDescription: request.error!,
+            errorCode: request.statusCode.toString()
+          })
+        );
         console.log(request.error);
         return;
       }
@@ -48,13 +56,31 @@ export function CreateExpertForm() {
       (e) => !expertises.some((exp) => exp.field === e.field)
     );
     for (const expertiseToAdd of expertisesToAdd) {
-      await addExpertiseToExpert(expert.email, expertiseToAdd);
+      const result = await addExpertiseToExpert(expert.email, expertiseToAdd);
+      if (!result.success) {
+        dispatch(
+          addError({
+            errorTitle: 'Network Error',
+            errorDescription: result.error!,
+            errorCode: result.statusCode.toString()
+          })
+        );
+      }
     }
     for (const expertiseToDelete of expertisesToDelete) {
-      await deleteExpertiseFromExpert(expert.email, expertiseToDelete);
+      const result = await deleteExpertiseFromExpert(expert.email, expertiseToDelete);
+      if (!result.success) {
+        dispatch(
+          addError({
+            errorTitle: 'Network Error',
+            errorDescription: result.error!,
+            errorCode: result.statusCode.toString()
+          })
+        );
+      }
     }
 
-    dispatch(getExpertsThunk());
+    dispatch(getCurrentExpertsThunk());
   };
 
   const expertisesModified =

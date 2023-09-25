@@ -19,7 +19,8 @@ import {
   Priority,
   Status,
   MeDTOFromApi,
-  Roles
+  Roles,
+  StatsDTO
 } from '../types';
 
 const URL = 'http://localhost:8080';
@@ -93,6 +94,10 @@ export async function deleteExpertiseFromExpert(email: string, expertise: Expert
   return del<ExpertiseDTO>(`/experts/${email}/expertise`, expertise);
 }
 
+export async function getExpertStats(email: string) {
+  return get<StatsDTO>(`/experts/${email}/stats`);
+}
+
 // Expertise
 
 export async function getExpertises(page?: number, offset?: number) {
@@ -129,8 +134,10 @@ export async function addMessage(ticketId: number, bodyMessageDTO: BodyMessageDT
   return post<BodyMessageDTO>(`/tickets/${ticketId}/messages`, bodyMessageDTO);
 }
 
-export async function ackMessage(ticketId: number, index: number) {
-  return put(`/tickets/${ticketId}/messages/${index}/ack`);
+export async function ackMessage(ticketId: number, index?: number) {
+  return index === undefined
+    ? put(`/tickets/${ticketId}/messages/ack`)
+    : put(`/tickets/${ticketId}/messages/${index}/ack`);
 }
 
 // Products
@@ -257,6 +264,7 @@ async function getPaginated<T>(
       headers: {
         'Content-Type': 'application/json'
       },
+      signal: AbortSignal.timeout(100),
       credentials: 'include'
     });
 
@@ -275,7 +283,13 @@ async function getPaginated<T>(
       error: response.statusText
     };
   } catch (e) {
-    //
+    if (e instanceof DOMException) {
+      return {
+        success: false,
+        statusCode: -50,
+        error: ''
+      };
+    }
   }
 
   return {
@@ -293,6 +307,7 @@ async function get<T>(path: string): Promise<ApiResponse<T>> {
       headers: {
         'Content-Type': 'application/json'
       },
+      signal: AbortSignal.timeout(100),
       credentials: 'include'
     });
 
@@ -332,6 +347,7 @@ async function post<S = undefined, T = undefined>(
       headers: {
         'Content-Type': 'application/json'
       },
+      signal: AbortSignal.timeout(100),
       credentials: 'include',
       body: body ? JSON.stringify(body) : undefined
     });
@@ -371,6 +387,7 @@ async function put<S = undefined, T = undefined>(
       headers: {
         'Content-Type': 'application/json'
       },
+      signal: AbortSignal.timeout(100),
       credentials: 'include',
       body: body ? JSON.stringify(body) : undefined
     });
@@ -410,6 +427,7 @@ async function del<S = undefined, T = undefined>(
       headers: {
         'Content-Type': 'application/json'
       },
+      signal: AbortSignal.timeout(100),
       credentials: 'include',
       body: body ? JSON.stringify(body) : undefined
     });

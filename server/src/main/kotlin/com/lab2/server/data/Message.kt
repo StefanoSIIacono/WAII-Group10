@@ -9,6 +9,7 @@ class Message(
     val index: Int,
     @Temporal(TemporalType.TIMESTAMP)
     val timestamp: java.util.Date,
+    @Column(length = 10000)
     val body: String,
 
     @OneToMany(mappedBy = "message", cascade = [CascadeType.ALL])

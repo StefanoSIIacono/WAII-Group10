@@ -14,6 +14,37 @@ body > #root > div {
   height: 90px;
 }
 
+.experts-right-stats {
+  overflow-y: scroll;
+  margin-bottom: 30px;
+  padding-bottom: 30px;
+}
+
+.experts-right-stats-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.experts-right-stats-container-label {
+  margin-bottom: 30px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.experts-right-stats-container-value {
+  font-size: 40px;
+}
+
+.experts-right-stats-graph-label {
+  margin-bottom: 30px;
+  font-weight: bold;
+  font-size: 20px;
+  margin-left: 60px;
+}
+
 /* Tickets dashboard */
 
 .ticket-body {

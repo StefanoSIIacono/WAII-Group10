@@ -7,6 +7,8 @@ import {
 } from '../utils/Api';
 import { ExpertDTO, ExpertiseDTO, ProductDTO } from '../types';
 import Typeahead from 'react-bootstrap-typeahead/types/core/Typeahead';
+import { addError } from '../store/slices/errors';
+import { useAppDispatch } from '../store/hooks';
 
 type Props = {
   type: 'products' | 'expertises' | 'experts';
@@ -22,6 +24,7 @@ export const SearchSelect = forwardRef(function SearchSelect(
   { type, onSelect, elementsToFilter, allowNewElement, expertise }: Props,
   ref: ForwardedRef<Typeahead>
 ) {
+  const dispatch = useAppDispatch();
   const makeAndHandleRequest = type === 'products' ? searchProductsByName : searchExpertiseByName;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -54,6 +57,14 @@ export const SearchSelect = forwardRef(function SearchSelect(
       setIsLoading(false);
       setOptions(options.concat(result.data.data.map((e) => ({ ...e, new: false }))));
       page.current = nextPage;
+    } else {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: result.error!,
+          errorCode: result.statusCode.toString()
+        })
+      );
     }
 
     return;
@@ -71,6 +82,14 @@ export const SearchSelect = forwardRef(function SearchSelect(
     if (result.success && result.data?.data) {
       setIsLoading(false);
       setOptions(result.data.data.map((e) => ({ ...e, new: false })));
+    } else {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: result.error!,
+          errorCode: result.statusCode.toString()
+        })
+      );
     }
 
     page.current = 1;

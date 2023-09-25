@@ -15,6 +15,7 @@ import { CreateExpertForm } from './pages/manager/createExpert';
 function App() {
   const dispatch = useAppDispatch();
   const { authenticated, loading } = useAppSelector((state) => state.authenticate);
+
   useEffect(() => {
     dispatch(checkAuthentication());
   }, []);

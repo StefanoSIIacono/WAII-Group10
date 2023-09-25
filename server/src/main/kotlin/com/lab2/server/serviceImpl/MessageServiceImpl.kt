@@ -23,7 +23,7 @@ class MessageServiceImpl(
     override fun handleNewMessage(sender: JwtAuthenticationToken, ticketId: Long, messageDTO: BodyMessageDTO) {
         val ticket = ticketingService.unsafeGetTicketByID(ticketId)
             ?: throw TicketNotFoundException("Ticket not found")
-        
+
         if (ticket.expert?.email != sender.name && ticket.profile.email != sender.name) {
             throw TicketNotFoundException("No ticket found")
         }
@@ -37,7 +37,7 @@ class MessageServiceImpl(
         }
 
         val message = Message(
-            ticket.messages.last().index + 1,
+            ticket.messages.maxOf { it.index } + 1,
             currentTimestamp,
             messageDTO.body,
         )
@@ -66,15 +66,18 @@ class MessageServiceImpl(
         }
 
         ticketingService.unsafeTicketSave(ticket)
+        acknowledgeMessage(ticketId, sender, message.index)
     }
 
-    override fun acknowledgeMessage(ticketID: Long, user: JwtAuthenticationToken, ack: Int) {
+    override fun acknowledgeMessage(ticketID: Long, user: JwtAuthenticationToken, ack: Int?) {
         val ticket = ticketingService.unsafeGetTicketByID(ticketID)
             ?: throw TicketNotFoundException("Ticket not found")
 
-        if (ticket.messages.size < ack) {
+        if (ack != null && ticket.messages.size < ack) {
             throw AckMessageInTheFutureException("Id doesn't exist")
         }
+
+        println(ack)
 
         if (ticket.expert?.email == user.name) {
             ticket.updateLastReadExpert(ack)

@@ -6,12 +6,14 @@ import { createAppAsyncThunk } from '../hooks';
 // Define a type for the slice state
 interface AuthenticationState {
   loading: boolean;
+  errorAuthenticating: boolean;
   authenticated: boolean;
   user?: MeDTO;
 }
 
 const initialState: AuthenticationState = {
   loading: true,
+  errorAuthenticating: false,
   authenticated: false
 };
 
@@ -21,10 +23,10 @@ export const checkAuthentication = createAppAsyncThunk('checkAuthentication', as
 
 export const loginUser = createAppAsyncThunk('login', async (loginDTO: LoginDTO, ThunkApi) => {
   const loginrequest = await login(loginDTO);
-  if (!loginrequest.success) {
-    return loginrequest;
+  if (loginrequest.success) {
+    ThunkApi.dispatch(checkAuthentication());
   }
-  ThunkApi.dispatch(checkAuthentication());
+  return loginrequest;
 });
 
 export const logoutUser = createAppAsyncThunk('logout', async (_, ThunkApi) => {
@@ -47,6 +49,7 @@ export const counterSlice = createSlice({
       if (action.payload.success && action.payload.data) {
         state.loading = false;
         state.authenticated = true;
+        state.errorAuthenticating = false;
         state.user = action.payload.data;
         return;
       }
@@ -56,6 +59,12 @@ export const counterSlice = createSlice({
     });
     builder.addCase(loginUser.pending, (state) => {
       state.loading = true;
+    });
+    builder.addCase(loginUser.fulfilled, (state, action) => {
+      state.loading = false;
+      if (!action.payload.success) {
+        state.errorAuthenticating = true;
+      }
     });
   }
 });

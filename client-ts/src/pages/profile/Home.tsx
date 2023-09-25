@@ -17,11 +17,13 @@ import {
 } from '../../types';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Button, Badge, Form, Modal } from 'react-bootstrap';
-import { addMessage, getTicketMessages, setTicketStatus } from '../../utils/Api';
+import { ackMessage, addMessage, getTicketMessages, setTicketStatus } from '../../utils/Api';
 import { updateTicketThunk } from '../../store/slices/tickets';
 import { SearchSelect } from '../../components/searchSelect';
 import dayjs from 'dayjs';
 import { Paperclip, Send, XCircle, ArrowLeft, ArrowRight } from 'react-bootstrap-icons';
+import { addError } from '../../store/slices/errors';
+import { useInterval } from '../../components/useInterval';
 
 export function Home() {
   const dispatch = useAppDispatch();
@@ -67,6 +69,24 @@ export function Home() {
     dispatch(getLastTicketsThunk());
   }, []);
 
+  useInterval(async () => {
+    dispatch(getCurrentPageTicketsThunk());
+    if (selectedTicketId) {
+      const messages = await getTicketMessages(selectedTicketId);
+      if (messages.success && messages.data?.data) {
+        setSelectedMessages(messages.data?.data);
+      } else {
+        dispatch(
+          addError({
+            errorTitle: 'Network Error',
+            errorDescription: messages.error!,
+            errorCode: messages.statusCode.toString()
+          })
+        );
+      }
+    }
+  }, 5000);
+
   useEffect(() => {
     const go = async () => {
       if (selectedTicket) {
@@ -75,6 +95,24 @@ export function Home() {
           const messages = await getTicketMessages(selectedTicket.id);
           if (messages.success && messages.data?.data) {
             setSelectedMessages(messages.data?.data);
+          } else {
+            dispatch(
+              addError({
+                errorTitle: 'Network Error',
+                errorDescription: messages.error!,
+                errorCode: messages.statusCode.toString()
+              })
+            );
+          }
+          if (
+            selectedTicket.totalMessages !== undefined &&
+            selectedTicket.lastReadMessageIndex !== undefined &&
+            selectedTicket.totalMessages - 1 > selectedTicket.lastReadMessageIndex
+          ) {
+            const result = await ackMessage(selectedTicket.id);
+            if (result.success) {
+              dispatch(updateTicketThunk(selectedTicket.id));
+            }
           }
         }
       }
@@ -96,6 +134,14 @@ export function Home() {
         return;
       }
       dispatch(updateTicketThunk(selectedTicket.id));
+    } else {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: response.error!,
+          errorCode: response.statusCode.toString()
+        })
+      );
     }
   };
 
@@ -126,7 +172,23 @@ export function Home() {
       const messages = await getTicketMessages(selectedTicketId);
       if (messages.success && messages.data?.data) {
         setSelectedMessages(messages.data?.data);
+      } else {
+        dispatch(
+          addError({
+            errorTitle: 'Network Error',
+            errorDescription: messages.error!,
+            errorCode: messages.statusCode.toString()
+          })
+        );
       }
+    } else {
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: request.error!,
+          errorCode: request.statusCode.toString()
+        })
+      );
     }
   };
 
@@ -172,17 +234,25 @@ export function Home() {
                     <Col className="ellipsis-text">{t.obj}</Col>
                     <Col md="auto">{dayjs(t.creationDate).format('DD/MM/YYYY HH:mm')}</Col>
                   </Row>
-                  <Row>
-                    <Col md="auto" className="mx-1 my-2 p-0">
-                      <Badge bg="info">{t.status.status}</Badge>
-                    </Col>
-                    <Col md="auto" className="mx-1 my-2 p-0">
-                      <Badge bg="secondary">{t.arg.field}</Badge>
-                    </Col>
-                    <Col md="auto" className="mx-1 my-2 p-0">
-                      <Badge>{t.priority}</Badge>
-                    </Col>
-                  </Row>
+                  <div className="d-flex justify-content-between">
+                    <div>
+                      <Badge className="mx-1" bg="info">
+                        {t.status.status}
+                      </Badge>
+                      <Badge className="mx-1" bg="secondary">
+                        {t.arg.field}
+                      </Badge>
+                      <Badge className="mx-1">{t.priority}</Badge>
+                    </div>
+                    <div>
+                      {userRole !== Roles.MANAGER &&
+                        t.totalMessages !== undefined &&
+                        t.lastReadMessageIndex !== undefined &&
+                        t.totalMessages - 1 > t.lastReadMessageIndex && (
+                          <Badge bg="danger">{t.totalMessages - 1 - t.lastReadMessageIndex}</Badge>
+                        )}
+                    </div>
+                  </div>
                 </Container>
               );
             })}
@@ -192,7 +262,7 @@ export function Home() {
               onClick={() => {
                 dispatch(getPreviousTicketsThunk());
               }}
-              disabled={currentPage === 1}>
+              disabled={currentPage < 2}>
               <ArrowLeft />
             </Button>
             <p>{`Page ${currentPage}`}</p>
@@ -338,7 +408,7 @@ export function Home() {
                       <input
                         onChange={handleUpload}
                         ref={hiddenFileInput}
-                        accept=".jpg"
+                        accept=".jpg, .jpeg, .png"
                         type="file"
                         style={{ display: 'none' }}
                       />

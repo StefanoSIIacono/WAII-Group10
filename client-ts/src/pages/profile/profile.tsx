@@ -3,6 +3,7 @@ import { Form, Button, Stack, Row, Col } from 'react-bootstrap';
 import { editProfile } from '../../utils/Api';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { checkAuthentication } from '../../store/slices/authentication';
+import { addError } from '../../store/slices/errors';
 
 export function UserProfile() {
   const dispatch = useAppDispatch();
@@ -28,7 +29,13 @@ export function UserProfile() {
       }
     });
     if (!request.success) {
-      console.log(request.error);
+      dispatch(
+        addError({
+          errorTitle: 'Network Error',
+          errorDescription: request.error!,
+          errorCode: request.statusCode.toString()
+        })
+      );
       return;
     }
     dispatch(checkAuthentication());

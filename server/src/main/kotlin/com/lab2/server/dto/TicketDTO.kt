@@ -14,6 +14,7 @@ data class TicketDTO(
     val product: ProductDTO,
     val status: TicketStatusDTO,
     val lastReadMessageIndex: Int?,
+    val totalMessages: Int?
 )
 
 data class TicketCreateBodyDTO(
@@ -41,6 +42,7 @@ fun Ticket.toDTO(loggedUser: String? = null): TicketDTO {
         this.expert?.toDTO(),
         this.product.toDTO(),
         this.statusHistory.maxBy { it.timestamp }.toDTO(),
-        if (loggedUser == this.profile.email) this.lastReadMessageIndexProfile else (if (loggedUser == this.expert?.email) this.lastReadMessageIndexExpert else null)
+        if (loggedUser == this.profile.email) this.lastReadMessageIndexProfile else (if (loggedUser == this.expert?.email) this.lastReadMessageIndexExpert else null),
+        if (loggedUser == this.profile.email || loggedUser == this.expert?.email) this.messages.size else null
     )
 }

@@ -1138,7 +1138,7 @@ class DbTicketingApplicationTest {
 
     @Test
     fun testResolveTicket_TicketNotFoundFailure() {
-        val response = putRequest<String, String>("/tickets/1234567/resolved", null, Roles.EXPERT)
+        val response = putRequest<String, String>("/tickets/1234567/resolved", null, Roles.MANAGER)
 
         assertNotNull(response)
         assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
@@ -1163,7 +1163,7 @@ class DbTicketingApplicationTest {
         val body = response2.body!!
 
         assertEquals(body.status.status, Status.IN_PROGRESS)
-        assertEquals(body.expert, expert.email)
+        assertEquals(body.expert?.email, expert.email)
         assertEquals(body.priority, Priority.HIGH)
     }
 

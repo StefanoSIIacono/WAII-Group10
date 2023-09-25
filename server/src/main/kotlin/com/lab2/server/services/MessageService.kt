@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 
 interface MessageService {
     fun handleNewMessage(sender: JwtAuthenticationToken, ticketId: Long, messageDTO: BodyMessageDTO)
-    fun acknowledgeMessage(ticketID: Long, user: JwtAuthenticationToken, ack: Int)
+    fun acknowledgeMessage(ticketID: Long, user: JwtAuthenticationToken, ack: Int?)
     fun getTicketPagedMessages(
         ticketID: Long,
         user: JwtAuthenticationToken,
