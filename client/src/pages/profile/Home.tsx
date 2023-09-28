@@ -16,7 +16,7 @@ import {
   validStatusChanges
 } from '../../types';
 import { Link } from 'react-router-dom';
-import { Container, Row, Col, Button, Badge, Form, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Button, Badge, Form, Modal, Image } from 'react-bootstrap';
 import { ackMessage, addMessage, getTicketMessages, setTicketStatus } from '../../utils/Api';
 import { updateTicketThunk } from '../../store/slices/tickets';
 import { SearchSelect } from '../../components/searchSelect';
@@ -199,10 +199,15 @@ export function Home() {
   };
 
   const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files !== null && e.target.files[0]) {
+    if (
+      e.target.files !== null &&
+      e.target.files[0] &&
+      !files.some((f) => e.target.files !== null && f.name === e.target.files[0].name)
+    ) {
       const newFile = e.target.files[0];
       setFiles((oldFiles) => [...oldFiles, newFile]);
     }
+    hiddenFileInput.current!.value = '';
   };
 
   const handleDeleteAttachment = (name: string) => {
@@ -351,13 +356,31 @@ export function Home() {
                           {m.attachments.map((a) => (
                             <div key={a.id} className="border ticket-right-attachment-container">
                               {a.contentType.startsWith('image') ? (
-                                <img
+                                <Image
                                   className="ticket-right-attachment-image"
                                   src={URL.createObjectURL(
                                     new Blob([
                                       Uint8Array.from(atob(a.attachment), (c) => c.charCodeAt(0))
                                     ])
                                   )}
+                                  onClick={() =>
+                                    window.open(
+                                      URL.createObjectURL(
+                                        new File(
+                                          [
+                                            new Blob([
+                                              Uint8Array.from(atob(a.attachment), (c) =>
+                                                c.charCodeAt(0)
+                                              )
+                                            ])
+                                          ],
+                                          a.id.toString(),
+                                          { type: a.contentType }
+                                        )
+                                      ),
+                                      '_blank'
+                                    )
+                                  }
                                 />
                               ) : (
                                 <p>File</p>
@@ -377,9 +400,10 @@ export function Home() {
                         />
                         <div className="border ticket-right-attachment-container">
                           {f.type.startsWith('image') ? (
-                            <img
+                            <Image
                               className="ticket-right-attachment-image"
                               src={URL.createObjectURL(f)}
+                              onClick={() => window.open(URL.createObjectURL(f), '_blank')}
                             />
                           ) : (
                             <p>File</p>

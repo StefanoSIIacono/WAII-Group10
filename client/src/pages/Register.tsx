@@ -17,9 +17,12 @@ export function RegisterForm() {
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('');
   const [zip, setZip] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    event.stopPropagation();
+    setError('');
     const request = await signup({
       email,
       password,
@@ -33,6 +36,9 @@ export function RegisterForm() {
       }
     });
     if (!request.success) {
+      if (request.statusCode === 409) {
+        setError('Email già esistente');
+      }
       dispatch(
         addError({
           errorTitle: 'Network Error',
@@ -42,8 +48,9 @@ export function RegisterForm() {
       );
       console.log(request.error);
       return;
+    } else {
+      navigate('/login');
     }
-    navigate('/login');
   };
 
   return (
@@ -83,6 +90,7 @@ export function RegisterForm() {
                 onChange={(ev) => setEmail(ev.target.value)}
                 required
               />
+              {!!error && <p style={{ color: 'red' }}>{error}</p>}
             </Form.Group>
             <Form.Group as={Col} controlId="password">
               <Form.Label>Password</Form.Label>

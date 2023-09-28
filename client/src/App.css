@@ -1,133 +1,282 @@
-.App {
-  min-height: 100vh;
-  background-color: #ffffff;
-  color: #1f1f1f;
-  margin:0;
-}
-
-.Navbar {
-  min-height: 10vh;
-  padding-left: 16px;
-  padding-right: 16px;
-}
-
-.Content {
-  padding-top: 16px;
-  margin-left: 10vh;
-  width: 100%;
-}
-
-.flex-container{
-  flex-direction: row;
-  margin-left: 10vh;
-  margin-right: 10vh;
-}
-
-.Menu {
-  margin-right: 8%;
-  text-decoration: none;
-}
-
-.Drawer {
-  margin: 16px 16px 16px 16px;
-  padding-top: 25%;
-  font-size: 25px;
-  font-weight: bold;
-}
-
-.ProTitle{
-  color:white;
-  font-family: SansSerif;
-  font-size: 35px;
-  font-weight: bold;
-  position: relative;
-  padding-top: 1vh;
-}
-
-.ScrollB{
-  height: 60vh;
-  overflow: scroll;
-}
-
-.TableStuff{
-  font-size: 20px;
-  color: white;
-  margin-top: 3%;
-  margin-bottom: 5%;
-  width: 90%;
-  height:100%;
-}
-
-.Home {
-  color: white;
-  font-family: SansSerif;
-  font-size: 45px;
-  font-weight: bold;
-  position: relative;
-  padding-top: 25vh;
-  padding-left: 35vh;
-  padding-right: 35vh;
-}
-
-.FontText{
-  color: white;
-  font-family: SansSerif;
-}
-
-.logo:link {
-  color: white;
-  text-decoration: none;
-}
-
-.navItem {
-  text-decoration: none;
-}
-
-.Auth-form-container {
+body > #root > div {
   height: 100vh;
 }
 
-.Auth-form {
-  align-items: center;
-  height: 100vh;
+.ellipsis-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.Imma {
-  background-repeat: no-repeat;
-  object-fit: cover;
-  width: 100%;
-  height: 90%;
+/* Experts dashboard */
+
+.experts-left-expert-container {
+  height: 90px;
 }
 
-.Drawer-li{
-  text-decoration: none;
-  color: #333;
+.experts-right-stats {
+  overflow-y: scroll;
+  margin-bottom: 30px;
+  padding-bottom: 30px;
 }
 
-.Drawer-li:hover{
-  text-decoration: underline;
-  color: #0080FF;
-}
-
-.box-container {
+.experts-right-stats-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  margin-bottom: 20px;
+  align-items: center;
+  height: 200px;
 }
 
-.box {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
+.experts-right-stats-container-label {
+  margin-bottom: 30px;
+  font-weight: bold;
+  font-size: 20px;
 }
 
-.box h3 {
+.experts-right-stats-container-value {
+  font-size: 40px;
+}
+
+.experts-right-stats-graph-label {
+  margin-bottom: 30px;
+  font-weight: bold;
+  font-size: 20px;
+  margin-left: 60px;
+}
+
+/* Tickets dashboard */
+
+.ticket-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: calc(100% - 60px);
+}
+
+.ticket-container {
+  max-width: 1400px;
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  height: 100%;
+}
+
+.ticket-left-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  min-width: 400px;
+  margin-top: 20px;
+  margin-right: 10px;
+}
+
+.ticket-left-container-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-bottom: 20px;
+}
+
+.ticket-left-container-tickets {
+  overflow-y: scroll;
+  height: calc(100% - 30px);
+  padding-right: 5px;
+}
+.ticket-left-container-tickets::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #f5f5f5;
+}
+
+.ticket-left-container-tickets::-webkit-scrollbar {
+  width: 6px;
+  background-color: #f5f5f5;
+}
+
+.ticket-left-container-tickets::-webkit-scrollbar-thumb {
+  background-color: #00000046;
+}
+
+.ticket-left-container-ticket {
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 15px;
+}
+
+.ticket-left-container-pagination {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 20px;
+  margin-left: 20px;
   margin-bottom: 10px;
 }
 
-.box a {
-  color: #007bff;
-  text-decoration: none;
+.ticket-right-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 3;
+  margin-top: 20px;
+  padding-left: 10px;
+  height: calc(100% - 20px);
+}
+
+.ticket-right-conditional-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.ticket-right-containe-expert-container {
+  align-items: center;
+  margin-top: 15px;
+}
+
+.ticket-right-containe-expert-container > p {
+  margin: 0px;
+}
+
+.ticket-right-container-badges {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  height: 15px;
+}
+
+.ticket-right-container-badges > .badge {
+  margin: 5px;
+}
+
+.ticket-right-container-product-container {
+  display: flex;
+  align-items: center;
+}
+
+.ticket-right-container-second-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ticket-right-container-product-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 20px;
+  border-left-color: #00000046;
+  border-left-width: 2px;
+  border-left-style: solid;
+  padding-left: 10px;
+}
+
+.ticket-right-container-product-detail > h6 {
+  vertical-align: text-bottom;
+}
+
+.ticket-right-container-product-detail > p {
+  vertical-align: text-top;
+}
+
+.ticket-right-header {
+  border-bottom-color: #00000067;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  padding-bottom: 5px;
+}
+
+.ticket-right-messages-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  height: calc(100% - 260px);
+}
+
+.ticket-right-chat-container {
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column-reverse;
+  height: 100%;
+}
+
+.ticket-right-chat-container::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #f5f5f5;
+}
+
+.ticket-right-chat-container::-webkit-scrollbar {
+  width: 6px;
+  background-color: #f5f5f5;
+}
+
+.ticket-right-chat-container::-webkit-scrollbar-thumb {
+  background-color: #00000046;
+}
+
+.ticket-right-messages-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.ticket-right-messages-form > div {
+  flex: 15;
+  margin-right: 10px;
+}
+
+.ticket-right-messages-button-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1 !important;
+  margin-right: 0px !important;
+  height: 100%;
+}
+
+.ticket-right-messages-button-container > button {
+  flex: 1;
+  height: 100px;
+  width: 60px;
+  margin-top: 5px;
+}
+
+.ticket-right-attachments-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.ticket-right-attachment-container {
+  height: 90px;
+  width: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ticket-right-attachment-image {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+}
+
+.ticket-right-attachment-image:hover {
+  cursor: pointer;
+}
+
+.ticket-right-attachment-close-button {
+  position: relative;
+  top: 0px;
+  left: 75px;
+}
+
+.ticket-right-attachment-close-button:hover {
+  cursor: pointer;
 }

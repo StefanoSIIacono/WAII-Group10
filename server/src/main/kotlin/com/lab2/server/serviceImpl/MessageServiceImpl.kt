@@ -77,8 +77,6 @@ class MessageServiceImpl(
             throw AckMessageInTheFutureException("Id doesn't exist")
         }
 
-        println(ack)
-
         if (ticket.expert?.email == user.name) {
             ticket.updateLastReadExpert(ack)
             ticketingService.unsafeTicketSave(ticket)
