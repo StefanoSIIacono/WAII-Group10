@@ -29,7 +29,7 @@ class Ticket(
     var messages = mutableListOf<Message>()
 
     var lastReadMessageIndexProfile: Int = 0
-    var lastReadMessageIndexExpert: Int = 0
+    var lastReadMessageIndexExpert: Int = -1
 
     fun changePriority(p: Priority) {
         this.priority = p
@@ -61,11 +61,11 @@ class Ticket(
     }
 
     fun updateLastReadExpert(index: Int?) {
-        lastReadMessageIndexExpert = index ?: messages.size
+        lastReadMessageIndexExpert = index ?: messages.maxOf { it.index }
     }
 
     fun updateLastReadProfile(index: Int?) {
-        lastReadMessageIndexProfile = index ?: messages.size
+        lastReadMessageIndexProfile = index ?: messages.maxOf { it.index }
     }
 }
 

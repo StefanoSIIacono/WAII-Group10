@@ -90,14 +90,15 @@ export function CreateExpertForm() {
   };
 
   const expertisesModified =
-    !expertises.every((arr2Item) => expert?.expertises.some((e) => e.field === arr2Item.field)) &&
+    (!expertises.every((arr2Item) => expert?.expertises.some((e) => e.field === arr2Item.field)) ||
+      (expert && expertises.length !== expert.expertises.length)) &&
     expertises.length > 0;
 
   return (
     <div className="fill d-flex align-items-center justify-content-center">
       <Form onSubmit={handleSubmit}>
         <Stack gap={2}>
-          <h1>Create expert</h1>
+          <h1>{`${expert ? 'Edit' : 'Create'} expert`}</h1>
           <Row className="mb-3">
             <Form.Group as={Col} controlId="name">
               <Form.Label>Name</Form.Label>
@@ -165,8 +166,7 @@ export function CreateExpertForm() {
                     setExpertises((curr) => curr.filter((e) => e.field !== expertise.field))
                   }
                   variant="danger"
-                  className="mx-auto"
-                  type="submit">
+                  className="mx-auto">
                   <Trash />
                 </Button>
               </Col>
@@ -195,8 +195,7 @@ export function CreateExpertForm() {
                   inputRef.current?.clear();
                 }}
                 variant="success"
-                disabled={!newExpertise}
-                type="submit">
+                disabled={!newExpertise}>
                 <Plus />
               </Button>
             </Col>
@@ -205,7 +204,7 @@ export function CreateExpertForm() {
           <Button
             className="mt-2 mx-auto w-50"
             type="submit"
-            disabled={!expert && !expertisesModified}>
+            disabled={expert && !expertisesModified}>
             {expert ? 'Save' : 'Create'}
           </Button>
         </Stack>

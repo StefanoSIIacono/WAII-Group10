@@ -71,8 +71,8 @@ export function Home() {
 
   useInterval(async () => {
     dispatch(getCurrentPageTicketsThunk());
-    if (selectedTicketId) {
-      const messages = await getTicketMessages(selectedTicketId);
+    if (selectedTicket) {
+      const messages = await getTicketMessages(selectedTicket.id);
       if (messages.success && messages.data?.data) {
         setSelectedMessages(messages.data?.data);
       } else {
@@ -383,7 +383,27 @@ export function Home() {
                                   }
                                 />
                               ) : (
-                                <p>File</p>
+                                <p
+                                  onClick={() =>
+                                    window.open(
+                                      URL.createObjectURL(
+                                        new File(
+                                          [
+                                            new Blob([
+                                              Uint8Array.from(atob(a.attachment), (c) =>
+                                                c.charCodeAt(0)
+                                              )
+                                            ])
+                                          ],
+                                          a.id.toString(),
+                                          { type: a.contentType }
+                                        )
+                                      ),
+                                      '_blank'
+                                    )
+                                  }>
+                                  File
+                                </p>
                               )}
                             </div>
                           ))}
@@ -406,7 +426,9 @@ export function Home() {
                               onClick={() => window.open(URL.createObjectURL(f), '_blank')}
                             />
                           ) : (
-                            <p>File</p>
+                            <p onClick={() => window.open(URL.createObjectURL(f), '_blank')}>
+                              File
+                            </p>
                           )}
                         </div>
                       </div>

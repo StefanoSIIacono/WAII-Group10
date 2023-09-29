@@ -131,9 +131,13 @@ export function CreateTicketForm() {
                 />
                 <div className="border ticket-right-attachment-container">
                   {f.type.startsWith('image') ? (
-                    <img className="ticket-right-attachment-image" src={URL.createObjectURL(f)} />
+                    <img
+                      onClick={() => window.open(URL.createObjectURL(f), '_blank')}
+                      className="ticket-right-attachment-image"
+                      src={URL.createObjectURL(f)}
+                    />
                   ) : (
-                    <p>File</p>
+                    <p onClick={() => window.open(URL.createObjectURL(f), '_blank')}>File</p>
                   )}
                 </div>
               </div>
