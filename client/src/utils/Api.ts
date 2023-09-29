@@ -264,7 +264,7 @@ async function getPaginated<T>(
       headers: {
         'Content-Type': 'application/json'
       },
-      signal: AbortSignal.timeout(1000),
+      signal: AbortSignal.timeout(5000),
       credentials: 'include'
     });
 
@@ -306,7 +306,7 @@ async function get<T>(path: string): Promise<ApiResponse<T>> {
       headers: {
         'Content-Type': 'application/json'
       },
-      signal: AbortSignal.timeout(1000),
+      signal: AbortSignal.timeout(5000),
       credentials: 'include'
     });
 
@@ -346,7 +346,7 @@ async function post<S = undefined, T = undefined>(
       headers: {
         'Content-Type': 'application/json'
       },
-      signal: AbortSignal.timeout(1000),
+      signal: AbortSignal.timeout(5000),
       credentials: 'include',
       body: body ? JSON.stringify(body) : undefined
     });
@@ -386,7 +386,7 @@ async function put<S = undefined, T = undefined>(
       headers: {
         'Content-Type': 'application/json'
       },
-      signal: AbortSignal.timeout(1000),
+      signal: AbortSignal.timeout(5000),
       credentials: 'include',
       body: body ? JSON.stringify(body) : undefined
     });
@@ -426,7 +426,7 @@ async function del<S = undefined, T = undefined>(
       headers: {
         'Content-Type': 'application/json'
       },
-      signal: AbortSignal.timeout(1000),
+      signal: AbortSignal.timeout(5000),
       credentials: 'include',
       body: body ? JSON.stringify(body) : undefined
     });
