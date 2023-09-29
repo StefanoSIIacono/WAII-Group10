@@ -33,7 +33,7 @@ class ExpertServiceImpl(
         val pageResult = if (expertise === null) expertRepository.findByEmailContaining(
             email,
             PageRequest.of(page, offset, Sort.by("name"))
-        ) else expertRepository.findByEmailContainingAndExpertisesField(
+        ) else expertRepository.findByEmailContainingIgnoreCaseAndExpertisesField(
             email,
             expertise,
             PageRequest.of(page, offset, Sort.by("name"))

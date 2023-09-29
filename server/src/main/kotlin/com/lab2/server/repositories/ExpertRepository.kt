@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ExpertRepository : JpaRepository<Expert, String> {
     fun findByEmailContaining(email: String, pageable: Pageable): Page<Expert>
-    fun findByEmailContainingAndExpertisesField(
+    fun findByEmailContainingIgnoreCaseAndExpertisesField(
         email: String,
         expertisesField: String,
         pageable: Pageable

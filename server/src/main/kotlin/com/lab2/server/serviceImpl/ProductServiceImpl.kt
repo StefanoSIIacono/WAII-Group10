@@ -22,7 +22,8 @@ class ProductServiceImpl(private val productRepository: ProductRepository) : Pro
     }
 
     override fun searchByNamePaged(name: String, page: Int, offset: Int): PagedDTO<ProductDTO> {
-        val pageResult = productRepository.findByNameContaining(name, PageRequest.of(page, offset, Sort.by("name")))
+        val pageResult =
+            productRepository.findByNameContainingIgnoreCase(name, PageRequest.of(page, offset, Sort.by("name")))
         val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
 
         return PagedDTO(meta, pageResult.content.map { it.toDTO() })

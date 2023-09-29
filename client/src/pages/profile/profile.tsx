@@ -57,7 +57,7 @@ export function UserProfile() {
           <Row className="mb-3">
             <Form.Group as={Col} controlId="email">
               <Form.Label>Email</Form.Label>
-              <Form.Control type="email" value={email} placeholder="email" disabled />
+              <Form.Control type="email" max={200} value={email} placeholder="email" disabled />
             </Form.Group>
           </Row>
           <Row className="mb-3">
@@ -66,6 +66,7 @@ export function UserProfile() {
               <Form.Control
                 type="text"
                 value={name}
+                max={200}
                 placeholder="Name"
                 onChange={(ev) => setName(ev.target.value)}
                 required
@@ -76,6 +77,7 @@ export function UserProfile() {
               <Form.Control
                 type="text"
                 value={surname}
+                max={200}
                 placeholder="surname"
                 onChange={(ev) => setSurname(ev.target.value)}
                 required
@@ -88,6 +90,7 @@ export function UserProfile() {
             <Form.Control
               placeholder="1234 Main St"
               value={address}
+              max={200}
               onChange={(ev) => setAddress(ev.target.value)}
               required
             />
@@ -99,6 +102,7 @@ export function UserProfile() {
               <Form.Control
                 placeholder="Turin"
                 value={city}
+                max={200}
                 onChange={(ev) => setCity(ev.target.value)}
                 required
               />
@@ -109,6 +113,7 @@ export function UserProfile() {
               <Form.Control
                 placeholder="italy"
                 value={country}
+                max={200}
                 onChange={(ev) => setCountry(ev.target.value)}
                 required
               />
@@ -120,6 +125,7 @@ export function UserProfile() {
                 type="text"
                 placeholder="12345"
                 value={zip}
+                max={10}
                 onChange={(ev) => setZip(ev.target.value)}
                 required
               />

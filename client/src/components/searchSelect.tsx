@@ -1,6 +1,9 @@
-import { ForwardedRef, forwardRef, useCallback, useRef, useState } from 'react';
+import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import {
+  getExpertises,
+  getExpertsByExpertises,
+  getProducts,
   searchExpertiseByName,
   searchExpertsByNameAndExpertise,
   searchProductsByName
@@ -13,6 +16,7 @@ import { useAppDispatch } from '../store/hooks';
 type Props = {
   type: 'products' | 'expertises' | 'experts';
   expertise?: string;
+  minLength?: number;
   onSelect: (selected?: ProductDTO | ExpertiseDTO | ExpertDTO) => void;
   elementsToFilter?: string[];
   allowNewElement?: boolean;
@@ -21,7 +25,7 @@ type Props = {
 type Option<T> = Partial<T> & { new: boolean };
 
 export const SearchSelect = forwardRef(function SearchSelect(
-  { type, onSelect, elementsToFilter, allowNewElement, expertise }: Props,
+  { type, onSelect, elementsToFilter, allowNewElement, expertise, minLength = 2 }: Props,
   ref: ForwardedRef<Typeahead>
 ) {
   const dispatch = useAppDispatch();
@@ -37,6 +41,12 @@ export const SearchSelect = forwardRef(function SearchSelect(
 
   const page = useRef(1);
 
+  useEffect(() => {
+    if (minLength === 0 && query.length === 0) {
+      handleSearch('');
+    }
+  }, [query]);
+
   const handleInputChange = (text: string) => {
     setQuery(text);
     onSelect(undefined);
@@ -49,9 +59,15 @@ export const SearchSelect = forwardRef(function SearchSelect(
 
     const nextPage = page.current + 1;
 
-    const result = await (type === 'experts'
-      ? searchExpertsByNameAndExpertise(query, expertise, nextPage)
-      : makeAndHandleRequest(query, nextPage));
+    const result = await (query.length > 0
+      ? type === 'experts'
+        ? searchExpertsByNameAndExpertise(query, expertise, nextPage)
+        : makeAndHandleRequest(query, nextPage)
+      : type === 'experts'
+      ? getExpertsByExpertises(expertise!, nextPage)
+      : type === 'expertises'
+      ? getExpertises(nextPage)
+      : getProducts(nextPage));
 
     if (result.success && result.data?.data) {
       setIsLoading(false);
@@ -73,9 +89,15 @@ export const SearchSelect = forwardRef(function SearchSelect(
   const handleSearch = useCallback(async (query: string) => {
     setIsLoading(true);
 
-    const result = await (type === 'experts'
-      ? searchExpertsByNameAndExpertise(query, expertise)
-      : makeAndHandleRequest(query));
+    const result = await (query.length > 0
+      ? type === 'experts'
+        ? searchExpertsByNameAndExpertise(query, expertise)
+        : makeAndHandleRequest(query)
+      : type === 'experts'
+      ? getExpertsByExpertises(expertise!)
+      : type === 'expertises'
+      ? getExpertises()
+      : getProducts());
 
     setIsLoading(false);
 
@@ -126,7 +148,7 @@ export const SearchSelect = forwardRef(function SearchSelect(
         setSelected(option[0] as unknown as ProductDTO | ExpertiseDTO | ExpertDTO);
         setShowRequiredError(false);
       }}
-      minLength={allowNewElement ? 0 : 2}
+      minLength={allowNewElement ? 0 : minLength}
       onInputChange={handleInputChange}
       onPaginate={handlePagination}
       onSearch={handleSearch}

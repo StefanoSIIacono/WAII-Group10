@@ -85,6 +85,7 @@ export function CreateTicketForm() {
               <Form.Label>Product</Form.Label>
               <SearchSelect
                 type="products"
+                minLength={0}
                 onSelect={(selected) => setProduct(selected as ProductDTO)}
               />
             </Form.Group>
@@ -92,6 +93,7 @@ export function CreateTicketForm() {
               <Form.Label>Argument</Form.Label>
               <SearchSelect
                 type="expertises"
+                minLength={0}
                 onSelect={(selected) => setArg(selected as ExpertiseDTO)}
               />
             </Form.Group>
@@ -102,6 +104,7 @@ export function CreateTicketForm() {
               type="text"
               value={obj}
               placeholder="Object"
+              max={200}
               onChange={(ev) => setObj(ev.target.value)}
               required
             />
@@ -112,6 +115,7 @@ export function CreateTicketForm() {
               as="textarea"
               rows={6}
               type="text"
+              maxLength={9000}
               value={body}
               placeholder="body"
               onChange={(ev) => setBody(ev.target.value)}

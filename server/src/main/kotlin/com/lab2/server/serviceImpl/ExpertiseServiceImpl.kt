@@ -42,7 +42,7 @@ class ExpertiseServiceImpl(private val expertiseRepository: ExpertiseRepository)
 
     override fun searchByFieldPaginated(field: String, page: Int, offset: Int): PagedDTO<ExpertiseDTO> {
         val pageResult =
-            expertiseRepository.findByFieldContaining(field, PageRequest.of(page, offset, Sort.by("field")))
+            expertiseRepository.findByFieldContainingIgnoreCase(field, PageRequest.of(page, offset, Sort.by("field")))
         val meta = PagedMetadata(pageResult.number + 1, pageResult.totalPages, pageResult.numberOfElements)
 
         return PagedDTO(meta, pageResult.content.map { it.toDTO() })

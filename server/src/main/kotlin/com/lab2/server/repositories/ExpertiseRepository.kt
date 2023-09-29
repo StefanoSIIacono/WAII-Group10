@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository
 interface ExpertiseRepository : JpaRepository<Expertise, Long> {
 
     fun findByField(field: String): Expertise?
-    fun findByFieldContaining(field: String, pageable: Pageable): Page<Expertise>
+    fun findByFieldContainingIgnoreCase(field: String, pageable: Pageable): Page<Expertise>
 }

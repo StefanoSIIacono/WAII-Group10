@@ -23,9 +23,11 @@ export function CreateExpertForm() {
   const [surname, setSurname] = useState(expert?.surname ?? '');
   const [expertises, setExpertises] = useState<ExpertiseDTO[]>(expert?.expertises ?? []);
   const [newExpertise, setNewExpertise] = useState<ExpertiseDTO | undefined>();
+  const [error, setError] = useState('');
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setError('');
     if (!expert) {
       const request = await createExpert({
         email,
@@ -35,6 +37,10 @@ export function CreateExpertForm() {
         expertises: expertises.map((e) => e.field)
       });
       if (!request.success) {
+        if (request.statusCode === 409) {
+          setError('Email già esistente');
+          return;
+        }
         dispatch(
           addError({
             errorTitle: 'Network Error',
@@ -98,6 +104,7 @@ export function CreateExpertForm() {
               <Form.Control
                 type="text"
                 value={name}
+                max={200}
                 placeholder="Name"
                 disabled={!!expert}
                 onChange={(ev) => setName(ev.target.value)}
@@ -110,6 +117,7 @@ export function CreateExpertForm() {
                 type="text"
                 value={surname}
                 disabled={!!expert}
+                max={200}
                 placeholder="surname"
                 onChange={(ev) => setSurname(ev.target.value)}
                 required
@@ -123,10 +131,12 @@ export function CreateExpertForm() {
                 type="email"
                 value={email}
                 disabled={!!expert}
+                max={200}
                 placeholder="email"
                 onChange={(ev) => setEmail(ev.target.value)}
                 required
               />
+              {!!error && <p style={{ color: 'red' }}>{error}</p>}
             </Form.Group>
             {!expert && (
               <Form.Group as={Col} controlId="password">
@@ -138,6 +148,7 @@ export function CreateExpertForm() {
                   onChange={(ev) => setPassword(ev.target.value)}
                   required
                   minLength={6}
+                  max={200}
                 />
               </Form.Group>
             )}
@@ -168,6 +179,7 @@ export function CreateExpertForm() {
                 type="expertises"
                 ref={inputRef}
                 allowNewElement={true}
+                minLength={0}
                 elementsToFilter={expertises.map((e) => e.field)}
                 onSelect={(selected) => setNewExpertise(selected as ExpertiseDTO)}
               />

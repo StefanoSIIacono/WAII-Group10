@@ -38,6 +38,7 @@ export function RegisterForm() {
     if (!request.success) {
       if (request.statusCode === 409) {
         setError('Email già esistente');
+        return;
       }
       dispatch(
         addError({
@@ -65,6 +66,7 @@ export function RegisterForm() {
                 type="text"
                 value={name}
                 placeholder="Name"
+                max={200}
                 onChange={(ev) => setName(ev.target.value)}
                 required
               />
@@ -75,6 +77,7 @@ export function RegisterForm() {
                 type="text"
                 value={surname}
                 placeholder="surname"
+                max={200}
                 onChange={(ev) => setSurname(ev.target.value)}
                 required
               />
@@ -87,6 +90,7 @@ export function RegisterForm() {
                 type="email"
                 value={email}
                 placeholder="email"
+                max={200}
                 onChange={(ev) => setEmail(ev.target.value)}
                 required
               />
@@ -98,6 +102,7 @@ export function RegisterForm() {
                 type="password"
                 value={password}
                 placeholder="password"
+                max={200}
                 onChange={(ev) => setPassword(ev.target.value)}
                 required
                 minLength={6}
@@ -110,6 +115,7 @@ export function RegisterForm() {
             <Form.Control
               placeholder="1234 Main St"
               value={address}
+              max={200}
               onChange={(ev) => setAddress(ev.target.value)}
               required
             />
@@ -121,6 +127,7 @@ export function RegisterForm() {
               <Form.Control
                 placeholder="Turin"
                 value={city}
+                max={200}
                 onChange={(ev) => setCity(ev.target.value)}
                 required
               />
@@ -131,6 +138,7 @@ export function RegisterForm() {
               <Form.Control
                 placeholder="italy"
                 value={country}
+                max={200}
                 onChange={(ev) => setCountry(ev.target.value)}
                 required
               />
@@ -142,6 +150,7 @@ export function RegisterForm() {
                 type="text"
                 placeholder="12345"
                 value={zip}
+                max={10}
                 onChange={(ev) => setZip(ev.target.value)}
                 required
               />

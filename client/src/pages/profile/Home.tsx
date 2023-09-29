@@ -418,6 +418,7 @@ export function Home() {
                         as="textarea"
                         rows={4}
                         type="text"
+                        maxLength={9000}
                         value={newMessageBody}
                         disabled={currentStatusValue !== Status.IN_PROGRESS}
                         placeholder="Message"
@@ -465,6 +466,7 @@ export function Home() {
               <Form.Label>Expert</Form.Label>
               <SearchSelect
                 type="experts"
+                minLength={0}
                 expertise={selectedTicket?.arg.field}
                 onSelect={(selected) => setCurrentInProgressExpertSelection(selected as ExpertDTO)}
               />

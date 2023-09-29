@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ProductRepository : JpaRepository<Product, String> {
-    fun findByNameContaining(name: String, pageable: Pageable): Page<Product>
+    fun findByNameContainingIgnoreCase(name: String, pageable: Pageable): Page<Product>
 }
