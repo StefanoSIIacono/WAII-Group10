@@ -195,6 +195,13 @@ class DbTicketingApplicationTest {
                     null,
                     product
                 )
+                val firstMessage = Message(
+                    0,
+                    Date(System.currentTimeMillis()),
+                    "initial Body",
+                    mutableListOf()
+                )
+                ticket.addMessageFromProfile(firstMessage)
 
                 var statusTimestamp = System.currentTimeMillis()
 
@@ -210,7 +217,7 @@ class DbTicketingApplicationTest {
                         for (j in 0 until NUMBEROFENTITIES) {
                             val attachment = "WnK3mmyVMFFMZInbdSP8wQ=="
                             val message = Message(
-                                j,
+                                j + 1,
                                 Date(time),
                                 "body${j}",
                                 mutableListOf(Attachment(attachment, attachment.length.toLong(), "contentType"))
